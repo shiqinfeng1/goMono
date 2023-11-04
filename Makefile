@@ -1,5 +1,4 @@
 GOHOSTOS:=$(shell go env GOHOSTOS)
-GOPATH:=$(shell go env GOPATH)
 VERSION=$(shell git describe --tags --always)
 
 ifeq ($(GOHOSTOS), windows)
@@ -28,10 +27,7 @@ init:
 .PHONY: config
 # generate internal proto
 config:
-	protoc --proto_path=./internal \
-	       --proto_path=./third_party \
- 	       --go_out=paths=source_relative:./internal \
-	       $(INTERNAL_PROTO_FILES)
+	find app -type d -depth 1 -print | xargs -L 1 bash -c 'cd "$$0" && pwd && $(MAKE) config'
 
 .PHONY: api
 # generate api proto
@@ -41,6 +37,9 @@ api:
  	       --go_out=paths=source_relative:./api \
  	       --go-http_out=paths=source_relative:./api \
  	       --go-grpc_out=paths=source_relative:./api \
+		   --go-errors_out=paths=source_relative:./api \
+		   --openapiv2_out=./api \
+	       --openapiv2_opt logtostderr=true \
 	       --openapi_out=fq_schema_naming=true,default_response=false:. \
 	       $(API_PROTO_FILES)
 
@@ -52,16 +51,15 @@ build:
 .PHONY: generate
 # generate
 generate:
-	go mod tidy
-	go get github.com/google/wire/cmd/wire@latest
-	go generate ./...
+	find app -type d -depth 1 -print | xargs -L 1 bash -c 'cd "$$0" && pwd && $(MAKE) generate'
 
 .PHONY: all
 # generate all
 all:
-	make api;
-	make config;
-	make generate;
+	make init
+	make api
+	find app -type d -depth 1 -print | xargs -L 1 bash -c 'cd "$$0" && pwd && $(MAKE) all'
+	make build
 
 # show help
 help:

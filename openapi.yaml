@@ -3,37 +3,68 @@
 
 openapi: 3.0.3
 info:
-    title: Greeter API
-    description: The greeting service definition.
+    title: ""
     version: 0.0.1
 paths:
-    /helloworld/{name}:
-        get:
+    /trainer/v1/isHourAvailable:
+        post:
             tags:
-                - Greeter
-                - subgroup
-            description: Sends a greeting
-            operationId: Greeter_SayHello
-            parameters:
-                - name: name
-                  in: path
-                  required: true
-                  schema:
-                    type: string
+                - TrainerService
+            operationId: TrainerService_IsHourAvailable
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/trainer.IsHourAvailableRequest'
+                required: true
             responses:
                 "200":
                     description: OK
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/helloworld.v1.HelloReply'
+                                $ref: '#/components/schemas/trainer.IsHourAvailableResponse'
+    /user/v1/getTrainingBalance:
+        post:
+            tags:
+                - UsersService
+            operationId: UsersService_GetTrainingBalance
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/users.GetTrainingBalanceRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/users.GetTrainingBalanceResponse'
 components:
     schemas:
-        helloworld.v1.HelloReply:
+        trainer.IsHourAvailableRequest:
             type: object
             properties:
-                message:
+                time:
                     type: string
-            description: The response message containing the greetings
+                    format: date-time
+        trainer.IsHourAvailableResponse:
+            type: object
+            properties:
+                isAvailable:
+                    type: boolean
+        users.GetTrainingBalanceRequest:
+            type: object
+            properties:
+                userId:
+                    type: string
+        users.GetTrainingBalanceResponse:
+            type: object
+            properties:
+                amount:
+                    type: string
 tags:
-    - name: Greeter
+    - name: TrainerService
+    - name: UsersService

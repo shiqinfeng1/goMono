@@ -9,15 +9,30 @@ import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
 service TrainerService {
-  rpc IsHourAvailable(IsHourAvailableRequest) returns (IsHourAvailableResponse) {
-    option (google.api.http) = {
-      post: "/trainer/v1/isHourAvailable"
+  rpc IsHourAvailable(IsHourAvailableRequest) returns (IsHourAvailableResponse) {}
+  rpc ScheduleTraining(UpdateHourRequest) returns (google.protobuf.Empty) {}
+  rpc CancelTraining(UpdateHourRequest) returns (google.protobuf.Empty) {}
+
+  rpc GetTrainerAvailableHours(GetTrainerAvailableHoursRequest) returns (GetTrainerAvailableHoursRespone) {
+     option (google.api.http) = {
+      post: "/trainer/v1/getTrainerAvailableHours"
       body: "*"
     };
   }
-  rpc ScheduleTraining(UpdateHourRequest) returns (google.protobuf.Empty) {}
-  rpc CancelTraining(UpdateHourRequest) returns (google.protobuf.Empty) {}
-  rpc MakeHourAvailable(UpdateHourRequest) returns (google.protobuf.Empty) {}
+
+  rpc MakeHourAvailable(MakeHourAvailableRequest) returns (google.protobuf.Empty) {
+     option (google.api.http) = {
+      post: "/trainer/v1/makeHourAvailable"
+      body: "*"
+    };
+  }
+
+  rpc MakeHourUnavailable(MakeHourUnavailableRequest) returns (google.protobuf.Empty) {
+     option (google.api.http) = {
+      post: "/trainer/v1/makeHourUnavailable"
+      body: "*"
+    };
+  }
 }
 
 message IsHourAvailableRequest {
@@ -30,4 +45,31 @@ message IsHourAvailableResponse {
 
 message UpdateHourRequest {
   google.protobuf.Timestamp time = 1;
+}
+
+message GetTrainerAvailableHoursRequest {
+  google.protobuf.Timestamp date_from = 1;
+	google.protobuf.Timestamp date_to = 2;
+}
+
+message GetTrainerAvailableHoursRespone {
+  message Hour {
+    bool available      = 1;      
+	  bool has_training_scheduled    = 2; 
+	  google.protobuf.Timestamp hour   = 3;
+  }
+  message Date {
+    google.protobuf.Timestamp date  = 1;  
+    bool Has_free_hours = 2;  
+    repeated Hour hours  = 3;  
+  }
+  repeated Date dates = 1;
+}
+
+message MakeHourAvailableRequest {
+  repeated google.protobuf.Timestamp time = 1;
+}
+
+message MakeHourUnavailableRequest {
+  repeated google.protobuf.Timestamp time = 1;
 }

@@ -1,0 +1,331 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: ""
+    version: 0.0.1
+paths:
+    /trainer/v1/getTrainerAvailableHours:
+        post:
+            tags:
+                - TrainerService
+            operationId: TrainerService_GetTrainerAvailableHours
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/trainer.GetTrainerAvailableHoursRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/trainer.GetTrainerAvailableHoursRespone'
+    /trainer/v1/makeHourAvailable:
+        post:
+            tags:
+                - TrainerService
+            operationId: TrainerService_MakeHourAvailable
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/trainer.MakeHourAvailableRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /trainer/v1/makeHourUnavailable:
+        post:
+            tags:
+                - TrainerService
+            operationId: TrainerService_MakeHourUnavailable
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/trainer.MakeHourUnavailableRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /trainings/v1/approveRescheduleTraining:
+        post:
+            tags:
+                - TrainingService
+            operationId: TrainingService_ApproveRescheduleTraining
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/trainer.ApproveRescheduleTrainingRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /trainings/v1/cancelTraining:
+        post:
+            tags:
+                - TrainingService
+            operationId: TrainingService_CancelTraining
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/trainer.CancelTrainingRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /trainings/v1/createTraining:
+        post:
+            tags:
+                - TrainingService
+            operationId: TrainingService_CreateTraining
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/trainer.CreateTrainingRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/trainer.CreateTrainingResponse'
+    /trainings/v1/getTrainings:
+        post:
+            tags:
+                - TrainingService
+            operationId: TrainingService_GetTrainings
+            requestBody:
+                content:
+                    application/json: {}
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/trainer.GetTrainingsResponse'
+    /trainings/v1/rejectRescheduleTraining:
+        post:
+            tags:
+                - TrainingService
+            operationId: TrainingService_RejectRescheduleTraining
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/trainer.RejectRescheduleTrainingRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /trainings/v1/requestRescheduleTraining:
+        post:
+            tags:
+                - TrainingService
+            operationId: TrainingService_RequestRescheduleTraining
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/trainer.RequestRescheduleTrainingRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /trainings/v1/rescheduleTraining:
+        post:
+            tags:
+                - TrainingService
+            operationId: TrainingService_RescheduleTraining
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/trainer.RescheduleTrainingRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /user/v1/getTrainingBalance:
+        post:
+            tags:
+                - UsersService
+            operationId: UsersService_GetTrainingBalance
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/users.GetTrainingBalanceRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/users.GetTrainingBalanceResponse'
+components:
+    schemas:
+        trainer.ApproveRescheduleTrainingRequest:
+            type: object
+            properties:
+                trainingUuid:
+                    type: string
+        trainer.CancelTrainingRequest:
+            type: object
+            properties:
+                trainingUuid:
+                    type: string
+        trainer.CreateTrainingRequest:
+            type: object
+            properties:
+                notes:
+                    type: string
+                time:
+                    type: string
+                    format: date-time
+        trainer.CreateTrainingResponse:
+            type: object
+            properties:
+                trainingUuid:
+                    type: string
+        trainer.GetTrainerAvailableHoursRequest:
+            type: object
+            properties:
+                dateFrom:
+                    type: string
+                    format: date-time
+                dateTo:
+                    type: string
+                    format: date-time
+        trainer.GetTrainerAvailableHoursRespone:
+            type: object
+            properties:
+                dates:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/trainer.GetTrainerAvailableHoursRespone_Date'
+        trainer.GetTrainerAvailableHoursRespone_Date:
+            type: object
+            properties:
+                date:
+                    type: string
+                    format: date-time
+                HasFreeHours:
+                    type: boolean
+                hours:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/trainer.GetTrainerAvailableHoursRespone_Hour'
+        trainer.GetTrainerAvailableHoursRespone_Hour:
+            type: object
+            properties:
+                available:
+                    type: boolean
+                hasTrainingScheduled:
+                    type: boolean
+                hour:
+                    type: string
+                    format: date-time
+        trainer.GetTrainingsResponse:
+            type: object
+            properties:
+                trainings:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/trainer.GetTrainingsResponse_Training'
+        trainer.GetTrainingsResponse_Training:
+            type: object
+            properties:
+                canBeCancelled:
+                    type: boolean
+                moveProposedBy:
+                    type: string
+                moveRequiresAccept:
+                    type: boolean
+                notes:
+                    type: string
+                proposedTime:
+                    type: string
+                    format: date-time
+                time:
+                    type: string
+                    format: date-time
+                user:
+                    type: string
+                userUuid:
+                    type: string
+                uuid:
+                    type: string
+        trainer.MakeHourAvailableRequest:
+            type: object
+            properties:
+                time:
+                    type: array
+                    items:
+                        type: string
+                        format: date-time
+        trainer.MakeHourUnavailableRequest:
+            type: object
+            properties:
+                time:
+                    type: array
+                    items:
+                        type: string
+                        format: date-time
+        trainer.RejectRescheduleTrainingRequest:
+            type: object
+            properties:
+                trainingUuid:
+                    type: string
+        trainer.RequestRescheduleTrainingRequest:
+            type: object
+            properties:
+                trainingUuid:
+                    type: string
+                notes:
+                    type: string
+                time:
+                    type: string
+                    format: date-time
+        trainer.RescheduleTrainingRequest:
+            type: object
+            properties:
+                trainingUuid:
+                    type: string
+                notes:
+                    type: string
+                time:
+                    type: string
+                    format: date-time
+        users.GetTrainingBalanceRequest:
+            type: object
+            properties:
+                userId:
+                    type: string
+        users.GetTrainingBalanceResponse:
+            type: object
+            properties:
+                amount:
+                    type: string
+tags:
+    - name: TrainerService
+    - name: TrainingService
+    - name: UsersService

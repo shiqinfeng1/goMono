@@ -7,10 +7,8 @@ ifeq ($(GOHOSTOS), windows)
 	#changed to use git-bash.exe to run find cli or other cli friendly, caused of every developer has a Git.
 	#Git_Bash= $(subst cmd\,bin\bash.exe,$(dir $(shell where git)))
 	Git_Bash=$(subst \,/,$(subst cmd\,bin\bash.exe,$(dir $(shell where git))))
-	INTERNAL_PROTO_FILES=$(shell $(Git_Bash) -c "find internal -name *.proto")
 	API_PROTO_FILES=$(shell $(Git_Bash) -c "find api -name *.proto")
 else
-	INTERNAL_PROTO_FILES=$(shell find internal -name *.proto)
 	API_PROTO_FILES=$(shell find api -name *.proto)
 endif
 
@@ -27,7 +25,7 @@ init:
 .PHONY: config
 # generate internal proto
 config:
-	find app -type d -depth 1 -print | xargs -L 1 bash -c 'cd "$$0" && pwd && $(MAKE) config'
+	find internal -type d -depth 1 -print | xargs -L 1 bash -c 'cd "$$0" && pwd && $(MAKE) config'
 
 .PHONY: api
 # generate api proto
@@ -38,10 +36,10 @@ api:
  	       --go-http_out=paths=source_relative:./api \
  	       --go-grpc_out=paths=source_relative:./api \
 		   --go-errors_out=paths=source_relative:./api \
-		   --openapiv2_out=./api \
-	       --openapiv2_opt logtostderr=true \
-	       --openapi_out=fq_schema_naming=true,default_response=false:. \
+	       --openapi_out=fq_schema_naming=true,default_response=false:./api \
 	       $(API_PROTO_FILES)
+#    		--openapiv2_out=./api 
+#     		--openapiv2_opt logtostderr=true 
 
 .PHONY: build
 # build
@@ -51,14 +49,14 @@ build:
 .PHONY: generate
 # generate
 generate:
-	find app -type d -depth 1 -print | xargs -L 1 bash -c 'cd "$$0" && pwd && $(MAKE) generate'
+	find internal -type d -depth 1 -print | xargs -L 1 bash -c 'cd "$$0" && pwd && $(MAKE) generate'
 
 .PHONY: all
 # generate all
 all:
 	make init
 	make api
-	find app -type d -depth 1 -print | xargs -L 1 bash -c 'cd "$$0" && pwd && $(MAKE) all'
+	find internal -type d -depth 1 -print | xargs -L 1 bash -c 'cd "$$0" && pwd && $(MAKE) all'
 	make build
 
 # show help

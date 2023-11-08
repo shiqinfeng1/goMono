@@ -20,10 +20,12 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	TrainerService_IsHourAvailable_FullMethodName   = "/trainer.TrainerService/IsHourAvailable"
-	TrainerService_ScheduleTraining_FullMethodName  = "/trainer.TrainerService/ScheduleTraining"
-	TrainerService_CancelTraining_FullMethodName    = "/trainer.TrainerService/CancelTraining"
-	TrainerService_MakeHourAvailable_FullMethodName = "/trainer.TrainerService/MakeHourAvailable"
+	TrainerService_IsHourAvailable_FullMethodName          = "/trainer.TrainerService/IsHourAvailable"
+	TrainerService_ScheduleTraining_FullMethodName         = "/trainer.TrainerService/ScheduleTraining"
+	TrainerService_CancelTraining_FullMethodName           = "/trainer.TrainerService/CancelTraining"
+	TrainerService_GetTrainerAvailableHours_FullMethodName = "/trainer.TrainerService/GetTrainerAvailableHours"
+	TrainerService_MakeHourAvailable_FullMethodName        = "/trainer.TrainerService/MakeHourAvailable"
+	TrainerService_MakeHourUnavailable_FullMethodName      = "/trainer.TrainerService/MakeHourUnavailable"
 )
 
 // TrainerServiceClient is the client API for TrainerService service.
@@ -33,7 +35,9 @@ type TrainerServiceClient interface {
 	IsHourAvailable(ctx context.Context, in *IsHourAvailableRequest, opts ...grpc.CallOption) (*IsHourAvailableResponse, error)
 	ScheduleTraining(ctx context.Context, in *UpdateHourRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	CancelTraining(ctx context.Context, in *UpdateHourRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	MakeHourAvailable(ctx context.Context, in *UpdateHourRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	GetTrainerAvailableHours(ctx context.Context, in *GetTrainerAvailableHoursRequest, opts ...grpc.CallOption) (*GetTrainerAvailableHoursRespone, error)
+	MakeHourAvailable(ctx context.Context, in *MakeHourAvailableRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	MakeHourUnavailable(ctx context.Context, in *MakeHourUnavailableRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type trainerServiceClient struct {
@@ -71,9 +75,27 @@ func (c *trainerServiceClient) CancelTraining(ctx context.Context, in *UpdateHou
 	return out, nil
 }
 
-func (c *trainerServiceClient) MakeHourAvailable(ctx context.Context, in *UpdateHourRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *trainerServiceClient) GetTrainerAvailableHours(ctx context.Context, in *GetTrainerAvailableHoursRequest, opts ...grpc.CallOption) (*GetTrainerAvailableHoursRespone, error) {
+	out := new(GetTrainerAvailableHoursRespone)
+	err := c.cc.Invoke(ctx, TrainerService_GetTrainerAvailableHours_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *trainerServiceClient) MakeHourAvailable(ctx context.Context, in *MakeHourAvailableRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, TrainerService_MakeHourAvailable_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *trainerServiceClient) MakeHourUnavailable(ctx context.Context, in *MakeHourUnavailableRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, TrainerService_MakeHourUnavailable_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +109,9 @@ type TrainerServiceServer interface {
 	IsHourAvailable(context.Context, *IsHourAvailableRequest) (*IsHourAvailableResponse, error)
 	ScheduleTraining(context.Context, *UpdateHourRequest) (*emptypb.Empty, error)
 	CancelTraining(context.Context, *UpdateHourRequest) (*emptypb.Empty, error)
-	MakeHourAvailable(context.Context, *UpdateHourRequest) (*emptypb.Empty, error)
+	GetTrainerAvailableHours(context.Context, *GetTrainerAvailableHoursRequest) (*GetTrainerAvailableHoursRespone, error)
+	MakeHourAvailable(context.Context, *MakeHourAvailableRequest) (*emptypb.Empty, error)
+	MakeHourUnavailable(context.Context, *MakeHourUnavailableRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedTrainerServiceServer()
 }
 
@@ -104,8 +128,14 @@ func (UnimplementedTrainerServiceServer) ScheduleTraining(context.Context, *Upda
 func (UnimplementedTrainerServiceServer) CancelTraining(context.Context, *UpdateHourRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CancelTraining not implemented")
 }
-func (UnimplementedTrainerServiceServer) MakeHourAvailable(context.Context, *UpdateHourRequest) (*emptypb.Empty, error) {
+func (UnimplementedTrainerServiceServer) GetTrainerAvailableHours(context.Context, *GetTrainerAvailableHoursRequest) (*GetTrainerAvailableHoursRespone, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTrainerAvailableHours not implemented")
+}
+func (UnimplementedTrainerServiceServer) MakeHourAvailable(context.Context, *MakeHourAvailableRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MakeHourAvailable not implemented")
+}
+func (UnimplementedTrainerServiceServer) MakeHourUnavailable(context.Context, *MakeHourUnavailableRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MakeHourUnavailable not implemented")
 }
 func (UnimplementedTrainerServiceServer) mustEmbedUnimplementedTrainerServiceServer() {}
 
@@ -174,8 +204,26 @@ func _TrainerService_CancelTraining_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TrainerService_GetTrainerAvailableHours_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTrainerAvailableHoursRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TrainerServiceServer).GetTrainerAvailableHours(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TrainerService_GetTrainerAvailableHours_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TrainerServiceServer).GetTrainerAvailableHours(ctx, req.(*GetTrainerAvailableHoursRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _TrainerService_MakeHourAvailable_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateHourRequest)
+	in := new(MakeHourAvailableRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -187,7 +235,25 @@ func _TrainerService_MakeHourAvailable_Handler(srv interface{}, ctx context.Cont
 		FullMethod: TrainerService_MakeHourAvailable_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TrainerServiceServer).MakeHourAvailable(ctx, req.(*UpdateHourRequest))
+		return srv.(TrainerServiceServer).MakeHourAvailable(ctx, req.(*MakeHourAvailableRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TrainerService_MakeHourUnavailable_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MakeHourUnavailableRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TrainerServiceServer).MakeHourUnavailable(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TrainerService_MakeHourUnavailable_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TrainerServiceServer).MakeHourUnavailable(ctx, req.(*MakeHourUnavailableRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -212,8 +278,16 @@ var TrainerService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _TrainerService_CancelTraining_Handler,
 		},
 		{
+			MethodName: "GetTrainerAvailableHours",
+			Handler:    _TrainerService_GetTrainerAvailableHours_Handler,
+		},
+		{
 			MethodName: "MakeHourAvailable",
 			Handler:    _TrainerService_MakeHourAvailable_Handler,
+		},
+		{
+			MethodName: "MakeHourUnavailable",
+			Handler:    _TrainerService_MakeHourUnavailable_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

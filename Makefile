@@ -8,8 +8,17 @@ ifeq ($(GOHOSTOS), windows)
 	#Git_Bash= $(subst cmd\,bin\bash.exe,$(dir $(shell where git)))
 	Git_Bash=$(subst \,/,$(subst cmd\,bin\bash.exe,$(dir $(shell where git))))
 	API_PROTO_FILES=$(shell $(Git_Bash) -c "find api -name *.proto")
-else
+else 
 	API_PROTO_FILES=$(shell find api -name *.proto)
+	ifeq ($(GOHOSTOS), darwin)
+		configCmd=xargs -I F sh -c 'cd F && echo && $(MAKE) config'
+		generateCmd=xargs -I F sh -c 'cd F && echo && $(MAKE) generate'
+		allCmd=xargs -I F sh -c 'cd F && echo && $(MAKE) all'
+	else
+		configCmd=xargs -i sh -c 'cd {} && echo && $(MAKE) config'
+		generateCmd=xargs -i sh -c 'cd {} && echo && $(MAKE) generate'
+		allCmd=xargs -i sh -c 'cd {} && echo && $(MAKE) all'
+	endif
 endif
 
 .PHONY: init
@@ -25,8 +34,8 @@ init:
 .PHONY: config
 # generate internal proto
 config:
-	find internal  -mindepth 1 -maxdepth 1 | grep -v common | xargs -i sh -c 'cd {} && echo && $(MAKE) config'
-
+	find internal  -mindepth 1 -maxdepth 1 | grep -v common | $(configCmd)
+	
 .PHONY: api
 # generate api proto
 api:
@@ -49,14 +58,14 @@ build:
 .PHONY: generate
 # generate
 generate:
-	find internal  -mindepth 1 -maxdepth 1 | grep -v common | xargs -i sh -c 'cd {} && echo && $(MAKE) generate'
+	find internal  -mindepth 1 -maxdepth 1 | grep -v common | $(generateCmd)
 
 .PHONY: all
 # generate all
 all:
 	make init
 	make api
-	find internal  -mindepth 1 -maxdepth 1 | grep -v common | xargs -i sh -c 'cd {} && echo && $(MAKE) all'
+	find internal  -mindepth 1 -maxdepth 1 | grep -v common | $(allCmd)
 	make build
 
 # show help

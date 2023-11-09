@@ -24,13 +24,6 @@ func NewHttpService(application app.Application) HttpService {
 	}
 }
 
-// IsHourAvailable(ctx context.Context, in *IsHourAvailableRequest, opts ...grpc.CallOption) (*IsHourAvailableResponse, error)
-// 	ScheduleTraining(ctx context.Context, in *UpdateHourRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-// 	CancelTraining(ctx context.Context, in *UpdateHourRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-
-// 	MakeHourAvailable(ctx context.Context, in *MakeHourAvailableRequest, opts ...grpc.CallOption)
-// 	MakeHourUnavailable, opts ...grpc.CallOption)
-
 func (h HttpService) GetTrainerAvailableHours(ctx context.Context, req *v1.GetTrainerAvailableHoursRequest) (*v1.GetTrainerAvailableHoursRespone, error) {
 	dateModels, err := h.app.Queries.TrainerAvailableHours.Handle(ctx, query.AvailableHours{
 		From: req.DateFrom.AsTime(),
@@ -46,24 +39,23 @@ func (h HttpService) GetTrainerAvailableHours(ctx context.Context, req *v1.GetTr
 	}, nil
 }
 
-func dateModelsToResponse(models []query.Date) []*v1.GetTrainerAvailableHoursRespone_Date {
+func dateModelsToResponse(model query.Date) []*v1.GetTrainerAvailableHoursRespone_Date {
 	var dates []*v1.GetTrainerAvailableHoursRespone_Date
-	for _, d := range models {
-		var hours []*v1.GetTrainerAvailableHoursRespone_Hour
-		for _, h := range d.Hours {
-			hours = append(hours, &v1.GetTrainerAvailableHoursRespone_Hour{
-				Available:            h.Available,
-				HasTrainingScheduled: h.HasTrainingScheduled,
-				Hour:                 timestamppb.New(h.Hour),
-			})
-		}
 
-		dates = append(dates, &v1.GetTrainerAvailableHoursRespone_Date{
-			Date:         timestamppb.New(d.Date),
-			HasFreeHours: d.HasFreeHours,
-			Hours:        hours,
+	var hours []*v1.GetTrainerAvailableHoursRespone_Hour
+	for _, h := range model.Hours {
+		hours = append(hours, &v1.GetTrainerAvailableHoursRespone_Hour{
+			Available:            h.Available,
+			HasTrainingScheduled: h.HasTrainingScheduled,
+			Hour:                 timestamppb.New(h.Hour),
 		})
 	}
+
+	dates = append(dates, &v1.GetTrainerAvailableHoursRespone_Date{
+		Date:         timestamppb.New(model.Date),
+		HasFreeHours: model.HasFreeHours,
+		Hours:        hours,
+	})
 
 	return dates
 }

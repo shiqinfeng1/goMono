@@ -1,17 +1,16 @@
-package server
+package ports
 
 import (
 	v1 "github.com/shiqinfeng1/goMono/api/trainer/v1"
 	"github.com/shiqinfeng1/goMono/internal/trainer/conf"
 	"github.com/shiqinfeng1/goMono/internal/trainer/service"
 
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 )
 
 // NewGRPCServer new a gRPC server.
-func NewGRPCServer(c *conf.Server, trainer service.HttpService, logger log.Logger) *grpc.Server {
+func NewGRPCServer(c *conf.Server, trainer service.GrpcService) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),

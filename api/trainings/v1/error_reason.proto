@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package trainings.v1;
+
+option go_package = "github.com/shiqinfeng1/goMono/api/trainings/v1;v1";
+import "errors/errors.proto";
+
+enum TrainingsErrorReason {
+  option (errors.default_code) = 500;
+  
+  TRAINER_UNSPECIFIED = 0;
+  USER_NOT_FOUND = 1;
+}

@@ -29,7 +29,7 @@ type DatesMysqlRepo struct {
 	log         *log.Helper
 }
 
-func NewDatesMysqlRepository(data *conf.Adapter, logger log.Logger) hour.QueryRepository {
+func NewDatesMysqlRepo(data *conf.Adapter, logger log.Logger) query.QueryRepository {
 	db, err := sqlx.Connect(data.Database.Driver, data.Database.Source)
 	if err != nil {
 		return nil

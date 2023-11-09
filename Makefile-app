@@ -25,6 +25,7 @@ generate:
 	go mod tidy
 	go get github.com/google/wire/cmd/wire@latest
 	go generate ./...
+	wire
 
 .PHONY: all
 # generate all

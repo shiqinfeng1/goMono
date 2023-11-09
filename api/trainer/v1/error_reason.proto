@@ -7,7 +7,7 @@ import "errors/errors.proto";
 
 enum TrainerErrorReason {
   option (errors.default_code) = 500;
-  
-  TRAINER_UNSPECIFIED = 0;
+
+  TRAINING_UNSPECIFIED = 0;
   USER_NOT_FOUND = 1;
 }

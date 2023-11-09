@@ -1,10 +1,9 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"os"
-
-	"github.com/shiqinfeng1/goMono/internal/trainer/conf"
 
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
@@ -13,6 +12,12 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
+	"github.com/shiqinfeng1/goMono/internal/trainer/conf"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
+	"go.opentelemetry.io/otel/sdk/resource"
+	"go.opentelemetry.io/otel/sdk/trace"
+	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 
 	_ "go.uber.org/automaxprocs"
 )
@@ -73,8 +78,21 @@ func main() {
 	if err := c.Scan(&bc); err != nil {
 		panic(err)
 	}
-
-	app, cleanup, err := wireApp(bc.Server, bc.Adapter, logger)
+	ctx := context.Background()
+	client := otlptracegrpc.NewClient(
+		otlptracegrpc.WithEndpoint(bc.Trace.Endpoint),
+	)
+	exp, err := otlptrace.New(ctx, client)
+	if err != nil {
+		panic(err)
+	}
+	tp := trace.NewTracerProvider(
+		trace.WithBatcher(exp),
+		trace.WithResource(resource.NewSchemaless(
+			semconv.ServiceNameKey.String(Name),
+		)),
+	)
+	app, cleanup, err := wireApp(bc.Server, tp, bc.Adapter, bc.Auth, logger)
 	if err != nil {
 		panic(err)
 	}

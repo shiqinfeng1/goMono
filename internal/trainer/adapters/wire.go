@@ -5,4 +5,4 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewHourRepo)
+var ProviderSet = wire.NewSet(NewHourRepo, NewDatesMysqlRepo)

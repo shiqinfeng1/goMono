@@ -16,7 +16,7 @@ import (
 	v1 "github.com/shiqinfeng1/goMono/api/trainings/v1"
 	"github.com/shiqinfeng1/goMono/internal/trainings/conf"
 	"github.com/shiqinfeng1/goMono/internal/trainings/service"
-	tracesdk "go.opentelemetry.io/otel/sdk/trace"
+	"go.opentelemetry.io/otel/sdk/trace"
 )
 
 // 设置白名单
@@ -33,7 +33,7 @@ func NewWhiteListMatcher() selector.MatchFunc {
 }
 
 // NewHTTPServer new an HTTP server.
-func NewHTTPServer(c *conf.Server, ac *conf.Auth, logger log.Logger, tp *tracesdk.TracerProvider, s *service.HttpService) *http.Server {
+func NewHTTPServer(c *conf.Server, ac *conf.Auth, logger log.Logger, tp *trace.TracerProvider, s *service.HttpService) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),

@@ -13,7 +13,3 @@ type CmdRepository interface {
 		updateFn func(h *Hour) (*Hour, error),
 	) error
 }
-
-type QueryRepository interface {
-	AvailableHours(ctx context.Context, from time.Time, to time.Time) ([]Date, error)
-}

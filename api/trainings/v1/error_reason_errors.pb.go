@@ -11,16 +11,16 @@ import (
 // is compatible with the kratos package it is being compiled against.
 const _ = errors.SupportPackageIsVersion1
 
-func IsTrainingUnspecified(err error) bool {
+func IsTrainerUnspecified(err error) bool {
 	if err == nil {
 		return false
 	}
 	e := errors.FromError(err)
-	return e.Reason == TrainerErrorReason_TRAINING_UNSPECIFIED.String() && e.Code == 500
+	return e.Reason == TrainingsErrorReason_TRAINER_UNSPECIFIED.String() && e.Code == 500
 }
 
-func ErrorTrainingUnspecified(format string, args ...interface{}) *errors.Error {
-	return errors.New(500, TrainerErrorReason_TRAINING_UNSPECIFIED.String(), fmt.Sprintf(format, args...))
+func ErrorTrainerUnspecified(format string, args ...interface{}) *errors.Error {
+	return errors.New(500, TrainingsErrorReason_TRAINER_UNSPECIFIED.String(), fmt.Sprintf(format, args...))
 }
 
 func IsUserNotFound(err error) bool {
@@ -28,9 +28,9 @@ func IsUserNotFound(err error) bool {
 		return false
 	}
 	e := errors.FromError(err)
-	return e.Reason == TrainerErrorReason_USER_NOT_FOUND.String() && e.Code == 500
+	return e.Reason == TrainingsErrorReason_USER_NOT_FOUND.String() && e.Code == 500
 }
 
 func ErrorUserNotFound(format string, args ...interface{}) *errors.Error {
-	return errors.New(500, TrainerErrorReason_USER_NOT_FOUND.String(), fmt.Sprintf(format, args...))
+	return errors.New(500, TrainingsErrorReason_USER_NOT_FOUND.String(), fmt.Sprintf(format, args...))
 }

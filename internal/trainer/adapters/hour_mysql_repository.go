@@ -27,7 +27,7 @@ type HourRepo struct {
 }
 
 // NewTrainingRepo .
-func NewHourRepo(data *conf.Adapter, logger log.Logger) hour.Repository {
+func NewHourRepo(data *conf.Adapter, logger log.Logger) hour.CmdRepository {
 	db, err := sqlx.Connect(data.Database.Driver, data.Database.Source)
 	if err != nil {
 		return nil

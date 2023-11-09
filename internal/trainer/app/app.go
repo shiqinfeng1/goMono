@@ -43,7 +43,7 @@ func NewApplication(ctx context.Context) app.Application {
 		MaxUtcHour:               20,
 	}
 
-	datesRepository := adapters.NewDatesFirestoreRepository(firestoreClient, factoryConfig)
+	datesRepository := adapters.NewDatesMysqlRepository(firestoreClient, factoryConfig)
 
 	hourFactory, err := hour.NewFactory(factoryConfig)
 	if err != nil {
@@ -55,15 +55,21 @@ func NewApplication(ctx context.Context) app.Application {
 	logger := log.NewStdLogger(io.stderr)
 	metricsClient := metrics.NoOp{}
 
-	return app.Application{
-		Commands: app.Commands{
-			CancelTraining:       command.NewCancelTrainingHandler(hourRepository, logger, metricsClient),
-			ScheduleTraining:     command.NewScheduleTrainingHandler(hourRepository, logger, metricsClient),
-			MakeHoursAvailable:   command.NewMakeHoursAvailableHandler(hourRepository, logger, metricsClient),
-			MakeHoursUnavailable: command.NewMakeHoursUnavailableHandler(hourRepository, logger, metricsClient),
+}
+
+func newApplication(logger log.Logger, hourRepo adapters.Repository) Application {
+
+	metricsClient := metrics.NoOp{}
+
+	return Application{
+		Commands: Commands{
+			CancelTraining:       command.NewCancelTrainingHandler(hourRepo, logger, metricsClient),
+			ScheduleTraining:     command.NewScheduleTrainingHandler(hourRepo, logger, metricsClient),
+			MakeHoursAvailable:   command.NewMakeHoursAvailableHandler(hourRepo, logger, metricsClient),
+			MakeHoursUnavailable: command.NewMakeHoursUnavailableHandler(hourRepo, logger, metricsClient),
 		},
-		Queries: app.Queries{
-			HourAvailability:      query.NewHourAvailabilityHandler(hourRepository, logger, metricsClient),
+		Queries: Queries{
+			HourAvailability:      query.NewHourAvailabilityHandler(hourRepo, logger, metricsClient),
 			TrainerAvailableHours: query.NewAvailableHoursHandler(datesRepository, logger, metricsClient),
 		},
 	}

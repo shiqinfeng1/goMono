@@ -17,11 +17,11 @@ type MakeHoursUnavailable struct {
 type MakeHoursUnavailableHandler decorator.CommandHandler[MakeHoursUnavailable]
 
 type makeHoursUnavailableHandler struct {
-	hourRepo hour.Repository
+	hourRepo hour.CmdRepository
 }
 
 func NewMakeHoursUnavailableHandler(
-	hourRepo hour.Repository,
+	hourRepo hour.CmdRepository,
 	logger log.Logger,
 	metricsClient decorator.MetricsClient,
 ) MakeHoursUnavailableHandler {

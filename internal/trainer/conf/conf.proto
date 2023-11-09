@@ -1,13 +1,14 @@
 syntax = "proto3";
 package kratos.api;
 
-option go_package = "github.com/shiqinfeng1/goMono/internal/trainings/conf;conf";
+option go_package = "github.com/shiqinfeng1/goMono/internal/trainer/conf;conf";
 
 import "google/protobuf/duration.proto";
 
 message Bootstrap {
   Server server = 1;
   Adapter adapter = 2;
+  Auth auth = 3;
 }
 
 message Server {
@@ -46,4 +47,9 @@ message Adapter {
   Redis redis = 2;
   TrainerGrpc trainerGrpc = 3;
   UserGrpc userGrpc = 4;
+}
+
+message Auth {
+  string service_key = 1;
+  string api_key = 2;
 }

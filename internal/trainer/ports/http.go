@@ -57,6 +57,6 @@ func NewHTTPServer(c *conf.Server, ac *conf.Auth, logger log.Logger, tp *tracesd
 	srv := http.NewServer(opts...)
 	h := openapiv2.NewHandler()
 	srv.HandlePrefix("/openapi/", h)
-	v1.RegisterTrainingServiceHTTPServer(srv, s)
+	v1.RegisterTrainerServiceHTTPServer(srv, s)
 	return srv
 }

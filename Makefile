@@ -25,7 +25,7 @@ init:
 .PHONY: config
 # generate internal proto
 config:
-	find internal -type d -depth 1 -print | xargs -L 1 bash -c 'cd "$$0" && pwd && $(MAKE) config'
+	find internal  -mindepth 1 -maxdepth 1 | grep -v common | xargs -i sh -c 'cd {} && echo && $(MAKE) config'
 
 .PHONY: api
 # generate api proto
@@ -49,14 +49,14 @@ build:
 .PHONY: generate
 # generate
 generate:
-	find internal -type d -depth 1 -print | xargs -L 1 bash -c 'cd "$$0" && pwd && $(MAKE) generate'
+	find internal  -mindepth 1 -maxdepth 1 | grep -v common | xargs -i sh -c 'cd {} && echo && $(MAKE) generate'
 
 .PHONY: all
 # generate all
 all:
 	make init
 	make api
-	find internal -type d -depth 1 -print | xargs -L 1 bash -c 'cd "$$0" && pwd && $(MAKE) all'
+	find internal  -mindepth 1 -maxdepth 1 | grep -v common | xargs -i sh -c 'cd {} && echo && $(MAKE) all'
 	make build
 
 # show help

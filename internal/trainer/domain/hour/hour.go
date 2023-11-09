@@ -8,6 +8,12 @@ import (
 	"go.uber.org/multierr"
 )
 
+type Date struct {
+	Date         time.Time `firestore:"Date"`
+	HasFreeHours bool      `firestore:"HasFreeHours"`
+	Hours        []Hour    `firestore:"Hours"`
+}
+
 // 训练课程以小时为单位，这里将小时作为一个领域实体，Hour具有一个具体的时间，还有一个状态
 type Hour struct {
 	hour time.Time

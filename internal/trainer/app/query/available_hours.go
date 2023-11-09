@@ -8,6 +8,8 @@ import (
 
 	"github.com/shiqinfeng1/goMono/internal/common/decorator"
 	"github.com/shiqinfeng1/goMono/internal/common/errors"
+	"github.com/shiqinfeng1/goMono/internal/trainer/adapters"
+	"github.com/shiqinfeng1/goMono/internal/trainer/domain/hour"
 )
 
 type AvailableHours struct {
@@ -17,30 +19,38 @@ type AvailableHours struct {
 
 type AvailableHoursHandler decorator.QueryHandler[AvailableHours, []Date]
 
-type AvailableHoursReadModel interface {
-	AvailableHours(ctx context.Context, from time.Time, to time.Time) ([]Date, error)
-}
-
 type availableHoursHandler struct {
-	readModel AvailableHoursReadModel
+	repo hour.QueryRepository
 }
 
 func NewAvailableHoursHandler(
-	readModel AvailableHoursReadModel,
+	repo hour.QueryRepository,
 	logger log.Logger,
 	metricsClient decorator.MetricsClient,
 ) AvailableHoursHandler {
 	return decorator.ApplyQueryDecorators[AvailableHours, []Date](
-		availableHoursHandler{readModel: readModel},
+		availableHoursHandler{repo: repo},
 		logger,
 		metricsClient,
 	)
 }
 
+// setDefaultAvailability adds missing hours to Date model if they were not set
+func setDefaultAvailability(date Date) Date {
+
+	return date
+}
+
 func (h availableHoursHandler) Handle(ctx context.Context, query AvailableHours) (d []Date, err error) {
+	var dates []Date
 	if query.From.After(query.To) {
 		return nil, errors.NewIncorrectInputError("date-from-after-date-to", "Date from after date to")
 	}
+	date := adapters.DateModel{}
+	if err := doc.DataTo(&date); err != nil {
+		return nil, err
+	}
+	dates = append(dates, dateModelToApp(date))
 
-	return h.readModel.AvailableHours(ctx, query.From, query.To)
+	return h.repo.AvailableHours(ctx, query.From, query.To)
 }

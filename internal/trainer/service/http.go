@@ -14,12 +14,12 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-type HttpServer struct {
+type HttpService struct {
 	app app.Application
 }
 
-func NewHttpServer(application app.Application) HttpServer {
-	return HttpServer{
+func NewHttpService(application app.Application) HttpService {
+	return HttpService{
 		app: application,
 	}
 }
@@ -31,7 +31,7 @@ func NewHttpServer(application app.Application) HttpServer {
 // 	MakeHourAvailable(ctx context.Context, in *MakeHourAvailableRequest, opts ...grpc.CallOption)
 // 	MakeHourUnavailable, opts ...grpc.CallOption)
 
-func (h HttpServer) GetTrainerAvailableHours(ctx context.Context, req *v1.GetTrainerAvailableHoursRequest) (*v1.GetTrainerAvailableHoursRespone, error) {
+func (h HttpService) GetTrainerAvailableHours(ctx context.Context, req *v1.GetTrainerAvailableHoursRequest) (*v1.GetTrainerAvailableHoursRespone, error) {
 	dateModels, err := h.app.Queries.TrainerAvailableHours.Handle(ctx, query.AvailableHours{
 		From: req.DateFrom.AsTime(),
 		To:   req.DateTo.AsTime(),
@@ -68,7 +68,7 @@ func dateModelsToResponse(models []query.Date) []*v1.GetTrainerAvailableHoursRes
 	return dates
 }
 
-func (h HttpServer) MakeHourAvailable(ctx context.Context, req *v1.MakeHourAvailableRequest) (*emptypb.Empty, error) {
+func (h HttpService) MakeHourAvailable(ctx context.Context, req *v1.MakeHourAvailableRequest) (*emptypb.Empty, error) {
 	user, err := auth.UserFromCtx(ctx)
 	if err != nil {
 		return nil, err
@@ -90,7 +90,7 @@ func (h HttpServer) MakeHourAvailable(ctx context.Context, req *v1.MakeHourAvail
 	return &emptypb.Empty{}, nil
 }
 
-func (h HttpServer) MakeHourUnavailable(ctx context.Context, req *v1.MakeHourUnavailableRequest) (*emptypb.Empty, error) {
+func (h HttpService) MakeHourUnavailable(ctx context.Context, req *v1.MakeHourUnavailableRequest) (*emptypb.Empty, error) {
 	user, err := auth.UserFromCtx(ctx)
 	if err != nil {
 		return nil, err
@@ -105,7 +105,7 @@ func (h HttpServer) MakeHourUnavailable(ctx context.Context, req *v1.MakeHourUna
 		hourUpdate = append(hourUpdate, hour.AsTime())
 	}
 
-	err = h.app.Commands.MakeHoursUnavailable.Handle(r.Context(), command.MakeHoursUnavailable{Hours: hourUpdate})
+	err = h.app.Commands.MakeHoursUnavailable.Handle(ctx, command.MakeHoursUnavailable{Hours: hourUpdate})
 	if err != nil {
 		return nil, err
 	}

@@ -17,11 +17,11 @@ type ScheduleTraining struct {
 type ScheduleTrainingHandler decorator.CommandHandler[ScheduleTraining]
 
 type scheduleTrainingHandler struct {
-	hourRepo hour.Repository
+	hourRepo hour.CmdRepository
 }
 
 func NewScheduleTrainingHandler(
-	hourRepo hour.Repository,
+	hourRepo hour.CmdRepository,
 	logger log.Logger,
 	metricsClient decorator.MetricsClient,
 ) ScheduleTrainingHandler {

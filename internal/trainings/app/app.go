@@ -56,6 +56,7 @@ func newApplication(logger log.Logger, repo training.Repository, trainerService 
 			RequestTrainingReschedule: command.NewRequestTrainingRescheduleHandler(repo, logger, metricsClient),
 			ScheduleTraining:          command.NewScheduleTrainingHandler(repo, userService, trainerService, logger, metricsClient),
 		},
+		// todo: 读写分离后，最好不要使用同一个repo
 		Queries: Queries{
 			AllTrainings:     query.NewAllTrainingsHandler(repo, logger, metricsClient),
 			TrainingsForUser: query.NewTrainingsForUserHandler(repo, logger, metricsClient),

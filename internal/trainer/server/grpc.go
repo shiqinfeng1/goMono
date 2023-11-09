@@ -2,8 +2,8 @@ package server
 
 import (
 	v1 "github.com/shiqinfeng1/goMono/api/trainer/v1"
-	"github.com/shiqinfeng1/goMono/internal/trainings/conf"
-	"github.com/shiqinfeng1/goMono/internal/trainings/service"
+	"github.com/shiqinfeng1/goMono/internal/trainer/conf"
+	"github.com/shiqinfeng1/goMono/internal/trainer/service"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"

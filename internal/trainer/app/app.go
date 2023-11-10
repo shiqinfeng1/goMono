@@ -26,12 +26,12 @@ type Queries struct {
 	TrainerAvailableHours query.AvailableHoursHandler
 }
 
-func NewApplication(logger log.Logger, hourCmdRepo hour.CmdRepository, hourQueryRepo query.QueryRepository) Application {
+func NewApplication(logger log.Logger, hourCmdRepo hour.CmdRepo, hourQueryRepo query.QueryRepository) Application {
 	return newApplication(logger, hourCmdRepo, hourQueryRepo)
 
 }
 
-func newApplication(logger log.Logger, hourCmdRepo hour.CmdRepository, hourQueryRepo query.QueryRepository) Application {
+func newApplication(logger log.Logger, hourCmdRepo hour.CmdRepo, hourQueryRepo query.QueryRepository) Application {
 
 	metricsClient := metrics.NoOp{}
 

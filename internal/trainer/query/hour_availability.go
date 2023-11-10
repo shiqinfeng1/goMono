@@ -16,11 +16,11 @@ type HourAvailability struct {
 type HourAvailabilityHandler decorator.QueryHandler[HourAvailability, bool]
 
 type hourAvailabilityHandler struct {
-	hourRepo hour.CmdRepository
+	hourRepo hour.CmdRepo
 }
 
 func NewHourAvailabilityHandler(
-	hourRepo hour.CmdRepository,
+	hourRepo hour.CmdRepo,
 	logger log.Logger,
 	metricsClient decorator.MetricsClient,
 ) HourAvailabilityHandler {

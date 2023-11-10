@@ -18,8 +18,8 @@ type HttpService struct {
 	app app.Application
 }
 
-func NewHttpService(application app.Application) HttpService {
-	return HttpService{
+func NewHttpService(application app.Application) *HttpService {
+	return &HttpService{
 		app: application,
 	}
 }

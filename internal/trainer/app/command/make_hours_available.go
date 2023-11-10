@@ -17,11 +17,11 @@ type MakeHoursAvailable struct {
 type MakeHoursAvailableHandler decorator.CommandHandler[MakeHoursAvailable]
 
 type makeHoursAvailableHandler struct {
-	hourRepo hour.CmdRepository
+	hourRepo hour.CmdRepo
 }
 
 func NewMakeHoursAvailableHandler(
-	hourRepo hour.CmdRepository,
+	hourRepo hour.CmdRepo,
 	logger log.Logger,
 	metricsClient decorator.MetricsClient,
 ) MakeHoursAvailableHandler {

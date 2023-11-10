@@ -20,8 +20,8 @@ type HttpService struct {
 	app app.Application
 }
 
-func NewHttpService(app app.Application) HttpService {
-	return HttpService{app}
+func NewHttpService(app app.Application) *HttpService {
+	return &HttpService{app}
 }
 
 func (h HttpService) GetTrainings(ctx context.Context, req *emptypb.Empty) (*v1.GetTrainingsResponse, error) {

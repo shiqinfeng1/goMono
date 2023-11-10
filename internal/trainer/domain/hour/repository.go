@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-type CmdRepository interface {
+type CmdRepo interface {
 	GetHour(ctx context.Context, hourTime time.Time) (*Hour, error)
 	UpdateHour(
 		ctx context.Context,

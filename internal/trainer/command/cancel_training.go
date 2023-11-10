@@ -17,11 +17,11 @@ type CancelTraining struct {
 type CancelTrainingHandler decorator.CommandHandler[CancelTraining]
 
 type cancelTrainingHandler struct {
-	hourRepo hour.CmdRepository
+	hourRepo hour.CmdRepo
 }
 
 func NewCancelTrainingHandler(
-	hourRepo hour.CmdRepository,
+	hourRepo hour.CmdRepo,
 	logger log.Logger,
 	metricsClient decorator.MetricsClient,
 ) CancelTrainingHandler {

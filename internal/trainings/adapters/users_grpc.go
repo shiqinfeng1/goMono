@@ -5,7 +5,7 @@ import (
 
 	"github.com/go-kratos/kratos/v2/log"
 	users "github.com/shiqinfeng1/goMono/api/users/v1"
-	grpcClient "github.com/shiqinfeng1/goMono/internal/common/client"
+	grpcClient "github.com/shiqinfeng1/goMono/internal/common/grpc"
 	"github.com/shiqinfeng1/goMono/internal/trainings/conf"
 )
 

@@ -6,7 +6,7 @@ import (
 
 	"github.com/pkg/errors"
 	trainer "github.com/shiqinfeng1/goMono/api/trainer/v1"
-	grpcClient "github.com/shiqinfeng1/goMono/internal/common/client"
+	grpcClient "github.com/shiqinfeng1/goMono/internal/common/grpc"
 	"github.com/shiqinfeng1/goMono/internal/trainings/conf"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )

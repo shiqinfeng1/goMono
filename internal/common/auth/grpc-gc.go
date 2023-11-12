@@ -1,4 +1,4 @@
-package client
+package auth
 
 import (
 	"context"
@@ -10,16 +10,20 @@ import (
 	"google.golang.org/grpc/credentials"
 )
 
+// 基于谷歌云的grpc安全通信用的token，需要实现PerRPCCredentials接口
+// 如果服务部署在谷歌云上，则使用该grpc安全通信选项
 type metadataServerToken struct {
 	serviceURL string
 }
 
-func newMetadataServerToken(grpcAddr string) credentials.PerRPCCredentials {
+func NewGcGrpcServerToken(grpcAddr string) credentials.PerRPCCredentials {
 	// based on https://cloud.google.com/run/docs/authenticating/service-to-service#go
 	// service need to have https prefix without port
 	serviceURL := "https://" + strings.Split(grpcAddr, ":")[0]
 
-	return metadataServerToken{serviceURL}
+	return metadataServerToken{
+		serviceURL: serviceURL,
+	}
 }
 
 // GetRequestMetadata is called on every request, so we are sure that token is always not expired

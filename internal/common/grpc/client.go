@@ -14,14 +14,14 @@ import (
 )
 
 // 微服务内部之间的通信，无需安全选项
-func newConnWithEtcd(endpoints []string, srvName string) (*ggrpc.ClientConn, func() error, error) {
+func newConnWithEtcd(endpoints []string, srvName string) (*ggrpc.ClientConn, error) {
 	eclient, err := etcdClient.New(etcdClient.Config{
 		Endpoints:   endpoints, //[]string{"127.0.0.1:2379"},
 		DialTimeout: time.Second,
 		DialOptions: []ggrpc.DialOption{ggrpc.WithBlock()},
 	})
 	if err != nil {
-		return nil, func() error { return nil }, err
+		return nil, err
 	}
 	r := etcd.New(eclient)
 	conn, err := grpc.DialInsecure(
@@ -30,49 +30,46 @@ func newConnWithEtcd(endpoints []string, srvName string) (*ggrpc.ClientConn, fun
 		grpc.WithDiscovery(r),
 	)
 	if err != nil {
-		return nil, func() error { return nil }, err
+		return nil, err
 	}
-	return conn, func() error { return conn.Close() }, nil
+	return conn, nil
 }
 
 // trainer服务的rpc客户端的封装，便于其他微服务调用
 func NewTrainerClient(endpoints []string) (client trainerApi.TrainerServiceClient, close func(), err error) {
-	conn, closeConn, err := newConnWithEtcd(endpoints, "trainer")
+	conn, err := newConnWithEtcd(endpoints, "trainer")
 	if err != nil {
 		return nil, func() {}, err
 	}
 	client = trainerApi.NewTrainerServiceClient(conn)
 	close = func() {
 		_ = conn.Close()
-		_ = closeConn()
 	}
 	return
 }
 
 // user服务的grpc客户端
 func NewUserClient(endpoints []string) (client userApi.UserServiceClient, close func(), err error) {
-	conn, closeConn, err := newConnWithEtcd(endpoints, "user")
+	conn, err := newConnWithEtcd(endpoints, "user")
 	if err != nil {
 		return nil, func() {}, err
 	}
 	client = userApi.NewUserServiceClient(conn)
 	close = func() {
 		_ = conn.Close()
-		_ = closeConn()
 	}
 	return
 }
 
 // user服务的grpc客户端
 func NewTrainingClient(endpoints []string) (client trainingApi.TrainingServiceClient, close func(), err error) {
-	conn, closeConn, err := newConnWithEtcd(endpoints, "training")
+	conn, err := newConnWithEtcd(endpoints, "training")
 	if err != nil {
 		return nil, func() {}, err
 	}
 	client = trainingApi.NewTrainingServiceClient(conn)
 	close = func() {
 		_ = conn.Close()
-		_ = closeConn()
 	}
 	return
 }

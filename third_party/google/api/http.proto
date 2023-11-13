@@ -187,7 +187,7 @@ message Http {
 //         option (google.api.http) = {
 //           get: "/v1/messages/{message_id}"
 //           additional_bindings {
-//             get: "/v1/users/{user_id}/messages/{message_id}"
+//             get: "/v1/user/{user_id}/messages/{message_id}"
 //           }
 //         };
 //       }
@@ -202,7 +202,7 @@ message Http {
 // HTTP | gRPC
 // -----|-----
 // `GET /v1/messages/123456` | `GetMessage(message_id: "123456")`
-// `GET /v1/users/me/messages/123456` | `GetMessage(user_id: "me" message_id:
+// `GET /v1/user/me/messages/123456` | `GetMessage(user_id: "me" message_id:
 // "123456")`
 //
 // ## Rules for HTTP mapping

@@ -54,7 +54,7 @@ paths:
                 "200":
                     description: OK
                     content: {}
-    /trainings/v1/approveRescheduleTraining:
+    /training/v1/approveRescheduleTraining:
         post:
             tags:
                 - TrainingService
@@ -69,7 +69,7 @@ paths:
                 "200":
                     description: OK
                     content: {}
-    /trainings/v1/cancelTraining:
+    /training/v1/cancelTraining:
         post:
             tags:
                 - TrainingService
@@ -84,7 +84,7 @@ paths:
                 "200":
                     description: OK
                     content: {}
-    /trainings/v1/createTraining:
+    /training/v1/createTraining:
         post:
             tags:
                 - TrainingService
@@ -102,11 +102,11 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/trainer.CreateTrainingResponse'
-    /trainings/v1/getTrainings:
+    /training/v1/getTraining:
         post:
             tags:
                 - TrainingService
-            operationId: TrainingService_GetTrainings
+            operationId: TrainingService_GetTraining
             requestBody:
                 content:
                     application/json: {}
@@ -117,8 +117,8 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/trainer.GetTrainingsResponse'
-    /trainings/v1/rejectRescheduleTraining:
+                                $ref: '#/components/schemas/trainer.GetTrainingResponse'
+    /training/v1/rejectRescheduleTraining:
         post:
             tags:
                 - TrainingService
@@ -133,7 +133,7 @@ paths:
                 "200":
                     description: OK
                     content: {}
-    /trainings/v1/requestRescheduleTraining:
+    /training/v1/requestRescheduleTraining:
         post:
             tags:
                 - TrainingService
@@ -148,7 +148,7 @@ paths:
                 "200":
                     description: OK
                     content: {}
-    /trainings/v1/rescheduleTraining:
+    /training/v1/rescheduleTraining:
         post:
             tags:
                 - TrainingService
@@ -166,13 +166,13 @@ paths:
     /user/v1/getTrainingBalance:
         post:
             tags:
-                - UsersService
-            operationId: UsersService_GetTrainingBalance
+                - UserService
+            operationId: UserService_GetTrainingBalance
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/users.GetTrainingBalanceRequest'
+                            $ref: '#/components/schemas/user.GetTrainingBalanceRequest'
                 required: true
             responses:
                 "200":
@@ -180,7 +180,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/users.GetTrainingBalanceResponse'
+                                $ref: '#/components/schemas/user.GetTrainingBalanceResponse'
 components:
     schemas:
         trainer.ApproveRescheduleTrainingRequest:
@@ -244,14 +244,14 @@ components:
                 hour:
                     type: string
                     format: date-time
-        trainer.GetTrainingsResponse:
+        trainer.GetTrainingResponse:
             type: object
             properties:
-                trainings:
+                training:
                     type: array
                     items:
-                        $ref: '#/components/schemas/trainer.GetTrainingsResponse_Training'
-        trainer.GetTrainingsResponse_Training:
+                        $ref: '#/components/schemas/trainer.GetTrainingResponse_Training'
+        trainer.GetTrainingResponse_Training:
             type: object
             properties:
                 canBeCancelled:
@@ -315,12 +315,12 @@ components:
                 time:
                     type: string
                     format: date-time
-        users.GetTrainingBalanceRequest:
+        user.GetTrainingBalanceRequest:
             type: object
             properties:
                 userId:
                     type: string
-        users.GetTrainingBalanceResponse:
+        user.GetTrainingBalanceResponse:
             type: object
             properties:
                 amount:
@@ -328,4 +328,4 @@ components:
 tags:
     - name: TrainerService
     - name: TrainingService
-    - name: UsersService
+    - name: UserService

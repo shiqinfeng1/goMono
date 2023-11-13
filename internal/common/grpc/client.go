@@ -1,4 +1,4 @@
-package client
+package grpc
 
 import (
 	"context"
@@ -7,11 +7,13 @@ import (
 	"github.com/go-kratos/kratos/contrib/registry/etcd/v2"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	trainerApi "github.com/shiqinfeng1/goMono/api/trainer/v1"
-	userApi "github.com/shiqinfeng1/goMono/api/users/v1"
+	trainingApi "github.com/shiqinfeng1/goMono/api/training/v1"
+	userApi "github.com/shiqinfeng1/goMono/api/user/v1"
 	etcdClient "go.etcd.io/etcd/client/v3"
 	ggrpc "google.golang.org/grpc"
 )
 
+// 微服务内部之间的通信，无需安全选项
 func newConnWithEtcd(endpoints []string, srvName string) (*ggrpc.ClientConn, func() error, error) {
 	eclient, err := etcdClient.New(etcdClient.Config{
 		Endpoints:   endpoints, //[]string{"127.0.0.1:2379"},
@@ -34,20 +36,43 @@ func newConnWithEtcd(endpoints []string, srvName string) (*ggrpc.ClientConn, fun
 }
 
 // trainer服务的rpc客户端的封装，便于其他微服务调用
-func NewTrainerClient(endpoints []string) (client trainerApi.TrainerServiceClient, close func() error, err error) {
-	conn, close, err := newConnWithEtcd(endpoints, "trainer")
+func NewTrainerClient(endpoints []string) (client trainerApi.TrainerServiceClient, close func(), err error) {
+	conn, closeConn, err := newConnWithEtcd(endpoints, "trainer")
 	if err != nil {
-		return nil, func() error { return nil }, err
+		return nil, func() {}, err
 	}
-	return trainerApi.NewTrainerServiceClient(conn), func() error { conn.Close(); return close() }, nil
+	client = trainerApi.NewTrainerServiceClient(conn)
+	close = func() {
+		_ = conn.Close()
+		_ = closeConn()
+	}
+	return
 }
 
-// users服务的grpc客户端
-func NewUsersClient(endpoints []string) (client userApi.UsersServiceClient, close func() error, err error) {
-	conn, close, err := newConnWithEtcd(endpoints, "user")
+// user服务的grpc客户端
+func NewUserClient(endpoints []string) (client userApi.UserServiceClient, close func(), err error) {
+	conn, closeConn, err := newConnWithEtcd(endpoints, "user")
 	if err != nil {
-		return nil, func() error { return nil }, err
+		return nil, func() {}, err
 	}
+	client = userApi.NewUserServiceClient(conn)
+	close = func() {
+		_ = conn.Close()
+		_ = closeConn()
+	}
+	return
+}
 
-	return userApi.NewUsersServiceClient(conn), func() error { conn.Close(); return close() }, nil
+// user服务的grpc客户端
+func NewTrainingClient(endpoints []string) (client trainingApi.TrainingServiceClient, close func(), err error) {
+	conn, closeConn, err := newConnWithEtcd(endpoints, "training")
+	if err != nil {
+		return nil, func() {}, err
+	}
+	client = trainingApi.NewTrainingServiceClient(conn)
+	close = func() {
+		_ = conn.Close()
+		_ = closeConn()
+	}
+	return
 }

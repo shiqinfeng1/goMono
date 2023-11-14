@@ -1,16 +1,30 @@
 ---
-- name: Deploy Docker Container
+- name: Install Docker & Docker-Compose
   hosts: all
   become: true
 
   tasks:
-    - name: Install Docker
-      apt:
-        name: docker.io
-        state: present
-        update_cache: true
-      become: true
-      when: ansible_os_family == 'Debian'
+    - name: download get-docker.sh from http://get.docker.com
+      uri:
+        url: 'http://get.docker.com'
+        method: GET
+        dest: get-docker.sh
+
+    - name: exec get-docker.sh
+      command: sh get-docker.sh
+
+    - name: 'download docker-compose'
+      uri:
+        url: 'https://get.daocloud.io/docker/compose/releases/download/v2.11.1/docker-compose-{{ ansible_system }}-{{ ansible_architecture }}'
+        method: GET
+        dest: /usr/local/bin/docker-compose
+        mode: u+x,g+x,o+x
+
+    # - name: chmod mode to 777 of docker-compose
+    #   file:
+    #     path: /usr/local/bin/docker-compose
+    #     state: file
+    #     mode: 0777
 
     - name: Start Docker service
       service:

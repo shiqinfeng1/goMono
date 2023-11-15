@@ -17,7 +17,7 @@
     ```bash
     ssh-copy-id -f -i ~/.ssh/id_rsa.pub sqf@192.168.1.184
     ```
-    检查是否生效: `ssh 'sqf@192.168.1.184’`, 如果微提示输入密码，表示已生效
+    检查是否生效: `ssh 'sqf@192.168.1.184'`, 如果微提示输入密码，表示已生效
     如果未生效， 参考这里解决：https://www.slw.ac.cn/article/linux-cmd-remotelogin.html
 - 下载安装dns域名管理工具
     ```bash
@@ -101,7 +101,7 @@ ansible webservers --list-hosts
 ansible dbservers --list-hosts 
 ```
 
-### 其他基础操作
+### 其他基础操作举例
 检查主机的连通性
 ```bash
 ansible node1 -m ping 
@@ -127,6 +127,11 @@ become_method=sudo
 # mode=600 文件属性 
 # owner=mdehaan group=mdehaan 文件所有者
 ansible all -m copy -a "src=/etc/hosts dest=/tmp/hosts mode=600 owner=mdehaan group=mdehaan"
+```
+
+### 检查剧本有效性及彩排
+```bash
+ansible-playbook --syntax-check deploy/docker/cluster/ansible-playbook/install_docker.yml
 ```
 
 ### 部署基础设施

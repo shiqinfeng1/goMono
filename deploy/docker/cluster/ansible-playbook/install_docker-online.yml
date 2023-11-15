@@ -1,0 +1,67 @@
+---
+- name: Install Docker & Docker-Compose
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Upgrade all packages in CentOS
+      yum: name=* state=latest
+      when: ansible_distribution == 'CentOS'
+    - name: Upgrade all packages in Ubuntu
+      yum: name=* state=latest
+      when: ansible_distribution == 'Ubuntu'
+
+    - name: Check if docker is installed
+      command: systemctl status docker
+      register: docker_check
+      ignore_errors: yes
+
+    # - debug:
+    #     msg: '{{ docker_check }}'
+
+    - name: download get-docker.sh from http://get.docker.com
+      command: curl -sSL http://get.docker.com -o /tmp/get-docker.sh warn=false
+      when: 
+        - docker_check.stderr is defined
+        - docker_check.stderr != ""
+
+    - name: Install docker
+      command: sh /tmp/get-docker.sh
+      when: 
+        - docker_check.stderr is defined
+        - docker_check.stderr != ""
+
+    - name: Remove the Docker installer file
+      file:
+        state: absent
+        path: /tmp/get-docker.sh
+
+    - name: Enable the Docker daemon in systemd
+      systemd:
+        name: docker
+        enabled: yes
+        masked: no
+
+    - name: Check if Docker Compose is installed
+      command: docker-compose --version
+      register: docker_compose_check
+
+    - name: Download and install docker-compose
+      uri:
+        url: 'https://get.daocloud.io/docker/compose/releases/download/v2.11.1/docker-compose-{{ ansible_system }}-{{ ansible_architecture }}'
+        dest: /usr/local/bin/docker-compose
+        follow_redirects: all
+        method: GET
+        mode: u+x,g+x,o+x
+      when:
+        - docker_compose_check.msg is defined
+        - docker_compose_check.msg.find('No such file or directory') != -1
+
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+
+
+
+

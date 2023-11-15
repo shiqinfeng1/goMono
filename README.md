@@ -186,9 +186,9 @@ ansible-playbook --check deploy/docker/cluster/ansible-playbook/install_docker-o
 3. 制作镜像
    
    ```bash
-   
+   ./deploy/docker/cluster/prepare-infra-images.sh
    ```
-   
+
 4. 部署nacos
     方式： 拷贝docker-compose.yml到运行节点，并启动
 

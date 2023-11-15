@@ -1,24 +1,141 @@
 # 基于Kratos的微服务最佳实践框架
-本框架基于kratos的大仓模式，微服务入口在app下。默认有3个服务。
+本框架基于kratos的大仓模式，结合了Kratos-layout和ThreeDotLabs的最佳实践，目录有所调整，支持DDD、CQRS，能够有效应对复杂的业务逻辑
 
-## 安装 Kratos
+# 部署运行本演示项目
+## 基于本模板仓库可以快速创建自己的项目仓库
+## 单机部署
 
+## 集群部署
+### 准备工作
+- 找1台或多台服务器，将1台作为ansible管理节点，其他作为运行节点。如果只有一台， 那么管理节点和运行节点是同一台，主机名和dns只需要配置一次就行。
+- 免密登录远端服务器
+    在master节点上，生成公钥
+    ```bash
+    ssh-keygen -C master@192.168.1.110 # 本地生成秘钥， 如果已有则跳过
+    ```
+    如果有独立运行节点，拷贝master节点的公钥到运行节点上
+    ```bash
+    ssh-copy-id -f -i ~/.ssh/id_rsa.pub sqf@192.168.1.184
+    ```
+    检查是否生效: `ssh 'sqf@192.168.1.184’`, 如果微提示输入密码，表示已生效
+    如果未生效， 参考这里解决：https://www.slw.ac.cn/article/linux-cmd-remotelogin.html
+- 下载安装dns域名管理工具
+    ```bash
+    mkdir hostctl && cd hostctl
+    wget https://github.com/guumaster/hostctl/releases/download/v1.1.4/hostctl_1.1.4_linux_64-bit.tar.gz 
+    tar -zxvf hostctl_1.1.4_linux_64-bit.tar.gz
+    sudo mv hostctl /usr/local/bin/
+    cd .. && rm -rf hostctl
+    hostctl -v
+    ```
+    hostctl的使用
+    ```bash
+    # 查看dns
+    hostctl list
+    # 添加dns记录
+    sudo hostctl add domains ansible node1 --ip 192.168.72.84  # 其中 ansible 表示管理域， node是域名
+    # 启用禁用本地域名解析
+    sudo hostctl disable  ansible
+    sudo hostctl enable  ansible
+    # 删除域名解析
+    sudo hostctl remove domains ansible node1
+    ```
+- 设置主机名
+  一般设置管理节点的主机名为master， 运行节点的主机名为nodeX， X为1,2,3...一次编号
+  ```bash
+   # 登录管理节点后，示例：ssh sqf@192.168.1.184
+   hostnamectl set-hostname master
+   # 登录运行节点后
+   hostnamectl set-hostname node1
+   hostnamectl set-hostname node2
+   ...
+  ```
+- 非root账号
+  测试环境可以直接使用root账号， 如果为了安全性则使用非root账号， 但需要确保具有sudo权限。
+  新建非root账号
+  ```bash
+  sudo useradd ansible
+  sudo passwd ansible
+  ```
+  配置sudo权限
+  ```bash
+  sudo chmod u+w -v /etc/sudoers
+  sudo sh -c 'echo "ansible ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers'
+  sudo chmod u-w -v /etc/sudoers
+  ```
+### 在管理节点上安装ansible
+
+centos7
 ```bash
-go install github.com/go-kratos/kratos/cmd/kratos/v2@latest
+sudo yum install -y epel-release
+sudo yum install -y ansible
+ansible --version  # 输出版本信息，例如： ansible 2.9.27
 ```
 
-## 下载框架
-
-1. 在github上fork该goMono仓库，例如fork后仓库为：`https://github.com/xiaoming/didi.git`
-2. clone到本地，例如：`git clone https://github.com/xiaoming/didi.git`
-3. 替换`github.com/shiqinfeng1/goMono` 为`github.com/xiaoming/didi`
-
+ubuntu
 ```bash
-git clone https://github.com/shiqinfeng1/goMono.git
+sudo apt install -y ansible
+ansible --version  # 输出版本信息，例如： ansible 2.9.6
 ```
 
+安装完成后，默认配置文件在 `/etc/ansible/` 下
+```
+ansible.cfg  hosts  roles
+```
+
+### 运行节点主机列表配置
+默认的配置在 `/etc/ansible/hosts` 中，追加自己的配置，例如：
+```ini
+[webservers]
+node1 ansible_user=user
+[dbservers]
+node1
+```
+- 方括号[]中是组名，用于对系统进行分类，便于对不同系统进行个别的管理。
+- ansible_user 是指定登录该服务器的用户名，如果不指定，将使用当前系统已登录的用户名，一个节点只需要指定一处
+
+查看服务器列表
+```bash
+ansible all --list-hosts
+ansible webservers --list-hosts
+ansible dbservers --list-hosts 
+```
+
+### 其他基础操作
+检查主机的连通性
+```bash
+ansible node1 -m ping 
+```
+使用sudo执行命令
+命令行下
+```bash
+# -m command 表示使用command模块，可以不写，默认就是使用command模块
+# -a表示模块的参数args
+ansible all -m command -a 'tail /etc/sudoers' -become=yes --become-method=sudo
+```
+
+全局修改: 修改 `/etc/ansible/ansible.cfg` 中的如下配置
+```ini
+[privilege_escalation]
+become=True
+become_method=sudo
+```
+修改后在playbook或命令行中可以不加 `become/become-method` 这些配置
+
+将文件直接传输到atlanta组中的所有服务器
+```bash
+# mode=600 文件属性 
+# owner=mdehaan group=mdehaan 文件所有者
+ansible all -m copy -a "src=/etc/hosts dest=/tmp/hosts mode=600 owner=mdehaan group=mdehaan"
+```
+
+### 部署基础设施
+
+
+
+# 开发微服务
 ## 添加自己的服务
-直接拷贝app下的服务目录，
+
 
 
 ## 初始化和编译
@@ -53,9 +170,6 @@ docker run --rm -p 8000:8000 -p 9000:9000 -v </path/to/your/configs>:/data/conf 
 
 ## 框架和功能详解
 
-### 工程目录
-
-工程目录结合了Kratos-layout和ThreeDotLabs的最佳实践，支持DDD、CQRS，能够有效应对复杂的业务逻辑
 
 #### 领域层
 

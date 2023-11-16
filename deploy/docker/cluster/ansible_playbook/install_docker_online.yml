@@ -46,6 +46,9 @@
       command: docker-compose --version
       register: docker_compose_check
 
+    - debug:
+        msg: "{{ docker_compose_check }}"
+
     - name: Download and install docker-compose
       uri:
         url: 'https://get.daocloud.io/docker/compose/releases/download/v2.11.1/docker-compose-{{ ansible_system }}-{{ ansible_architecture }}'

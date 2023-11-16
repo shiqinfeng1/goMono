@@ -28,6 +28,8 @@
 
     检查是否生效: `ssh 'sqf@192.168.1.184'`, 如果微提示输入密码，表示已生效
     如果未生效， 参考这里解决：https://www.slw.ac.cn/article/linux-cmd-remotelogin.html
+    如果本机也是作为被ansible管理的主机，也需要设置本机免密登录（ssh-copy-id到本机）
+
 - 下载安装dns域名管理工具
   
     ```bash
@@ -65,6 +67,8 @@
    ...
   ```
 
+  如果主机较多， 也可以使用下面介绍的ansible来批量设置
+
 - 非root账号
   测试环境可以直接使用root账号， 如果为了安全性则使用非root账号， 但需要确保具有sudo权限。
   新建非root账号
@@ -89,15 +93,18 @@ centos7
 
 ```bash
 sudo yum install -y epel-release
-sudo yum install -y ansible
+sudo dnf install ansible
+# sudo dnf install ansible-collection-community-general
 ansible --version  # 输出版本信息，例如： ansible 2.9.27
 ```
 
 ubuntu
 
 ```bash
-sudo apt install -y ansible
-ansible --version  # 输出版本信息，例如： ansible 2.9.6
+$ sudo apt update
+$ sudo apt install software-properties-common
+$ sudo add-apt-repository --yes --update ppa:ansible/ansible
+$ sudo apt install ansible
 ```
 
 安装完成后，默认配置文件在 `/etc/ansible/` 下
@@ -111,8 +118,13 @@ ansible.cfg  hosts  roles
 默认的配置在 `/etc/ansible/hosts` 中，追加自己的配置，例如：
 
 ```ini
+[all]
+master hostname=master ansible_python_interpreter=/usr/bin/python3 ansible_ssh_host=192.168.72.36 ansible_ssh_port=22 ansible_ssh_user=sqf # ansible_ssh_pass='Tsss'
+node1 hostname=node1 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_host=192.168.72.84 ansible_ssh_port=22 ansible_ssh_user=user # ansible_ssh_pass='Tsss'
+[registry]
+master
 [webservers]
-node1 ansible_user=user
+node1
 [dbservers]
 node1
 ```
@@ -153,14 +165,20 @@ become=True
 become_method=sudo
 ```
 
-修改后在playbook或命令行中可以不加 `become/become-method` 这些配置
+修改后在playbook或命令行中可以不加 `become/become-method` 这些配置了
 
-将文件直接传输到atlanta组中的所有服务器
+将文件直接传输到all组中的所有服务器
 
 ```bash
 # mode=600 文件属性 
 # owner=mdehaan group=mdehaan 文件所有者
 ansible all -m copy -a "src=/etc/hosts dest=/tmp/hosts mode=600 owner=mdehaan group=mdehaan"
+```
+
+批量设置hostname
+
+```bash
+ansible-playbook ./deploy/docker/cluster/ansible_playbook/modify_hostname.yml
 ```
 
 ### 检查剧本有效性及彩排
@@ -174,14 +192,18 @@ ansible-playbook --check deploy/docker/cluster/ansible-playbook/install_docker-o
 
 ### 部署基础设施
 
-1. 安装docker
+2. 安装docker
 
     ```bash
-    ansible-playbook deploy/docker/cluster/ansible-playbook/install_docker-online.yml
+    ansible-playbook ./deploy/docker/cluster/ansible-playbook/install_docker_online.yml
     ```
 
 2. 自建镜像仓库
-    [参考项目](https://github.com/Joxit/docker-registry-ui)
+    项目来自[这里](https://github.com/Joxit/docker-registry-ui), 部署操作：
+
+    ```bash
+    ansible-playbook ./deploy/docker/cluster/ansible_playbook/install_docker_registry.yml
+    ```
 
 3. 制作镜像
    

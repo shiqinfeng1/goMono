@@ -20,15 +20,14 @@
     ssh-keygen -C master@192.168.1.110 # 本地生成秘钥， 如果已有则跳过
     ```
 
-    如果有独立运行节点，拷贝master节点的公钥到运行节点上
+    如果只有少数节点，拷贝master节点的公钥到运行节点上
 
     ```bash
     ssh-copy-id -f -i ~/.ssh/id_rsa.pub sqf@192.168.1.184
     ```
 
-    检查是否生效: `ssh 'sqf@192.168.1.184'`, 如果微提示输入密码，表示已生效
-    如果未生效， 参考这里解决：https://www.slw.ac.cn/article/linux-cmd-remotelogin.html
-    如果本机也是作为被ansible管理的主机，也需要设置本机免密登录（ssh-copy-id到本机）
+    检查是否生效: `ssh 'sqf@192.168.1.184'`, 如果未提示输入密码，表示已生效。如果未生效， 参考这里解决：https://www.slw.ac.cn/article/linux-cmd-remotelogin.html
+    如果节点较多，使用下面的ansible完成公钥复制。
 
 - 下载安装dns域名管理工具
   
@@ -69,7 +68,7 @@
 
   如果主机较多， 也可以使用下面介绍的ansible来批量设置
 
-- 非root账号
+- 使用非root账号
   测试环境可以直接使用root账号， 如果为了安全性则使用非root账号， 但需要确保具有sudo权限。
   新建非root账号
 

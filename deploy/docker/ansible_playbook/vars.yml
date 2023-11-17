@@ -1,0 +1,34 @@
+#########################################################################
+# dockler私有仓库配置
+#########################################################################
+docker_registry_compose_file: docker_compose_docker_registry.yml  # docker私有仓库的compose文件
+registry_srv_port: 8080  # docker私有仓库的服务端口 
+
+prometheus_image: prom/prometheus:latest
+grafana_image: grafana/grafana:latest
+nacos_mysql_image: nacos/mysql:8.0.31
+nacos_image: nacos/nacos-server:latest
+
+infra_images_list:   # 在线下载的基础设施的镜像列表
+  - "{{prometheus_image}}"
+  - "{{grafana_image}}"
+  - "{{nacos_image}}"
+local_infra_images_list: # 本地打包的基础设施的镜像列表
+  - "{{nacos_mysql_image}}"
+
+delete_download_images: true  # 是否删除本地已上传到私有仓库的基础设施镜像
+
+#########################################################################
+# nacos相关配置
+#########################################################################
+config_nacos_mysql: config_nacos_mysql.env # nacos使用的数据库的配置
+config_nacos: config_nacos.env # nacos的配置
+nacos_mysql_port: 13306 # nacos使用的mysql的服务端口
+
+#########################################################################
+# prometheus相关配置
+#########################################################################
+promethus_srv_port: 9090  # promethus的服务端口
+grafana_srv_port: 3000 # grafana的服务端口
+config_prometheus: config_prometheus.yaml  # prometheus的配置文件名称
+

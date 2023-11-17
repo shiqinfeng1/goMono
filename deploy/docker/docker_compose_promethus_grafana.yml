@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  prometheus:
+    container_name: prometheus
+    hostname: prometheus
+    image: "{{registry_addr}}/{{prometheus_image}}"
+    volumes:
+      - ./{{config_prometheus}}:/etc/prometheus/prometheus.yml
+    ports:
+      - "{{promethus_srv_port}}:9090"
+    depends_on:
+      - nacos
+    restart: on-failure
+  grafana:
+    container_name: grafana
+    hostname: grafana
+    image: "{{registry_addr}}/{{grafana_image}}"
+    ports:
+      - "{{grafana_srv_port}}:3000"
+    restart: on-failure

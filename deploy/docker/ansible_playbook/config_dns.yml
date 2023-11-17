@@ -1,0 +1,41 @@
+---
+- name: Install Docker & Docker-Compose
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Creates hostctl directory
+      file:
+        path: /tmp/hostctl
+        state: directory
+    - name: download hostctl_1.1.4_linux_64-bit.tar.gz 
+      command: 
+        cmd: wget https://github.com/guumaster/hostctl/releases/download/v1.1.4/hostctl_1.1.4_linux_64-bit.tar.gz 
+        chdir: /tmp/hostctl
+
+    - name: Unarchive hostctl_1.1.4_linux_64-bit.tar.gz
+      unarchive: 
+        src: /tmp/hostctl/hostctl_1.1.4_linux_64-bit.tar.gz
+        dest: /tmp/hostctl
+        copy: no
+
+    - name: Ansible copy files remote to remote
+      copy:
+        src: /tmp/hostctl/hostctl
+        dest: /usr/bin
+        remote_src: yes
+        mode: u+x,g+x,o+x
+
+    - name: Clean files
+      file:
+        path: /tmp/hostctl
+        state: absent
+
+    - name: Set DNS
+      command: hostctl add domains ansible {{ hostvars[item].hostname }} --ip {{ hostvars[item].ansible_host }}
+      with_items: "{{groups['all']}}"
+    - name: After Set DNS
+      command: hostctl list
+      register: hosts
+    - debug:
+        var: hosts.stdout_lines

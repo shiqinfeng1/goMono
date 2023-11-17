@@ -1,0 +1,68 @@
+version: "3.8"
+services:
+  nacos1:
+    hostname: nacos1
+    container_name: nacos1
+    image: "{{registry_addr}}/{{nacos_image}}"
+    volumes:
+      - ./cluster-logs/nacos1:/home/nacos/logs
+    ports:
+      - "7848:7848"
+      - "8848:8848"
+      - "9868:9848"
+      - "9850:9849"
+    env_file:
+      - ./{{config_nacos}}
+    restart: always
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  nacos2:
+    hostname: nacos2
+    image: "{{registry_addr}}/{{nacos_image}}"
+    container_name: nacos2
+    volumes:
+      - ./cluster-logs/nacos2:/home/nacos/logs
+    ports:
+      - "7849:7848"
+      - "8849:8848"
+      - "9869:9848"
+      - "9851:9849"
+    env_file:
+      - ./{{config_nacos}}
+    restart: always
+    depends_on:
+      mysql:
+        condition: service_healthy
+  nacos3:
+    hostname: nacos3
+    image: "{{registry_addr}}/{{nacos_image}}"
+    container_name: nacos3
+    volumes:
+      - ./cluster-logs/nacos3:/home/nacos/logs
+    ports:
+      - "7850:7848"
+      - "8850:8848"
+      - "9870:9848"
+      - "9852:9849"
+    env_file:
+      - ./{{config_nacos}}
+    restart: always
+    depends_on:
+      mysql:
+        condition: service_healthy
+  mysql:
+    container_name: mysql
+    image: "{{registry_addr}}/{{nacos_mysql_image}}"
+    env_file:
+      - ./{{config_nacos_mysql}}
+    volumes:
+      - ./mysql:/var/lib/mysql
+    ports:
+      - "{{nacos_mysql_port}}:3306"
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      interval: 5s
+      timeout: 10s
+      retries: 10

@@ -1,0 +1,32 @@
+---
+- name: Get docker Image Registry Hostname
+  hosts: registry
+  tasks:
+  - name: get registry hostname
+    command: cat /etc/hostname
+    register: registry_hostname
+
+- name: Prepare Infra Images
+  hosts: master
+  vars_files:
+    - vars.yml
+  vars:
+    - registry_addr: "{{registry_hostname.stdout}}:{{registry_srv_port}}"
+  tasks:
+  - name: Pull Images
+    command: "docker pull {{item}}"
+    loop: 
+      "{{infra_images_list}}"
+  - name: Tag Images
+    command: "docker tag {{item}} {{registry_addr}}/{{item}}"
+    loop: 
+      "{{infra_images_list}}"
+  - name: Push Images
+    command: "docker push {{registry_addr}}/{{item}}"
+    loop: 
+      "{{infra_images_list}}"
+  - name: Remove Downloaded Images
+    command: "docker rmi {{registry_addr}}/{{item}} {{item}}"
+    loop: 
+      "{{infra_images_list}}"
+    when: delete_download_images == True

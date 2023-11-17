@@ -5,7 +5,7 @@ services:
     image: joxit/docker-registry-ui:main
     restart: always
     ports:
-      - {{registry_listen_port}}:80
+      - "{{registry_srv_port}}:80"
     environment:
       - SINGLE_REGISTRY=true
       - REGISTRY_TITLE=Docker Registry UI

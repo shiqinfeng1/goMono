@@ -64,7 +64,11 @@
       service:
         name: docker
         state: started
-
-
+     
+    - name: Test docker 
+      command: docker images
+      register: images
+    - debug:
+        var: images.stdout_lines
 
 

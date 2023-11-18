@@ -12,68 +12,19 @@
 
 ### 准备工作
 
-- 找1台或多台服务器，将1台作为ansible管理节点，其他作为运行节点。如果只有一台， 那么管理节点和运行节点是同一台，主机名和dns只需要配置一次就行。
-- 免密登录远端服务器
+- 找1台或多台服务器，将其中1台作为ansible管理节点，其他作为运行节点。如果只有一台， 那么管理节点和运行节点是同一台
     在master节点上，生成公钥
 
     ```bash
     ssh-keygen -C master@192.168.1.110 # 本地生成秘钥， 如果已有则跳过
     ```
 
-    如果只有少数节点，拷贝master节点的公钥到运行节点上
-
-    ```bash
-    ssh-copy-id -f -i ~/.ssh/id_rsa.pub sqf@192.168.1.184
-    ```
-
-    检查是否生效: `ssh 'sqf@192.168.1.184'`, 如果未提示输入密码，表示已生效。如果未生效， 参考这里解决：https://www.slw.ac.cn/article/linux-cmd-remotelogin.html
-    如果节点较多，使用下面的ansible完成公钥复制。
-
-- 下载安装dns域名管理工具
-  
-    ```bash
-    mkdir hostctl && cd hostctl
-    wget https://github.com/guumaster/hostctl/releases/download/v1.1.4/hostctl_1.1.4_linux_64-bit.tar.gz 
-    tar -zxvf hostctl_1.1.4_linux_64-bit.tar.gz
-    sudo mv hostctl /usr/local/bin/
-    cd .. && rm -rf hostctl
-    hostctl -v
-    ```
-
-    hostctl的使用
-
-    ```bash
-    # 查看dns
-    hostctl list
-    # 添加dns记录
-    sudo hostctl add domains ansible node1 --ip 192.168.72.84  # 其中 ansible 表示管理域， node是域名
-    # 启用禁用本地域名解析
-    sudo hostctl disable  ansible
-    sudo hostctl enable  ansible
-    # 删除域名解析
-    sudo hostctl remove domains ansible node1
-    ```
-
-- 设置主机名
-  一般设置管理节点的主机名为master， 运行节点的主机名为nodeX， X为1,2,3...一次编号
-
-  ```bash
-   # 登录管理节点后，示例：ssh sqf@192.168.1.184
-   hostnamectl set-hostname master
-   # 登录运行节点后
-   hostnamectl set-hostname node1
-   hostnamectl set-hostname node2
-   ...
-  ```
-
-  如果主机较多， 也可以使用下面介绍的ansible来批量设置
-
-- 使用非root账号
+- 允许使用非root账号sudo免密操作
   测试环境可以直接使用root账号， 如果为了安全性则使用非root账号， 但需要确保具有sudo权限。
+  
   新建非root账号
 
     ```bash
-
     sudo useradd ansible
     sudo passwd ansible
     ```
@@ -93,7 +44,6 @@ centos7
 ```bash
 sudo yum install -y epel-release
 sudo dnf install ansible
-# sudo dnf install ansible-collection-community-general
 ansible --version  # 输出版本信息，例如： ansible 2.9.27
 ```
 
@@ -109,29 +59,37 @@ $ sudo apt install ansible
 安装完成后，默认配置文件在 `/etc/ansible/` 下
 
 ```bash
+ls /etc/ansible/
 ansible.cfg  hosts  roles
 ```
 
 ### 运行节点主机列表配置
 
-默认的配置在 `/etc/ansible/hosts` 中，追加自己的配置，例如：
+默认的配置在 `/etc/ansible/hosts` 中，追加自己的配置，和项目匹配到配置如下：
 
 ```ini
 [all]
-master hostname=master ansible_python_interpreter=/usr/bin/python3 ansible_ssh_host=192.168.72.36 ansible_ssh_port=22 ansible_ssh_user=sqf # ansible_ssh_pass='Tsss'
-node1 hostname=node1 ansible_python_interpreter=/usr/bin/python3 ansible_ssh_host=192.168.72.84 ansible_ssh_port=22 ansible_ssh_user=user # ansible_ssh_pass='Tsss'
+master hostname=master ansible_python_interpreter=/usr/bin/python3 ansible_host=192.168.72.36 ansible_port=22 ansible_user=sqf # ansible_pass='Tsss'
+node1 hostname=node1 ansible_python_interpreter=/usr/bin/python3 ansible_host=192.168.72.84 ansible_port=22 ansible_user=user # ansible_pass='Tsss'
+
 [registry]
 master
-[webservers]
-node1
-[dbservers]
+
+[nacos]
+master
+
+[prometheus]
+master
+
+[backend]
 node1
 ```
 
 - 方括号[]中是组名，用于对系统进行分类，便于对不同系统进行个别的管理。
-- ansible_user 是指定登录该服务器的用户名，如果不指定，将使用当前系统已登录的用户名，一个节点只需要指定一处
+- ansible_user 指定登录该服务器的用户名，如果和当前系统已登录的用户名一样，则不需要指定。
+- 如果修改组名，需同步更新playbook中的hosts字段
 
-查看服务器列表
+查看主机清单
 
 ```bash
 ansible all --list-hosts
@@ -139,24 +97,15 @@ ansible webservers --list-hosts
 ansible dbservers --list-hosts 
 ```
 
-### 其他基础操作举例
-
-检查主机的连通性
+### 检查主机的连通性
 
 ```bash
 ansible node1 -m ping 
 ```
 
-使用sudo执行命令
-命令行下
+### 允许使用sudo执行命令
 
-```bash
-# -m command 表示使用command模块，可以不写，默认就是使用command模块
-# -a表示模块的参数args
-ansible all -m command -a 'tail /etc/sudoers' -become=yes --become-method=sudo
-```
-
-全局修改: 修改 `/etc/ansible/ansible.cfg` 中的如下配置
+修改 `/etc/ansible/ansible.cfg` 中的privilege_escalation配置为：
 
 ```ini
 [privilege_escalation]
@@ -164,61 +113,54 @@ become=True
 become_method=sudo
 ```
 
-修改后在playbook或命令行中可以不加 `become/become-method` 这些配置了
-
-将文件直接传输到all组中的所有服务器
+### 设置节点免密登录
 
 ```bash
-# mode=600 文件属性 
-# owner=mdehaan group=mdehaan 文件所有者
-ansible all -m copy -a "src=/etc/hosts dest=/tmp/hosts mode=600 owner=mdehaan group=mdehaan"
+ansible-playbook ./deploy/docker/ansible_playbook/ssh_login_no_password.yml
 ```
 
-批量设置hostname
+### 批量设置hostname
 
 ```bash
-ansible-playbook ./deploy/docker/cluster/ansible_playbook/modify_hostname.yml
-```
-
-### 检查剧本有效性及彩排
-
-举例：
-
-```bash
-ansible-playbook --syntax-check deploy/docker/cluster/ansible-playbook/install_docker-online.yml
-ansible-playbook --check deploy/docker/cluster/ansible-playbook/install_docker-online.yml
+ansible-playbook ./deploy/docker/ansible_playbook/modify_hostname.yml
 ```
 
 ### 部署基础设施
 
-2. 安装docker
+1. 安装docker
 
     ```bash
-    ansible-playbook ./deploy/docker/cluster/ansible-playbook/install_docker_online.yml
+    ansible-playbook ./deploy/docker/ansible-playbook/install_docker_online.yml
     ```
 
-2. 自建镜像仓库
-    项目来自[这里](https://github.com/Joxit/docker-registry-ui), 部署操作：
+2. 部署镜像私有仓库
+    项目源码来自[这里](https://github.com/Joxit/docker-registry-ui), 部署操作：
 
     ```bash
-    ansible-playbook ./deploy/docker/cluster/ansible_playbook/install_docker_registry.yml
+    ansible-playbook ./deploy/docker/ansible_playbook/install_docker_registry.yml
     ```
 
-3. 制作镜像
+3. 拉取和打包镜像
    
    ```bash
-   ./deploy/docker/cluster/prepare-infra-images.sh
+   ansible-playbook ./deploy/docker/prepare-infra-images.yml
    ```
 
 4. 部署nacos
-    方式： 拷贝docker-compose.yml到运行节点，并启动
+    
+   ```bash
+   ansible-playbook ./deploy/docker/install_nacos.yml
+   ```
 
-    ```bash
+4. 部署prometheus和grafana
+    
+   ```bash
+   ansible-playbook ./deploy/docker/install_prometheus_grafana.yml
+   ```
 
-    ```
-
-部署mysql集群
-方式：拷贝docker-compose.yml到运行节点，并启动
+  注意：
+  - 默认只设置了nacos的数据源，如果需要增加其他数据源，修改 `./deploy/docker/config_prometheus.env` 配置
+  - nacos的dashboard配置是： `deploy/docker/config_nacos_grafana_dashboard.json`
 
 # 开发微服务
 

@@ -14,7 +14,7 @@
     - registry_addr: "{{registry_hostname.stdout}}:{{registry_srv_port}}"
   become: true
   tasks:
-  - name: Copy Docker Compose files
+  - name: Copy Nacos Docker-Compose Files
     template: 
       src: ../{{ item }}
       dest: /tmp/{{ item }}
@@ -24,18 +24,52 @@
       - "{{nacos2_compose_file}}"
       - "{{nacos3_compose_file}}"
       - "{{nacos_mysql_compose_file}}"
-
-  - name: Start Nacos1
+      - "{{config_nacos_mysql}}"
+      - "{{config_nacos}}"
+  
+  - name: Start Nacos-MySQL
     shell:
-      cmd: "docker-compose -f /tmp/{{nacos1_compose_file}} up -d"
-    when: nacos1_host == ansible_hostname
+      cmd: "docker-compose -f /tmp/{{nacos_mysql_compose_file}} up -d"
+    when: nacos_mysql_host == ansible_hostname
 
-  # - name: Delete docker-compose.yml
-  #   file: 
-  #     dest: /tmp/{{ item }}
-  #     state: absent
-  #   loop:
-  #     - "{{nacos1_compose_file}}"
-  #     - "{{nacos2_compose_file}}"
-  #     - "{{nacos3_compose_file}}"
-  #     - "{{nacos_mysql_compose_file}}"
+  - name: Check Nacos-MySQL Running Status
+    docker_container_info:
+      name: "{{item}}"
+    register: result
+    until: result.container['State']['Health']['Status'] == "healthy"
+    retries: 10
+    delay: 5
+    when: nacos_mysql_host == ansible_hostname
+    loop:
+      - "nacos-mysql"
+
+  - name: Start Nacos ...
+    shell:
+      cmd: "docker-compose -f /tmp/{{item.1}} up -d"
+    when: item.0 == ansible_hostname
+    with_together: 
+      - "{{[nacos1_host,nacos2_host,nacos3_host]}}"
+      - "{{[nacos1_compose_file,nacos2_compose_file,nacos3_compose_file]}}"
+
+  - name: Check Nacos Running Status
+    docker_container_info:
+      name: "{{item}}"
+    register: result
+    until: result.container['State']['Health']['Status'] == "healthy"
+    retries: 10
+    delay: 5
+    when: nacos_mysql_host == ansible_hostname
+    loop:
+      - "nacos1"
+      - "nacos2"
+      - "nacos3"
+
+  - name: Delete docker-compose.yml
+    file: 
+      dest: /tmp/{{ item }}
+      state: absent
+    loop:
+      - "{{nacos1_compose_file}}"
+      - "{{nacos2_compose_file}}"
+      - "{{nacos3_compose_file}}"
+      - "{{nacos_mysql_compose_file}}"

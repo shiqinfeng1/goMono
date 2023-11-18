@@ -8,14 +8,13 @@ services:
     volumes:
       - ./{{config_prometheus}}:/etc/prometheus/prometheus.yml
     ports:
-      - "{{promethus_srv_port}}:9090"
-    depends_on:
-      - nacos
-    restart: on-failure
+      - "{{prometheus_srv_port}}:9090"
+    restart: always
+
   grafana:
     container_name: grafana
     hostname: grafana
     image: "{{registry_addr}}/{{grafana_image}}"
     ports:
       - "{{grafana_srv_port}}:3000"
-    restart: on-failure
+    restart: always

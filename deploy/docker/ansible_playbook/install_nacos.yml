@@ -1,0 +1,41 @@
+---
+- name: Get docker Image Registry Hostname
+  hosts: registry
+  tasks:
+  - name: get registry hostname
+    command: cat /etc/hostname
+    register: registry_hostname
+
+- name: Install Nacos
+  hosts: nacos
+  vars_files:
+    - vars.yml
+  vars:
+    - registry_addr: "{{registry_hostname.stdout}}:{{registry_srv_port}}"
+  become: true
+  tasks:
+  - name: Copy Docker Compose files
+    template: 
+      src: ../{{ item }}
+      dest: /tmp/{{ item }}
+      force: true
+    loop:
+      - "{{nacos1_compose_file}}"
+      - "{{nacos2_compose_file}}"
+      - "{{nacos3_compose_file}}"
+      - "{{nacos_mysql_compose_file}}"
+
+  - name: Start Nacos1
+    shell:
+      cmd: "docker-compose -f /tmp/{{nacos1_compose_file}} up -d"
+    when: nacos1_host == ansible_hostname
+
+  # - name: Delete docker-compose.yml
+  #   file: 
+  #     dest: /tmp/{{ item }}
+  #     state: absent
+  #   loop:
+  #     - "{{nacos1_compose_file}}"
+  #     - "{{nacos2_compose_file}}"
+  #     - "{{nacos3_compose_file}}"
+  #     - "{{nacos_mysql_compose_file}}"

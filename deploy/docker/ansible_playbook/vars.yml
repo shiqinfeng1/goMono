@@ -4,10 +4,13 @@
 docker_registry_compose_file: docker_compose_docker_registry.yml  # docker私有仓库的compose文件
 registry_srv_port: 8080  # docker私有仓库的服务端口 
 
+#########################################################################
+# 基础设施镜像相关配置
+#########################################################################
 prometheus_image: prom/prometheus:latest
 grafana_image: grafana/grafana:latest
-nacos_mysql_image: nacos/mysql:8.0.31
 nacos_image: nacos/nacos-server:latest
+nacos_mysql_image: nacos/mysql:8.0.31
 
 infra_images_list:   # 在线下载的基础设施的镜像列表
   - "{{prometheus_image}}"
@@ -15,15 +18,37 @@ infra_images_list:   # 在线下载的基础设施的镜像列表
   - "{{nacos_image}}"
 local_infra_images_list: # 本地打包的基础设施的镜像列表
   - "{{nacos_mysql_image}}"
+local_infra_images_dockerfile_list: # 注意顺序保存和local_infra_images_list一致
+  - "dockerfile.nacos_mysql"
 
 delete_download_images: true  # 是否删除本地已上传到私有仓库的基础设施镜像
 
 #########################################################################
 # nacos相关配置
 #########################################################################
+nacos1_compose_file: docker_compose_nacos1.yml  # nacos1的compose文件
+nacos2_compose_file: docker_compose_nacos2.yml  # nacos2的compose文件
+nacos3_compose_file: docker_compose_nacos3.yml  # nacos3的compose文件
+nacos_mysql_compose_file: docker_compose_nacos_mysql.yml  #nacos的mysql的compose文件
 config_nacos_mysql: config_nacos_mysql.env # nacos使用的数据库的配置
 config_nacos: config_nacos.env # nacos的配置
 nacos_mysql_port: 13306 # nacos使用的mysql的服务端口
+nacos_mysql_host: master # nacos使用的mysql的服务地址，该主机的dns需要配置在部署nacos的机子上, 并在ansible主机清单维护
+nacos1_host: master # nacos1的服务地址，该主机的dns需要配置在部署nacos/promethus的机子上, 并在ansible主机清单维护
+nacos1_conn_port1: 7848
+nacos1_conn_port2: 9848
+nacos1_conn_port3: 9849
+nacos1_srv_port: 8848
+nacos2_host: master # nacos2的服务地址，该主机的dns需要配置在部署nacos/promethus的机子上, 并在ansible主机清单维护
+nacos2_conn_port1: 7849
+nacos2_conn_port2: 9849
+nacos2_conn_port3: 9850
+nacos2_srv_port: 8849
+nacos3_host: master # nacos3的服务地址，该主机的dns需要配置在部署nacos/promethus的机子上, 并在ansible主机清单维护
+nacos3_conn_port1: 7850
+nacos3_conn_port2: 9850
+nacos3_conn_port3: 9851
+nacos3_srv_port: 8850
 
 #########################################################################
 # prometheus相关配置

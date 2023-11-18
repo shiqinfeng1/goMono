@@ -38,9 +38,9 @@
       - "prometheus"
       - "grafana"
 
-  - name: Delete docker-compose.yml
-    file: 
-      dest: /tmp/{{ item }}
-      state: absent
-    loop:
-      - "{{prometheus_compose_file}}"
+  # - name: Delete docker-compose.yml
+  #   file: 
+  #     dest: /tmp/{{ item }}
+  #     state: absent
+  #   loop:
+  #     - "{{prometheus_compose_file}}"

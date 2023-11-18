@@ -56,7 +56,7 @@
       name: "{{item}}"
     register: result
     until: result.container['State']['Health']['Status'] == "healthy"
-    retries: 10
+    retries: 15
     delay: 5
     when: nacos_mysql_host == ansible_hostname
     loop:
@@ -64,12 +64,12 @@
       - "nacos2"
       - "nacos3"
 
-  - name: Delete docker-compose.yml
-    file: 
-      dest: /tmp/{{ item }}
-      state: absent
-    loop:
-      - "{{nacos1_compose_file}}"
-      - "{{nacos2_compose_file}}"
-      - "{{nacos3_compose_file}}"
-      - "{{nacos_mysql_compose_file}}"
+  # - name: Delete docker-compose.yml
+  #   file: 
+  #     dest: /tmp/{{ item }}
+  #     state: absent
+  #   loop:
+  #     - "{{nacos1_compose_file}}"
+  #     - "{{nacos2_compose_file}}"
+  #     - "{{nacos3_compose_file}}"
+  #     - "{{nacos_mysql_compose_file}}"

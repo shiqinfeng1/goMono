@@ -2,15 +2,14 @@ package main
 
 import (
 	"context"
-	"flag"
 	"os"
 
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
-	"github.com/go-kratos/kratos/v2/config/file"
-	"github.com/go-kratos/kratos/v2/log"
-	"github.com/go-kratos/kratos/v2/middleware/tracing"
+	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/http"
+	cfgsource "github.com/shiqinfeng1/goMono/internal/common/config"
+	"github.com/shiqinfeng1/goMono/internal/common/log"
 	"github.com/shiqinfeng1/goMono/internal/training/conf"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
@@ -23,23 +22,35 @@ import (
 
 // go build -ldflags "-X main.Version=x.y.z"
 var (
-	// Name is the name of the compiled software.
-	Name string
-	// Version is the version of the compiled software.
-	Version string
-	// flagconf is the config flag.
-	flagconf string
-
-	id, _ = os.Hostname()
+	Name    = "trainer"     // Name is the name of the compiled software.
+	Version string          // Version is the version of the compiled software.
+	ID, _   = os.Hostname() // 主机信息
+	BootCfg conf.Bootstrap  // 应用配置参数
+	Logger  klog.Logger
 )
 
 func init() {
-	flag.StringVar(&flagconf, "conf", "../../configs", "config path, eg: -conf config.yaml")
+	c := cfgsource.Bootstrap("trainer.yaml")
+	if err := c.Scan(&BootCfg); err != nil {
+		panic(err)
+	}
+
+	Logger = log.NewKLogger(ID, Name, Version, BootCfg.Log.Level)
+
+	// 这里添加监听需哟啊动态更新的字段
+	if err := c.Watch("log.level", func(key string, value config.Value) {
+		if key == "log.level" {
+			lvl, _ := value.String()
+			log.SetLevel(lvl)
+		}
+	}); err != nil {
+		panic(err)
+	}
 }
 
-func newApp(logger log.Logger, hs *http.Server) *kratos.App {
+func newApp(logger klog.Logger, hs *http.Server) *kratos.App {
 	return kratos.New(
-		kratos.ID(id),
+		kratos.ID(ID),
 		kratos.Name(Name),
 		kratos.Version(Version),
 		kratos.Metadata(map[string]string{}),
@@ -51,34 +62,16 @@ func newApp(logger log.Logger, hs *http.Server) *kratos.App {
 }
 
 func main() {
-	flag.Parse()
-	logger := log.With(log.NewStdLogger(os.Stdout),
-		"ts", log.DefaultTimestamp,
-		"caller", log.DefaultCaller,
-		"service.id", id,
-		"service.name", Name,
-		"service.version", Version,
-		"trace.id", tracing.TraceID(),
-		"span.id", tracing.SpanID(),
-	)
-	c := config.New(
-		config.WithSource(
-			file.NewSource(flagconf),
-		),
-	)
-	defer c.Close()
 
-	if err := c.Load(); err != nil {
-		panic(err)
-	}
-
-	var bc conf.Bootstrap
-	if err := c.Scan(&bc); err != nil {
-		panic(err)
-	}
+	// 	docker run -d --name jaeger \
+	//   -e COLLECTOR_OTLP_ENABLED=true \
+	//   -p 16686:16686 \
+	//   -p 4317:4317 \
+	//   -p 4318:4318 \
+	//   jaegertracing/all-in-one:latest
 	ctx := context.Background()
 	client := otlptracegrpc.NewClient(
-		otlptracegrpc.WithEndpoint(bc.Trace.Endpoint),
+		otlptracegrpc.WithEndpoint(BootCfg.Trace.Endpoint),
 	)
 	exp, err := otlptrace.New(ctx, client)
 	if err != nil {
@@ -90,7 +83,7 @@ func main() {
 			semconv.ServiceNameKey.String(Name),
 		)),
 	)
-	app, cleanup, err := wireApp(bc.Server, tp, bc.Adapter, bc.Auth, logger)
+	app, cleanup, err := wireApp(BootCfg.Server, tp, BootCfg.Adapter, BootCfg.Auth, Logger)
 	if err != nil {
 		panic(err)
 	}

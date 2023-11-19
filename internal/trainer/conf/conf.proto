@@ -10,6 +10,10 @@ message Bootstrap {
   Adapter adapter = 2;
   Auth auth = 3;
   Trace trace = 4;
+  Log log = 5;
+}
+message Log {
+    string level = 1;
 }
 message Trace {
     string endpoint = 1;

@@ -7,7 +7,6 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/pkg/errors"
 	"github.com/shiqinfeng1/goMono/internal/common/decorator"
-	"github.com/shiqinfeng1/goMono/internal/common/logs"
 	"github.com/shiqinfeng1/goMono/internal/training/domain/training"
 )
 
@@ -54,9 +53,6 @@ func NewScheduleTrainingHandler(
 }
 
 func (h scheduleTrainingHandler) Handle(ctx context.Context, cmd ScheduleTraining) (err error) {
-	defer func() {
-		logs.LogCommandExecution("ScheduleTraining", cmd, err)
-	}()
 
 	tr, err := training.NewTraining(cmd.TrainingUUID, cmd.UserUUID, cmd.UserName, cmd.TrainingTime)
 	if err != nil {

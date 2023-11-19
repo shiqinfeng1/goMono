@@ -6,7 +6,6 @@ import (
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/shiqinfeng1/goMono/internal/common/decorator"
-	"github.com/shiqinfeng1/goMono/internal/common/logs"
 	"github.com/shiqinfeng1/goMono/internal/training/domain/training"
 )
 
@@ -42,9 +41,6 @@ func NewRequestTrainingRescheduleHandler(
 }
 
 func (h requestTrainingRescheduleHandler) Handle(ctx context.Context, cmd RequestTrainingReschedule) (err error) {
-	defer func() {
-		logs.LogCommandExecution("RequestTrainingReschedule", cmd, err)
-	}()
 
 	return h.repo.UpdateTraining(
 		ctx,

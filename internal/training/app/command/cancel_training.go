@@ -6,7 +6,6 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/pkg/errors"
 	"github.com/shiqinfeng1/goMono/internal/common/decorator"
-	"github.com/shiqinfeng1/goMono/internal/common/logs"
 	"github.com/shiqinfeng1/goMono/internal/training/domain/training"
 )
 
@@ -48,9 +47,6 @@ func NewCancelTrainingHandler(
 }
 
 func (h cancelTrainingHandler) Handle(ctx context.Context, cmd CancelTraining) (err error) {
-	defer func() {
-		logs.LogCommandExecution("CancelTrainingHandler", cmd, err)
-	}()
 
 	return h.repo.UpdateTraining(
 		ctx,

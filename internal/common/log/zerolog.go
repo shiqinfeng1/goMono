@@ -102,19 +102,23 @@ func (x *fluentWriteSyncer) Write(data []byte) (n int, err error) {
 }
 
 // zerolog的日志监控输出
-func newMonitorWriter() io.Writer {
+func newMonitorWriter(endpoint ...string) io.Writer {
 	// EFK: Elasticsearch + Fluentd + Kibana
 	var addr string
-	if addr = os.Getenv("LOG_MONITOR_ADDR"); addr == "" {
+	if len(endpoint) != 0 {
+		addr = endpoint[0]
+	} else {
 		addr = "tcp://127.0.0.1:24224"
 	}
 	logger, err := newFluentWriteSyncer(addr)
 	if err != nil {
-		return klog.NewWriter(klog.DefaultLogger, klog.WithWriteMessageKey(fmt.Sprintf("(Need-To-Monitor,But %v)", err)))
+		return klog.NewWriter(klog.DefaultLogger, klog.WithWriteMessageKey(fmt.Sprintf("(NO Monitor: %v)", err)))
 	}
 	return logger
 }
-func NewZeroLogger(svcID, svcName string, lvl zerolog.Level) *zerolog.Logger {
+
+// 生成一个zero的日志器，支持输出到屏幕、日志文件、远端日志服务
+func NewZeroLogger(svcID, svcName string, lvl zerolog.Level, endpoint ...string) *zerolog.Logger {
 	zerolog.TimeFieldFormat = timeFormat
 	m, _ := vars.NewModeFromString(os.Getenv("MODE"))
 	if !m.IsValid() {
@@ -127,11 +131,11 @@ func NewZeroLogger(svcID, svcName string, lvl zerolog.Level) *zerolog.Logger {
 		l = zerolog.New(multi).With().Timestamp().Caller().Stack().Logger().Level(lvl)
 	}
 	if m.Is(vars.ModeTest) {
-		multi := zerolog.MultiLevelWriter(newFileWriter(fileName), newMonitorWriter())
+		multi := zerolog.MultiLevelWriter(newFileWriter(fileName), newMonitorWriter(endpoint...))
 		l = zerolog.New(multi).With().Timestamp().Caller().Stack().Logger().Level(lvl)
 	}
 	if m.Is(vars.ModeProduct) {
-		multi := zerolog.MultiLevelWriter(newFileWriter(fileName), newMonitorWriter())
+		multi := zerolog.MultiLevelWriter(newFileWriter(fileName), newMonitorWriter(endpoint...))
 		l = zerolog.New(multi).With().Timestamp().Logger().Level(lvl)
 	}
 	return &l

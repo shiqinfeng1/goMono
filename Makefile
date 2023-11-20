@@ -12,11 +12,11 @@ else
 	API_PROTO_FILES=$(shell find api -name *.proto)
 	ifeq ($(GOHOSTOS), darwin)
 		configCmd=xargs -I F sh -c 'cd F && echo && $(MAKE) config'
-		generateCmd=xargs -I F sh -c 'cd F && echo && $(MAKE) generate'
+		wireCmd=xargs -I F sh -c 'cd F && echo && $(MAKE) wire'
 		allCmd=xargs -I F sh -c 'cd F && echo && $(MAKE) all'
 	else
 		configCmd=xargs -i sh -c 'cd {} && echo && $(MAKE) config'
-		generateCmd=xargs -i sh -c 'cd {} && echo && $(MAKE) generate'
+		wireCmd=xargs -i sh -c 'cd {} && echo && $(MAKE) wire'
 		allCmd=xargs -i sh -c 'cd {} && echo && $(MAKE) all'
 	endif
 endif
@@ -56,9 +56,9 @@ build:
 	mkdir -p bin/ && go build -ldflags "-X main.Version=$(VERSION)" -o ./bin/ ./...
 
 .PHONY: generate
-# generate
-generate:
-	find internal  -mindepth 1 -maxdepth 1 | grep -v common | $(generateCmd)
+# generate wire_gen.go
+wire:
+	find internal  -mindepth 1 -maxdepth 1 | grep -v common | $(wireCmd)
 
 .PHONY: all
 # generate all

@@ -22,7 +22,7 @@ func (k *kloggerWrap) Log(level klog.Level, keyvals ...interface{}) error {
 var once sync.Once
 var klogger *kloggerWrap
 
-func newKLogger(svcID, svcName, svcVer string, lvl zerolog.Level) klog.Logger {
+func newKLogger(svcID, svcName, svcVer string, lvl zerolog.Level, endpoint ...string) klog.Logger {
 	zl := NewZeroLogger(svcID, svcName, lvl)
 	zlogger := zlog.NewLogger(zl)
 	return klog.With(zlogger,
@@ -35,7 +35,7 @@ func newKLogger(svcID, svcName, svcVer string, lvl zerolog.Level) klog.Logger {
 }
 
 // 全局初始化一次
-func NewKLogger(svcID, svcName, svcVer string, lvlStr string) klog.Logger {
+func New(svcID, svcName, svcVer string, lvlStr string, endpoint ...string) klog.Logger {
 	once.Do(func() {
 		lvl, err := zerolog.ParseLevel(lvlStr)
 		if err != nil {
@@ -46,7 +46,7 @@ func NewKLogger(svcID, svcName, svcVer string, lvlStr string) klog.Logger {
 			svcName: svcName,
 			svcVer:  svcVer,
 			lvl:     lvl,
-			l:       newKLogger(svcID, svcName, svcVer, lvl),
+			l:       newKLogger(svcID, svcName, svcVer, lvl, endpoint...),
 		}
 	})
 	return klogger

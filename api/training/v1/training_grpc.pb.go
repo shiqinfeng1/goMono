@@ -20,7 +20,7 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	TrainingService_GetTraining_FullMethodName              = "/trainer.TrainingService/GetTraining"
+	TrainingService_GetTraining_FullMethodName               = "/trainer.TrainingService/GetTraining"
 	TrainingService_CreateTraining_FullMethodName            = "/trainer.TrainingService/CreateTraining"
 	TrainingService_CancelTraining_FullMethodName            = "/trainer.TrainingService/CancelTraining"
 	TrainingService_RescheduleTraining_FullMethodName        = "/trainer.TrainingService/RescheduleTraining"

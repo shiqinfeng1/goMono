@@ -1,6 +1,0 @@
-syntax = "proto3";
-package kratos.api;
-
-option go_package = "github.com/shiqinfeng1/goMono/internal/training/conf;conf";
-
-import "common/config/protobuf/training.proto";

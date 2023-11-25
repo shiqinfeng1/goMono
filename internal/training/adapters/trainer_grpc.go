@@ -2,23 +2,55 @@ package adapters
 
 import (
 	"context"
+	"fmt"
+	"sync"
 	"time"
 
 	"github.com/pkg/errors"
 	trainerApi "github.com/shiqinfeng1/goMono/api/trainer/v1"
+	"github.com/shiqinfeng1/goMono/internal/common/config"
+	"github.com/shiqinfeng1/goMono/internal/common/grpc"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
+var (
+	once sync.Once
+)
+
 type TrainerGrpc struct {
-	client trainerApi.TrainerServiceClient
+	endpoints []string
+	client    trainerApi.TrainerServiceClient
+	close     func() error
 }
 
-func NewTrainerGrpc(client trainerApi.TrainerServiceClient) TrainerGrpc {
-	return TrainerGrpc{client: client}
+func NewTrainerGrpc(dis *config.Discovery) *TrainerGrpc {
+	return &TrainerGrpc{
+		endpoints: dis.Endpoints,
+	}
+}
+func (s TrainerGrpc) Close() {
+	if s.close != nil {
+		s.close()
+	}
+}
+func (s *TrainerGrpc) getClient() trainerApi.TrainerServiceClient {
+	once.Do(func() {
+		dis, err := grpc.EtcdDiscovery(s.endpoints)
+		if err != nil {
+			panic(fmt.Errorf("invalid discovery %v: %w", s.endpoints, err))
+		}
+		conn, err := grpc.NewGrpcClientConn(dis, "trainer")
+		if err != nil {
+			panic(fmt.Errorf("invalid trainer client from %v: %w", s.endpoints, err))
+		}
+		s.client = trainerApi.NewTrainerServiceClient(conn)
+		s.close = conn.Close
+	})
+	return s.client
 }
 
 func (s TrainerGrpc) ScheduleTraining(ctx context.Context, trainingTime time.Time) error {
-	_, err := s.client.ScheduleTraining(ctx, &trainerApi.UpdateHourRequest{
+	_, err := s.getClient().ScheduleTraining(ctx, &trainerApi.UpdateHourRequest{
 		Time: timestamppb.New(trainingTime),
 	})
 
@@ -26,7 +58,7 @@ func (s TrainerGrpc) ScheduleTraining(ctx context.Context, trainingTime time.Tim
 }
 
 func (s TrainerGrpc) CancelTraining(ctx context.Context, trainingTime time.Time) error {
-	_, err := s.client.CancelTraining(ctx, &trainerApi.UpdateHourRequest{
+	_, err := s.getClient().CancelTraining(ctx, &trainerApi.UpdateHourRequest{
 		Time: timestamppb.New(trainingTime),
 	})
 

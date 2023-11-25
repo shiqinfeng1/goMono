@@ -2,32 +2,22 @@ package grpc
 
 import (
 	"context"
-	"time"
 
-	"github.com/go-kratos/kratos/contrib/registry/etcd/v2"
+	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	trainerApi "github.com/shiqinfeng1/goMono/api/trainer/v1"
 	trainingApi "github.com/shiqinfeng1/goMono/api/training/v1"
 	userApi "github.com/shiqinfeng1/goMono/api/user/v1"
-	etcdClient "go.etcd.io/etcd/client/v3"
+
 	ggrpc "google.golang.org/grpc"
 )
 
 // 微服务内部之间的通信，无需安全选项
-func newConnWithEtcd(endpoints []string, srvName string) (*ggrpc.ClientConn, error) {
-	eclient, err := etcdClient.New(etcdClient.Config{
-		Endpoints:   endpoints, //[]string{"127.0.0.1:2379"},
-		DialTimeout: time.Second,
-		DialOptions: []ggrpc.DialOption{ggrpc.WithBlock()},
-	})
-	if err != nil {
-		return nil, err
-	}
-	r := etcd.New(eclient)
+func NewGrpcClientConn(discovery registry.Discovery, srvName string) (*ggrpc.ClientConn, error) {
 	conn, err := grpc.DialInsecure(
 		context.Background(),
 		grpc.WithEndpoint("discovery:///"+srvName),
-		grpc.WithDiscovery(r),
+		grpc.WithDiscovery(discovery),
 	)
 	if err != nil {
 		return nil, err
@@ -36,8 +26,8 @@ func newConnWithEtcd(endpoints []string, srvName string) (*ggrpc.ClientConn, err
 }
 
 // trainer服务的rpc客户端的封装，便于其他微服务调用
-func NewTrainerClient(endpoints []string) (client trainerApi.TrainerServiceClient, close func(), err error) {
-	conn, err := newConnWithEtcd(endpoints, "trainer")
+func NewTrainerClient(discovery registry.Discovery) (client trainerApi.TrainerServiceClient, close func(), err error) {
+	conn, err := NewGrpcClientConn(discovery, "trainer")
 	if err != nil {
 		return nil, func() {}, err
 	}
@@ -49,8 +39,8 @@ func NewTrainerClient(endpoints []string) (client trainerApi.TrainerServiceClien
 }
 
 // user服务的grpc客户端
-func NewUserClient(endpoints []string) (client userApi.UserServiceClient, close func(), err error) {
-	conn, err := newConnWithEtcd(endpoints, "user")
+func NewUserClient(discovery registry.Discovery) (client userApi.UserServiceClient, close func(), err error) {
+	conn, err := NewGrpcClientConn(discovery, "user")
 	if err != nil {
 		return nil, func() {}, err
 	}
@@ -62,8 +52,8 @@ func NewUserClient(endpoints []string) (client userApi.UserServiceClient, close 
 }
 
 // user服务的grpc客户端
-func NewTrainingClient(endpoints []string) (client trainingApi.TrainingServiceClient, close func(), err error) {
-	conn, err := newConnWithEtcd(endpoints, "training")
+func NewTrainingClient(discovery registry.Discovery) (client trainingApi.TrainingServiceClient, close func(), err error) {
+	conn, err := NewGrpcClientConn(discovery, "training")
 	if err != nil {
 		return nil, func() {}, err
 	}

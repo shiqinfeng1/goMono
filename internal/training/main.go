@@ -5,13 +5,13 @@ import (
 	"os"
 
 	"github.com/go-kratos/kratos/v2"
-	"github.com/go-kratos/kratos/v2/config"
+	kcfg "github.com/go-kratos/kratos/v2/config"
 	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/http"
-	cfgsource "github.com/shiqinfeng1/goMono/internal/common/config"
+	"github.com/shiqinfeng1/goMono/internal/common/config"
+	conf "github.com/shiqinfeng1/goMono/internal/common/config/training"
 	"github.com/shiqinfeng1/goMono/internal/common/log"
-	"github.com/shiqinfeng1/goMono/internal/common/trace"
-	"github.com/shiqinfeng1/goMono/internal/training/conf"
+	"github.com/shiqinfeng1/goMono/internal/common/types"
 	_ "go.uber.org/automaxprocs"
 )
 
@@ -20,17 +20,22 @@ var (
 	Name    = "trainer"     // Name is the name of the compiled software.
 	Version string          // Version is the version of the compiled software.
 	ID, _   = os.Hostname() // 主机信息
-	BootCfg conf.Bootstrap  // 应用配置参数
+	srvCfg  conf.Server     // 应用配置参数
+	pubCfg  config.Public
 )
 
 func init() {
-	c := cfgsource.Bootstrap("trainer.yaml")
-	if err := c.Scan(&BootCfg); err != nil {
+	c1 := config.Bootstrap("trainer.yaml")
+	if err := c1.Scan(&srvCfg); err != nil {
+		panic(err)
+	}
+	c2 := config.Bootstrap("public.yaml")
+	if err := c2.Scan(&pubCfg); err != nil {
 		panic(err)
 	}
 
 	// 这里添加监听需哟啊动态更新的字段
-	if err := c.Watch("log.level", func(key string, value config.Value) {
+	if err := c2.Watch("log.level", func(key string, value kcfg.Value) {
 		if key == "log.level" {
 			lvl, _ := value.String()
 			log.SetLevel(lvl)
@@ -62,10 +67,21 @@ func main() {
 	//   -p 4318:4318 \
 	//   jaegertracing/all-in-one:latest
 	ctx := context.Background()
-	logger := log.New(ID, Name, Version, BootCfg.Log.Level, BootCfg.Log.Endpoint)
-	tp := trace.New(ctx, Name, BootCfg.Trace.Endpoint)
-
-	app, cleanup, err := wireApp(BootCfg.Server, BootCfg.Adapter, BootCfg.Auth, logger, tp)
+	svcInfo := &types.SrvInfo{
+		ID:      ID,
+		Name:    Name,
+		Version: Version,
+	}
+	app, cleanup, err := wireApp(
+		ctx,
+		svcInfo,
+		pubCfg.Discovery,
+		pubCfg.Log,
+		pubCfg.Trace,
+		pubCfg.Adapter,
+		srvCfg.Http,
+		srvCfg.Auth,
+	)
 	if err != nil {
 		panic(err)
 	}

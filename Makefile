@@ -8,8 +8,10 @@ ifeq ($(GOHOSTOS), windows)
 	#Git_Bash= $(subst cmd\,bin\bash.exe,$(dir $(shell where git)))
 	Git_Bash=$(subst \,/,$(subst cmd\,bin\bash.exe,$(dir $(shell where git))))
 	API_PROTO_FILES=$(shell $(Git_Bash) -c "find api -name *.proto")
+	INTERNAL_PROTO_FILES=$(shell $(Git_Bash) -c "find internal/common/config -name *.proto")
 else 
 	API_PROTO_FILES=$(shell find api -name *.proto)
+	INTERNAL_PROTO_FILES=$(shell find internal/common/config -name *.proto)
 	ifeq ($(GOHOSTOS), darwin)
 		configCmd=xargs -I F sh -c 'cd F && echo && $(MAKE) config'
 		wireCmd=xargs -I F sh -c 'cd F && echo && $(MAKE) wire'
@@ -34,8 +36,13 @@ init:
 .PHONY: config
 # generate internal proto
 config:
-	find internal  -mindepth 1 -maxdepth 1 | grep -v common | $(configCmd)
-	
+	for var in $(INTERNAL_PROTO_FILES); do \
+        protoc --proto_path=./internal/common/config \
+	       --proto_path=./third_party \
+ 	       --go_out=paths=source_relative:./internal/common/config \
+	       $$var; \
+    done
+
 .PHONY: api
 # generate api proto
 api:

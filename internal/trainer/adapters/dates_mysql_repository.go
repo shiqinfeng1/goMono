@@ -6,8 +6,8 @@ import (
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/jmoiron/sqlx"
+	"github.com/shiqinfeng1/goMono/internal/common/config"
 	"github.com/shiqinfeng1/goMono/internal/trainer/app/query"
-	"github.com/shiqinfeng1/goMono/internal/trainer/conf"
 	"github.com/shiqinfeng1/goMono/internal/trainer/domain/hour"
 )
 
@@ -29,8 +29,8 @@ type DatesMysqlRepo struct {
 	log         *log.Helper
 }
 
-func NewDatesMysqlRepo(data *conf.Adapter, logger log.Logger) query.QueryRepository {
-	db, err := sqlx.Connect(data.Database.Driver, data.Database.Source)
+func NewDatesMysqlRepo(pubCfg *config.Adapter, logger log.Logger) query.QueryRepository {
+	db, err := sqlx.Connect(pubCfg.Database.Driver, pubCfg.Database.Source)
 	if err != nil {
 		return nil
 	}

@@ -2,7 +2,7 @@ package ports
 
 import (
 	v1 "github.com/shiqinfeng1/goMono/api/trainer/v1"
-	"github.com/shiqinfeng1/goMono/internal/trainer/conf"
+	conf "github.com/shiqinfeng1/goMono/internal/common/config/trainer"
 	"github.com/shiqinfeng1/goMono/internal/trainer/service"
 
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
@@ -10,20 +10,20 @@ import (
 )
 
 // NewGRPCServer new a gRPC server.
-func NewGRPCServer(c *conf.Server, trainer service.GrpcService) *grpc.Server {
+func NewGRPCServer(c *conf.GRPC, trainer service.GrpcService) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),
 		),
 	}
-	if c.Grpc.Network != "" {
-		opts = append(opts, grpc.Network(c.Grpc.Network))
+	if c.Network != "" {
+		opts = append(opts, grpc.Network(c.Network))
 	}
-	if c.Grpc.Addr != "" {
-		opts = append(opts, grpc.Address(c.Grpc.Addr))
+	if c.Addr != "" {
+		opts = append(opts, grpc.Address(c.Addr))
 	}
-	if c.Grpc.Timeout != nil {
-		opts = append(opts, grpc.Timeout(c.Grpc.Timeout.AsDuration()))
+	if c.Timeout != nil {
+		opts = append(opts, grpc.Timeout(c.Timeout.AsDuration()))
 	}
 	srv := grpc.NewServer(opts...)
 	v1.RegisterTrainerServiceServer(srv, trainer)

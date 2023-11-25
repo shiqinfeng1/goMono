@@ -2,8 +2,6 @@ package app
 
 import (
 	"github.com/go-kratos/kratos/v2/log"
-	trainer "github.com/shiqinfeng1/goMono/api/trainer/v1"
-	user "github.com/shiqinfeng1/goMono/api/user/v1"
 	"github.com/shiqinfeng1/goMono/internal/common/metrics"
 	"github.com/shiqinfeng1/goMono/internal/training/adapters"
 	"github.com/shiqinfeng1/goMono/internal/training/app/command"
@@ -32,9 +30,7 @@ type Queries struct {
 	TrainingForUser query.TrainingForUserHandler
 }
 
-func NewApplication(logger log.Logger, repo training.Repository, trainerClient trainer.TrainerServiceClient, userClient user.UserServiceClient) Application {
-	trainerGrpc := adapters.NewTrainerGrpc(trainerClient)
-	userGrpc := adapters.NewUserGrpc(userClient)
+func NewApplication(logger log.Logger, repo training.Repository, trainerGrpc *adapters.TrainerGrpc, userGrpc *adapters.UserGrpc) Application {
 	return newApplication(logger, repo, trainerGrpc, userGrpc)
 
 }

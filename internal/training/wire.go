@@ -6,21 +6,37 @@
 package main
 
 import (
-	"github.com/shiqinfeng1/goMono/internal/common/grpc"
-	"github.com/shiqinfeng1/goMono/internal/common/log"
-	"github.com/shiqinfeng1/goMono/internal/common/trace"
-	"github.com/shiqinfeng1/goMono/internal/training/adapters"
-	"github.com/shiqinfeng1/goMono/internal/training/app"
-	"github.com/shiqinfeng1/goMono/internal/training/conf"
-	"github.com/shiqinfeng1/goMono/internal/training/ports"
-	"github.com/shiqinfeng1/goMono/internal/training/service"
+	"context"
 
 	"github.com/go-kratos/kratos/v2"
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
+	"github.com/shiqinfeng1/goMono/internal/common/config"
+	"github.com/shiqinfeng1/goMono/internal/common/config/training"
+	"github.com/shiqinfeng1/goMono/internal/common/log"
+	"github.com/shiqinfeng1/goMono/internal/common/trace"
+	"github.com/shiqinfeng1/goMono/internal/common/types"
+	"github.com/shiqinfeng1/goMono/internal/training/adapters"
+	"github.com/shiqinfeng1/goMono/internal/training/app"
+	"github.com/shiqinfeng1/goMono/internal/training/ports"
+	"github.com/shiqinfeng1/goMono/internal/training/service"
 )
 
 // wireApp init kratos application.
-func wireApp(svcID,svcName, svcVer string,*conf.Server, *conf.Adapter, *conf.Auth, *conf.Log, *conf.Trace) (*kratos.App, func(), error) {
-	panic(wire.Build(grpc.ProviderSet, log.ProviderSet, trace.ProviderSet, app.ProviderSet, ports.ProviderSet, adapters.ProviderSet, service.ProviderSet, newApp))
+func wireApp(
+	context.Context,
+	*types.SrvInfo,
+	*config.Discovery,
+	*config.Log,
+	*config.Trace,
+	*config.Adapter,
+	*training.HTTP,
+	*training.Auth) (*kratos.App, func(), error) {
+	panic(wire.Build(
+		log.ProviderSet,
+		trace.ProviderSet,
+		adapters.ProviderSet,
+		app.ProviderSet,
+		ports.ProviderSet,
+		service.ProviderSet,
+		newApp))
 }

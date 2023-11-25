@@ -9,7 +9,7 @@ import (
 	"github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
-	"github.com/shiqinfeng1/goMono/internal/trainer/conf"
+	"github.com/shiqinfeng1/goMono/internal/common/config"
 	"github.com/shiqinfeng1/goMono/internal/trainer/domain/hour"
 	"go.uber.org/multierr"
 )
@@ -27,8 +27,8 @@ type HourRepo struct {
 }
 
 // NewTrainingRepo .
-func NewHourRepo(data *conf.Adapter, logger log.Logger) hour.CmdRepo {
-	db, err := sqlx.Connect(data.Database.Driver, data.Database.Source)
+func NewHourRepo(adpr *config.Adapter, logger log.Logger) hour.CmdRepo {
+	db, err := sqlx.Connect(adpr.Database.Driver, adpr.Database.Source)
 	if err != nil {
 		return nil
 	}

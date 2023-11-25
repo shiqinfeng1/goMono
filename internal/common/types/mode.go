@@ -1,4 +1,4 @@
-package vars
+package types
 
 import (
 	"fmt"
@@ -41,7 +41,7 @@ func (m Mode) Is(expect Mode) bool {
 	return m == expect
 }
 func (m Mode) ErrInvaild() error {
-	return errors.New(fmt.Sprintf("mode(%s) is invalid, not in(%v)", m.s, modeValues))
+	return errors.New(fmt.Sprintf("env.mode=%s is invalid, not in %v", m.s, modeValues))
 }
 func NewModeFromString(modeStr string) (Mode, error) {
 	for _, mode := range modeValues {

@@ -1,0 +1,25 @@
+syntax = "proto3";
+package kratos.config.trainer;
+
+option go_package = "github.com/shiqinfeng1/goMono/internal/common/config/trainer;trainer";
+import "google/protobuf/duration.proto";
+
+message Server {
+  HTTP http = 1;
+  GRPC grpc = 2;
+  Auth auth = 3;
+}
+message HTTP {
+  string network = 1;
+  string addr = 2;
+  google.protobuf.Duration timeout = 3;
+}
+message GRPC {
+  string network = 1;
+  string addr = 2;
+  google.protobuf.Duration timeout = 3;
+}
+message Auth {
+  string service_key = 1;
+  string api_key = 2;
+}

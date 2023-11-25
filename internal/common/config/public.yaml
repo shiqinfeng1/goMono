@@ -1,18 +1,23 @@
-all:
-  server:
-    http:
-      addr: 0.0.0.0:8000
-      timeout: 1s
-    grpc:
-      addr: 0.0.0.0:9000
-      timeout: 1s
-  data:
+
+public:
+  adapter:
     database:
       driver: mysql
       source: root:root@tcp(127.0.0.1:23306)/test
     redis:
+      network: 
       addr: 127.0.0.1:26379
       read_timeout: 0.2s
       write_timeout: 0.2s
   log:
     level: debug
+
+  registry: 
+    addrs:
+      - registry:8000
+  trace:
+    endpoint: 127.0.0.1:2379
+
+  discovery:
+    endpoints:
+      - discovery:2379

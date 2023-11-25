@@ -14,7 +14,7 @@ import (
 	jwt2 "github.com/golang-jwt/jwt/v4"
 	"github.com/gorilla/handlers"
 	v1 "github.com/shiqinfeng1/goMono/api/training/v1"
-	"github.com/shiqinfeng1/goMono/internal/training/conf"
+	conf "github.com/shiqinfeng1/goMono/internal/common/config/training"
 	"github.com/shiqinfeng1/goMono/internal/training/service"
 	"go.opentelemetry.io/otel/sdk/trace"
 )
@@ -33,7 +33,7 @@ func NewWhiteListMatcher() selector.MatchFunc {
 }
 
 // NewHTTPServer new an HTTP server.
-func NewHTTPServer(c *conf.Server, ac *conf.Auth, logger log.Logger, tp *trace.TracerProvider, s *service.HttpService) *http.Server {
+func NewHTTPServer(c *conf.HTTP, ac *conf.Auth, logger log.Logger, tp *trace.TracerProvider, s *service.HttpService) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
@@ -59,14 +59,14 @@ func NewHTTPServer(c *conf.Server, ac *conf.Auth, logger log.Logger, tp *trace.T
 			handlers.AllowedOrigins([]string{"*"}),
 		)),
 	}
-	if c.Http.Network != "" {
-		opts = append(opts, http.Network(c.Http.Network))
+	if c.Network != "" {
+		opts = append(opts, http.Network(c.Network))
 	}
-	if c.Http.Addr != "" {
-		opts = append(opts, http.Address(c.Http.Addr))
+	if c.Addr != "" {
+		opts = append(opts, http.Address(c.Addr))
 	}
-	if c.Http.Timeout != nil {
-		opts = append(opts, http.Timeout(c.Http.Timeout.AsDuration()))
+	if c.Timeout != nil {
+		opts = append(opts, http.Timeout(c.Timeout.AsDuration()))
 	}
 	srv := http.NewServer(opts...)
 	h := openapiv2.NewHandler()

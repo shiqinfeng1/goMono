@@ -1,16 +1,16 @@
 syntax = "proto3";
-package kratos.api;
+package kratos.config.public;
 
-option go_package = "github.com/shiqinfeng1/goMono/internal/trainer/conf;conf";
+option go_package = "github.com/shiqinfeng1/goMono/internal/common/config;config";
 
 import "google/protobuf/duration.proto";
 
-message Bootstrap {
-  Server server = 1;
-  Adapter adapter = 2;
-  Auth auth = 3;
-  Trace trace = 4;
-  Log log = 5;
+message Public{
+  Log log = 1;
+  Trace trace = 2;
+  Registry registry = 3;
+  Discovery discovery = 4;
+  Adapter adapter = 5;
 }
 message Log {
     string level = 1;
@@ -19,21 +19,12 @@ message Log {
 message Trace {
     string endpoint = 1;
 }
-message Server {
-  message HTTP {
-    string network = 1;
-    string addr = 2;
-    google.protobuf.Duration timeout = 3;
-  }
-  message GRPC {
-    string network = 1;
-    string addr = 2;
-    google.protobuf.Duration timeout = 3;
-  }
-  HTTP http = 1;
-  GRPC grpc = 2;
+message Registry {
+    repeated string addrs = 1;
 }
-
+message Discovery {
+    repeated string endpoints = 1;
+}
 message Adapter {
   message Database {
     string driver = 1;
@@ -51,9 +42,4 @@ message Adapter {
   Database database = 1;
   Redis redis = 2;
   Registry registry = 3;
-}
-
-message Auth {
-  string service_key = 1;
-  string api_key = 2;
 }

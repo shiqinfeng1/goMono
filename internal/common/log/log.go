@@ -7,12 +7,15 @@ import (
 	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/rs/zerolog"
+	"github.com/shiqinfeng1/goMono/internal/common/config"
+	"github.com/shiqinfeng1/goMono/internal/common/types"
 )
 
 type kloggerWrap struct {
-	l                      klog.Logger
-	svcID, svcName, svcVer string
-	lvl                    zerolog.Level
+	l        klog.Logger
+	svcInfo  *types.SrvInfo
+	endpoint string
+	lvl      zerolog.Level
 }
 
 func (k *kloggerWrap) Log(level klog.Level, keyvals ...interface{}) error {
@@ -22,31 +25,29 @@ func (k *kloggerWrap) Log(level klog.Level, keyvals ...interface{}) error {
 var once sync.Once
 var klogger *kloggerWrap
 
-func newKLogger(svcID, svcName, svcVer string, lvl zerolog.Level, endpoint ...string) klog.Logger {
-	zl := NewZeroLogger(svcID, svcName, lvl)
+func newKLogger(srvInfo *types.SrvInfo, lvl zerolog.Level, endpoint string) klog.Logger {
+	zl := newZeroLogger(srvInfo.ID, srvInfo.Name, lvl, endpoint)
 	zlogger := zlog.NewLogger(zl)
 	return klog.With(zlogger,
-		"svc.id", svcID,
-		"svc.name", svcName,
-		"svc.version", svcVer,
+		"svc.id", srvInfo.ID,
+		"svc.name", srvInfo.Name,
+		"svc.version", srvInfo.Version,
 		"trace.id", tracing.TraceID(),
 		"span.id", tracing.SpanID(),
 	)
 }
 
 // 全局初始化一次
-func New(svcID, svcName, svcVer string, lvlStr string, endpoint ...string) klog.Logger {
+func New(svcInfo *types.SrvInfo, log *config.Log) klog.Logger {
 	once.Do(func() {
-		lvl, err := zerolog.ParseLevel(lvlStr)
+		lvl, err := zerolog.ParseLevel(log.Level)
 		if err != nil {
 			lvl = zerolog.DebugLevel
 		}
 		klogger = &kloggerWrap{
-			svcID:   svcID,
-			svcName: svcName,
-			svcVer:  svcVer,
+			svcInfo: svcInfo,
 			lvl:     lvl,
-			l:       newKLogger(svcID, svcName, svcVer, lvl, endpoint...),
+			l:       newKLogger(svcInfo, lvl, log.Endpoint),
 		}
 	})
 	return klogger
@@ -60,8 +61,8 @@ func SetLevel(lvlStr string) {
 	if err != nil {
 		return
 	}
-	// 因为zerolog设置level后会返回一个新的logger，无法修改原logger的level，因此对于新的level直接new一个新的
+	// 因为zerolog设置level后会返回一个新的logger，导致无法修改原logger的level，因此对于新的level直接new一个新的
 	if klogger.lvl != lvl {
-		klogger.l = newKLogger(klogger.svcID, klogger.svcName, klogger.svcVer, lvl)
+		klogger.l = newKLogger(klogger.svcInfo, lvl, klogger.endpoint)
 	}
 }

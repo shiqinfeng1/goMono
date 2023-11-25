@@ -7,14 +7,17 @@
 package main
 
 import (
+	"context"
 	"github.com/go-kratos/kratos/v2"
-	"github.com/go-kratos/kratos/v2/log"
+	"github.com/shiqinfeng1/goMono/internal/common/config"
+	"github.com/shiqinfeng1/goMono/internal/common/config/training"
+	"github.com/shiqinfeng1/goMono/internal/common/log"
+	"github.com/shiqinfeng1/goMono/internal/common/trace"
+	"github.com/shiqinfeng1/goMono/internal/common/types"
 	"github.com/shiqinfeng1/goMono/internal/training/adapters"
 	"github.com/shiqinfeng1/goMono/internal/training/app"
-	"github.com/shiqinfeng1/goMono/internal/training/conf"
 	"github.com/shiqinfeng1/goMono/internal/training/ports"
 	"github.com/shiqinfeng1/goMono/internal/training/service"
-	"go.opentelemetry.io/otel/sdk/trace"
 )
 
 import (
@@ -24,23 +27,16 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(server *conf.Server, tracerProvider *trace.TracerProvider, adapter *conf.Adapter, auth *conf.Auth, logger log.Logger) (*kratos.App, func(), error) {
+func wireApp(contextContext context.Context, srvInfo *types.SrvInfo, discovery *config.Discovery, configLog *config.Log, configTrace *config.Trace, adapter *config.Adapter, http *training.HTTP, auth *training.Auth) (*kratos.App, func(), error) {
+	logger := log.New(srvInfo, configLog)
+	tracerProvider := trace.New(contextContext, srvInfo, configTrace)
 	repository := adapters.NewTrainingRepo(adapter, logger)
-	trainerServiceClient, cleanup, err := adapters.NewTrainerClient(adapter)
-	if err != nil {
-		return nil, nil, err
-	}
-	userServiceClient, cleanup2, err := adapters.NewUserClient(adapter, logger)
-	if err != nil {
-		cleanup()
-		return nil, nil, err
-	}
-	application := app.NewApplication(logger, repository, trainerServiceClient, userServiceClient)
+	trainerGrpc := adapters.NewTrainerGrpc(discovery)
+	userGrpc := adapters.NewUserGrpc(discovery)
+	application := app.NewApplication(logger, repository, trainerGrpc, userGrpc)
 	httpService := service.NewHttpService(application)
-	httpServer := ports.NewHTTPServer(server, auth, logger, tracerProvider, httpService)
-	kratosApp := newApp(logger, httpServer)
+	server := ports.NewHTTPServer(http, auth, logger, tracerProvider, httpService)
+	kratosApp := newApp(logger, server)
 	return kratosApp, func() {
-		cleanup2()
-		cleanup()
 	}, nil
 }

@@ -13,7 +13,7 @@ import (
 	"github.com/fluent/fluent-logger-golang/fluent"
 	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/rs/zerolog"
-	"github.com/shiqinfeng1/goMono/internal/common/vars"
+	"github.com/shiqinfeng1/goMono/internal/common/types"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
@@ -102,12 +102,10 @@ func (x *fluentWriteSyncer) Write(data []byte) (n int, err error) {
 }
 
 // zerolog的日志监控输出
-func newMonitorWriter(endpoint ...string) io.Writer {
+func newMonitorWriter(endpoint string) io.Writer {
 	// EFK: Elasticsearch + Fluentd + Kibana
 	var addr string
-	if len(endpoint) != 0 {
-		addr = endpoint[0]
-	} else {
+	if endpoint == "" {
 		addr = "tcp://127.0.0.1:24224"
 	}
 	logger, err := newFluentWriteSyncer(addr)
@@ -118,24 +116,24 @@ func newMonitorWriter(endpoint ...string) io.Writer {
 }
 
 // 生成一个zero的日志器，支持输出到屏幕、日志文件、远端日志服务
-func NewZeroLogger(svcID, svcName string, lvl zerolog.Level, endpoint ...string) *zerolog.Logger {
+func newZeroLogger(svcID, svcName string, lvl zerolog.Level, endpoint string) *zerolog.Logger {
 	zerolog.TimeFieldFormat = timeFormat
-	m, _ := vars.NewModeFromString(os.Getenv("MODE"))
+	m, _ := types.NewModeFromString(os.Getenv("MODE"))
 	if !m.IsValid() {
 		panic(m.ErrInvaild())
 	}
 	fileName := svcID + "-" + svcName
 	var l zerolog.Logger
-	if m.Is(vars.ModeDevelop) {
+	if m.Is(types.ModeDevelop) {
 		multi := zerolog.MultiLevelWriter(newConsoleWriter(), newFileWriter(fileName))
 		l = zerolog.New(multi).With().Timestamp().Caller().Stack().Logger().Level(lvl)
 	}
-	if m.Is(vars.ModeTest) {
-		multi := zerolog.MultiLevelWriter(newFileWriter(fileName), newMonitorWriter(endpoint...))
+	if m.Is(types.ModeTest) {
+		multi := zerolog.MultiLevelWriter(newFileWriter(fileName), newMonitorWriter(endpoint))
 		l = zerolog.New(multi).With().Timestamp().Caller().Stack().Logger().Level(lvl)
 	}
-	if m.Is(vars.ModeProduct) {
-		multi := zerolog.MultiLevelWriter(newFileWriter(fileName), newMonitorWriter(endpoint...))
+	if m.Is(types.ModeProduct) {
+		multi := zerolog.MultiLevelWriter(newFileWriter(fileName), newMonitorWriter(endpoint))
 		l = zerolog.New(multi).With().Timestamp().Logger().Level(lvl)
 	}
 	return &l

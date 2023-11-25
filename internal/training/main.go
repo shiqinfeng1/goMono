@@ -25,24 +25,18 @@ var (
 )
 
 func init() {
-	c1 := config.Bootstrap("trainer.yaml")
-	if err := c1.Scan(&srvCfg); err != nil {
-		panic(err)
-	}
-	c2 := config.Bootstrap("public.yaml")
-	if err := c2.Scan(&pubCfg); err != nil {
-		panic(err)
-	}
-
-	// 这里添加监听需哟啊动态更新的字段
-	if err := c2.Watch("log.level", func(key string, value kcfg.Value) {
-		if key == "log.level" {
+	onChanges := map[string]func(key string, value kcfg.Value){
+		"log.level": func(key string, value kcfg.Value) {
+			_ = key
 			lvl, _ := value.String()
-			log.SetLevel(lvl)
-		}
-	}); err != nil {
-		panic(err)
+			log.SetLevel(lvl) // 动态更新level等级
+		},
 	}
+	config.Bootstrap(
+		[]string{"public.yaml", "training.yaml"},
+		[]interface{}{&pubCfg, &srvCfg},
+		onChanges,
+	)
 }
 
 func newApp(logger klog.Logger, hs *http.Server) *kratos.App {

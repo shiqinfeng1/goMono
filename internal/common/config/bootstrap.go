@@ -12,6 +12,7 @@ import (
 
 var (
 	ErrFileNotExist = func(f string) error { return errors.Newf("config file not exist:%v", f) }
+	ErrNoCfgSource  = errors.Newf("no found config source")
 )
 
 func fileExists(filename string) bool {
@@ -24,7 +25,7 @@ func Bootstrap(cfgFile []string, scanTarget []interface{}, onChanges map[string]
 	if !runMode.IsValid() {
 		panic(runMode.ErrInvaild())
 	}
-	s := func() []kcfg.Source {
+	source := func() []kcfg.Source {
 		ks := make([]kcfg.Source, 0)
 		for _, f := range cfgFile {
 			f := filepath.Join("./config", f)
@@ -40,6 +41,9 @@ func Bootstrap(cfgFile []string, scanTarget []interface{}, onChanges map[string]
 					ks = append(ks, file.NewSource(f))
 				}
 				ks = append(ks, file.NewSource(f))
+				if len(ks) == 0 {
+					panic(ErrNoCfgSource)
+				}
 			case runMode.Is(types.ModeDevelop):
 				if !fileExists(f) {
 					panic(ErrFileNotExist(f))
@@ -49,7 +53,7 @@ func Bootstrap(cfgFile []string, scanTarget []interface{}, onChanges map[string]
 		}
 		return ks
 	}()
-	c := kcfg.New(kcfg.WithSource(s...))
+	c := kcfg.New(kcfg.WithSource(source...))
 	if err := c.Load(); err != nil {
 		panic(err)
 	}

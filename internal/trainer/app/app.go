@@ -14,9 +14,8 @@ type Application struct {
 }
 
 type Commands struct {
-	CancelTraining   command.CancelTrainingHandler
-	ScheduleTraining command.ScheduleTrainingHandler
-
+	CancelTraining       command.CancelTrainingHandler
+	ScheduleTraining     command.ScheduleTrainingHandler
 	MakeHoursAvailable   command.MakeHoursAvailableHandler
 	MakeHoursUnavailable command.MakeHoursUnavailableHandler
 }

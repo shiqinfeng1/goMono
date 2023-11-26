@@ -11,6 +11,13 @@ public:
       write_timeout: 0.2s
   log:
     level: debug
+    monitor:
+      endpoint: tcp://127.0.0.1:23224
+    file:
+      max_size:    100  # megabytes
+      max_backups: 7    # file numbers
+      max_age:     28   # days
+      compress:    true
 
   registry: 
     addrs:

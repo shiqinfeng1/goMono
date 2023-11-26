@@ -2,8 +2,7 @@ package auth
 
 import (
 	"context"
-
-	commonerrors "github.com/shiqinfeng1/goMono/internal/common/errors"
+	"errors"
 )
 
 type User struct {
@@ -23,7 +22,7 @@ const (
 var (
 	// if we expect that the user of the function may be interested with concrete error,
 	// it's a good idea to provide variable with this error
-	NoUserInContextError = commonerrors.NewAuthorizationError("no user in context", "no-user-found")
+	ErrNoUserInContext = errors.New("no user in context")
 )
 
 func UserFromCtx(ctx context.Context) (User, error) {
@@ -32,5 +31,5 @@ func UserFromCtx(ctx context.Context) (User, error) {
 		return u, nil
 	}
 
-	return User{}, NoUserInContextError
+	return User{}, ErrNoUserInContext
 }

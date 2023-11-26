@@ -13,8 +13,18 @@ message Public{
   Adapter adapter = 5;
 }
 message Log {
-    string level = 1;
-    string endpoint = 2;
+  string level = 1;
+  Monitor monitor = 2;
+  File file = 3;
+}
+message Monitor {
+  string endpoint = 1;
+}
+message File {
+  int32 max_size = 1;
+  int32 max_backups = 2;
+  int32 max_age = 3;
+  bool compress = 4;
 }
 message Trace {
     string endpoint = 1;

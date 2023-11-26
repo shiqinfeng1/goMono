@@ -1,7 +1,10 @@
 package log
 
 import (
+	"errors"
+	"fmt"
 	"sync"
+	"time"
 
 	zlog "github.com/go-kratos/kratos/contrib/log/zerolog/v2"
 	klog "github.com/go-kratos/kratos/v2/log"
@@ -11,22 +14,31 @@ import (
 	"github.com/shiqinfeng1/goMono/internal/common/types"
 )
 
+var (
+	ErrNotInitedLogger = errors.New("not initialized logger")
+	ErrInvalidLogLevel = func(err error) error { return fmt.Errorf("invalid log level:%w", err) }
+)
+
 type kloggerWrap struct {
-	l        klog.Logger
-	svcInfo  *types.SrvInfo
-	endpoint string
-	lvl      zerolog.Level
+	l       klog.Logger
+	svcInfo *types.SrvInfo
+	f       *config.File
+	m       *config.Monitor
+	lvl     zerolog.Level
 }
 
 func (k *kloggerWrap) Log(level klog.Level, keyvals ...interface{}) error {
 	return k.l.Log(level, keyvals)
 }
 
-var once sync.Once
-var klogger *kloggerWrap
+var (
+	once    sync.Once
+	klogger *kloggerWrap
+)
 
-func newKLogger(srvInfo *types.SrvInfo, lvl zerolog.Level, endpoint string) klog.Logger {
-	zl := newZeroLogger(srvInfo.ID, srvInfo.Name, lvl, endpoint)
+func newKLogger(srvInfo *types.SrvInfo, lvl zerolog.Level, fcfg *config.File, mcfg *config.Monitor) klog.Logger {
+	fileName := time.Now().Format(fmt.Sprintf("./log/%v-%v-20160102.log", srvInfo.Name, srvInfo.ID))
+	zl := newZeroLogger(fileName, lvl, fcfg, mcfg)
 	zlogger := zlog.NewLogger(zl)
 	return klog.With(zlogger,
 		"svc.id", srvInfo.ID,
@@ -47,22 +59,28 @@ func New(svcInfo *types.SrvInfo, log *config.Log) klog.Logger {
 		klogger = &kloggerWrap{
 			svcInfo: svcInfo,
 			lvl:     lvl,
-			l:       newKLogger(svcInfo, lvl, log.Endpoint),
+			f:       log.File,
+			m:       log.Monitor,
+			l:       newKLogger(svcInfo, lvl, log.File, log.Monitor),
 		}
 	})
 	return klogger
 }
 
-func SetLevel(lvlStr string) {
+func SetLevel(lvlStr string) error {
 	if klogger == nil {
-		return
+		return ErrNotInitedLogger
 	}
 	lvl, err := zerolog.ParseLevel(lvlStr)
 	if err != nil {
-		return
+		klogger.l.Log(klog.LevelError, "SetLevel", ErrInvalidLogLevel(err))
+		return ErrInvalidLogLevel(err)
 	}
 	// 因为zerolog设置level后会返回一个新的logger，导致无法修改原logger的level，因此对于新的level直接new一个新的
+	oldlvl := klogger.lvl
 	if klogger.lvl != lvl {
-		klogger.l = newKLogger(klogger.svcInfo, lvl, klogger.endpoint)
+		klogger.l = newKLogger(klogger.svcInfo, lvl, klogger.f, klogger.m)
 	}
+	klogger.l.Log(klog.LevelWarn, "SetLevel", fmt.Sprintf("change log level '%v' to '%v'", oldlvl, lvl))
+	return nil
 }

@@ -23,7 +23,6 @@ type makeHoursUnavailableHandler struct {
 func NewMakeHoursUnavailableHandler(
 	hourRepo hour.CmdRepo,
 	logger log.Logger,
-	metricsClient decorator.MetricsClient,
 ) MakeHoursUnavailableHandler {
 	if hourRepo == nil {
 		panic("hourRepo is nil")
@@ -32,7 +31,6 @@ func NewMakeHoursUnavailableHandler(
 	return decorator.ApplyCommandDecorators[MakeHoursUnavailable](
 		makeHoursUnavailableHandler{hourRepo: hourRepo},
 		logger,
-		metricsClient,
 	)
 }
 

@@ -9,12 +9,9 @@ import (
 )
 
 // 命令的装饰器。最外层是日志，其次是测量，最后才是业务命令
-func ApplyCommandDecorators[H any](handler CommandHandler[H], logger log.Logger, metricsClient MetricsClient) CommandHandler[H] {
+func ApplyCommandDecorators[H any](handler CommandHandler[H], logger log.Logger) CommandHandler[H] {
 	return commandLoggingDecorator[H]{
-		base: commandMetricsDecorator[H]{
-			base:   handler,
-			client: metricsClient,
-		},
+		base:   handler,
 		logger: logger,
 	}
 }

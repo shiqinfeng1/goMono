@@ -18,7 +18,6 @@ type allTrainingHandler struct {
 func NewAllTrainingHandler(
 	readModel AllTrainingReadModel,
 	logger log.Logger,
-	metricsClient decorator.MetricsClient,
 ) AllTrainingHandler {
 	if readModel == nil {
 		panic("nil readModel")
@@ -27,7 +26,6 @@ func NewAllTrainingHandler(
 	return decorator.ApplyQueryDecorators[AllTraining, []Training](
 		allTrainingHandler{readModel: readModel},
 		logger,
-		metricsClient,
 	)
 }
 

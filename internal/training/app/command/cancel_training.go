@@ -27,7 +27,6 @@ func NewCancelTrainingHandler(
 	userService UserService,
 	trainerService TrainerService,
 	logger log.Logger,
-	metricsClient decorator.MetricsClient,
 ) decorator.CommandHandler[CancelTraining] {
 	if repo == nil {
 		panic("nil repo")
@@ -42,7 +41,6 @@ func NewCancelTrainingHandler(
 	return decorator.ApplyCommandDecorators[CancelTraining](
 		cancelTrainingHandler{repo: repo, userService: userService, trainerService: trainerService},
 		logger,
-		metricsClient,
 	)
 }
 

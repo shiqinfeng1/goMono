@@ -23,7 +23,6 @@ type scheduleTrainingHandler struct {
 func NewScheduleTrainingHandler(
 	hourRepo hour.CmdRepo,
 	logger log.Logger,
-	metricsClient decorator.MetricsClient,
 ) ScheduleTrainingHandler {
 	if hourRepo == nil {
 		panic("nil hourRepo")
@@ -32,7 +31,6 @@ func NewScheduleTrainingHandler(
 	return decorator.ApplyCommandDecorators[ScheduleTraining](
 		scheduleTrainingHandler{hourRepo: hourRepo},
 		logger,
-		metricsClient,
 	)
 }
 

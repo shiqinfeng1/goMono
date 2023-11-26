@@ -2,7 +2,6 @@ package app
 
 import (
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/shiqinfeng1/goMono/internal/common/metrics"
 	"github.com/shiqinfeng1/goMono/internal/trainer/app/command"
 	"github.com/shiqinfeng1/goMono/internal/trainer/app/query"
 	"github.com/shiqinfeng1/goMono/internal/trainer/domain/hour"
@@ -31,18 +30,16 @@ func NewApplication(logger log.Logger, hourCmdRepo hour.CmdRepo, hourQueryRepo q
 
 func newApplication(logger log.Logger, hourCmdRepo hour.CmdRepo, hourQueryRepo query.QueryRepository) Application {
 
-	metricsClient := metrics.NoOp{}
-
 	return Application{
 		Commands: Commands{
-			CancelTraining:       command.NewCancelTrainingHandler(hourCmdRepo, logger, metricsClient),
-			ScheduleTraining:     command.NewScheduleTrainingHandler(hourCmdRepo, logger, metricsClient),
-			MakeHoursAvailable:   command.NewMakeHoursAvailableHandler(hourCmdRepo, logger, metricsClient),
-			MakeHoursUnavailable: command.NewMakeHoursUnavailableHandler(hourCmdRepo, logger, metricsClient),
+			CancelTraining:       command.NewCancelTrainingHandler(hourCmdRepo, logger),
+			ScheduleTraining:     command.NewScheduleTrainingHandler(hourCmdRepo, logger),
+			MakeHoursAvailable:   command.NewMakeHoursAvailableHandler(hourCmdRepo, logger),
+			MakeHoursUnavailable: command.NewMakeHoursUnavailableHandler(hourCmdRepo, logger),
 		},
 		Queries: Queries{
-			HourAvailability:      query.NewHourAvailabilityHandler(hourCmdRepo, logger, metricsClient),
-			TrainerAvailableHours: query.NewAvailableHoursHandler(hourQueryRepo, logger, metricsClient),
+			HourAvailability:      query.NewHourAvailabilityHandler(hourCmdRepo, logger),
+			TrainerAvailableHours: query.NewAvailableHoursHandler(hourQueryRepo, logger),
 		},
 	}
 }

@@ -27,7 +27,6 @@ type requestTrainingRescheduleHandler struct {
 func NewRequestTrainingRescheduleHandler(
 	repo training.Repository,
 	logger log.Logger,
-	metricsClient decorator.MetricsClient,
 ) RequestTrainingRescheduleHandler {
 	if repo == nil {
 		panic("nil repo service")
@@ -36,7 +35,6 @@ func NewRequestTrainingRescheduleHandler(
 	return decorator.ApplyCommandDecorators[RequestTrainingReschedule](
 		requestTrainingRescheduleHandler{repo: repo},
 		logger,
-		metricsClient,
 	)
 }
 

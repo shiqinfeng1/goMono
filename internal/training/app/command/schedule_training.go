@@ -33,7 +33,6 @@ func NewScheduleTrainingHandler(
 	userService UserService,
 	trainerService TrainerService,
 	logger log.Logger,
-	metricsClient decorator.MetricsClient,
 ) ScheduleTrainingHandler {
 	if repo == nil {
 		panic("nil repo")
@@ -48,7 +47,6 @@ func NewScheduleTrainingHandler(
 	return decorator.ApplyCommandDecorators[ScheduleTraining](
 		scheduleTrainingHandler{repo: repo, userService: userService, trainerService: trainerService},
 		logger,
-		metricsClient,
 	)
 }
 

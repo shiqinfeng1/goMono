@@ -8,6 +8,7 @@ require (
 	github.com/fluent/fluent-logger-golang v1.9.0
 	github.com/go-kratos/kratos/contrib/config/nacos/v2 v2.0.0-20231113102135-421dbc7dae0f
 	github.com/go-kratos/kratos/contrib/log/zerolog/v2 v2.0.0-20231116090954-1e4e37ad8735
+	github.com/go-kratos/kratos/contrib/metrics/prometheus/v2 v2.0.0-20231122041305-e84cddeabddb
 	github.com/go-kratos/kratos/contrib/registry/etcd/v2 v2.0.0-20231107125212-e38a364340c5
 	github.com/go-kratos/kratos/v2 v2.7.1
 	github.com/go-kratos/swagger-api v1.0.1
@@ -20,6 +21,7 @@ require (
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/nacos-group/nacos-sdk-go v1.1.4
 	github.com/pkg/errors v0.9.1
+	github.com/prometheus/client_golang v1.17.0
 	github.com/rs/zerolog v1.31.0
 	github.com/stretchr/testify v1.8.4
 	go.etcd.io/etcd/client/v3 v3.5.10
@@ -38,9 +40,11 @@ require (
 require (
 	cloud.google.com/go/compute v1.21.0 // indirect
 	github.com/aliyun/alibaba-cloud-sdk-go v1.61.18 // indirect
+	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 // indirect
 	github.com/buger/jsonparser v1.1.1 // indirect
 	github.com/cenkalti/backoff/v4 v4.2.1 // indirect
+	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/cockroachdb/logtags v0.0.0-20230118201751-21c54148d20b // indirect
 	github.com/cockroachdb/redact v1.1.5 // indirect
 	github.com/coreos/go-semver v0.3.0 // indirect
@@ -68,10 +72,14 @@ require (
 	github.com/kr/text v0.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/philhofer/fwd v1.1.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/prometheus/client_model v0.4.1-0.20230718164431-9a2bf3000d16 // indirect
+	github.com/prometheus/common v0.44.0 // indirect
+	github.com/prometheus/procfs v0.11.1 // indirect
 	github.com/rakyll/statik v0.1.7 // indirect
 	github.com/rogpeppe/go-internal v1.11.0 // indirect
 	github.com/tinylib/msgp v1.1.6 // indirect

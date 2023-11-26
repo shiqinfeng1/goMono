@@ -24,7 +24,6 @@ type hourAvailabilityHandler struct {
 func NewHourAvailabilityHandler(
 	hourRepo hour.CmdRepo,
 	logger log.Logger,
-	metricsClient decorator.MetricsClient,
 ) HourAvailabilityHandler {
 	if hourRepo == nil {
 		panic("nil hourRepo")
@@ -33,7 +32,6 @@ func NewHourAvailabilityHandler(
 	return decorator.ApplyQueryDecorators[HourAvailability, bool](
 		hourAvailabilityHandler{hourRepo: hourRepo},
 		logger,
-		metricsClient,
 	)
 }
 

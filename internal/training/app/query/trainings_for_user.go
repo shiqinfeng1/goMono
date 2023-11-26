@@ -21,7 +21,6 @@ type trainingForUserHandler struct {
 func NewTrainingForUserHandler(
 	readModel TrainingForUserReadModel,
 	logger log.Logger,
-	metricsClient decorator.MetricsClient,
 ) TrainingForUserHandler {
 	if readModel == nil {
 		panic("nil readModel")
@@ -30,7 +29,6 @@ func NewTrainingForUserHandler(
 	return decorator.ApplyQueryDecorators[TrainingForUser, []Training](
 		trainingForUserHandler{readModel: readModel},
 		logger,
-		metricsClient,
 	)
 }
 

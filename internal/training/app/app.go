@@ -2,7 +2,6 @@ package app
 
 import (
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/shiqinfeng1/goMono/internal/common/metrics"
 	"github.com/shiqinfeng1/goMono/internal/training/adapters"
 	"github.com/shiqinfeng1/goMono/internal/training/app/command"
 	"github.com/shiqinfeng1/goMono/internal/training/app/query"
@@ -41,21 +40,19 @@ func NewComponentTestApplication(logger log.Logger, repo training.Repository) Ap
 }
 func newApplication(logger log.Logger, repo training.Repository, trainerService command.TrainerService, userService command.UserService) Application {
 
-	metricsClient := metrics.NoOp{}
-
 	return Application{
 		Commands: Commands{
-			ApproveTrainingReschedule: command.NewApproveTrainingRescheduleHandler(repo, userService, trainerService, logger, metricsClient),
-			CancelTraining:            command.NewCancelTrainingHandler(repo, userService, trainerService, logger, metricsClient),
-			RejectTrainingReschedule:  command.NewRejectTrainingRescheduleHandler(repo, logger, metricsClient),
-			RescheduleTraining:        command.NewRescheduleTrainingHandler(repo, userService, trainerService, logger, metricsClient),
-			RequestTrainingReschedule: command.NewRequestTrainingRescheduleHandler(repo, logger, metricsClient),
-			ScheduleTraining:          command.NewScheduleTrainingHandler(repo, userService, trainerService, logger, metricsClient),
+			ApproveTrainingReschedule: command.NewApproveTrainingRescheduleHandler(repo, userService, trainerService, logger),
+			CancelTraining:            command.NewCancelTrainingHandler(repo, userService, trainerService, logger),
+			RejectTrainingReschedule:  command.NewRejectTrainingRescheduleHandler(repo, logger),
+			RescheduleTraining:        command.NewRescheduleTrainingHandler(repo, userService, trainerService, logger),
+			RequestTrainingReschedule: command.NewRequestTrainingRescheduleHandler(repo, logger),
+			ScheduleTraining:          command.NewScheduleTrainingHandler(repo, userService, trainerService, logger),
 		},
 		// todo: 读写分离后，最好不要使用同一个repo
 		Queries: Queries{
-			AllTraining:     query.NewAllTrainingHandler(repo, logger, metricsClient),
-			TrainingForUser: query.NewTrainingForUserHandler(repo, logger, metricsClient),
+			AllTraining:     query.NewAllTrainingHandler(repo, logger),
+			TrainingForUser: query.NewTrainingForUserHandler(repo, logger),
 		},
 	}
 }

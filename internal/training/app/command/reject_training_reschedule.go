@@ -22,7 +22,6 @@ type rejectTrainingRescheduleHandler struct {
 func NewRejectTrainingRescheduleHandler(
 	repo training.Repository,
 	logger log.Logger,
-	metricsClient decorator.MetricsClient,
 ) RejectTrainingRescheduleHandler {
 	if repo == nil {
 		panic("nil repo service")
@@ -31,7 +30,6 @@ func NewRejectTrainingRescheduleHandler(
 	return decorator.ApplyCommandDecorators[RejectTrainingReschedule](
 		rejectTrainingRescheduleHandler{repo: repo},
 		logger,
-		metricsClient,
 	)
 }
 

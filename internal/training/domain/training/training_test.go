@@ -99,9 +99,9 @@ func newExampleTrainingWithTime(t *testing.T, trainingTime time.Time) *training.
 	return tr
 }
 
-func newCanceledTraining(t *testing.T) *training.Training {
-	tr := newExampleTraining(t)
-	require.NoError(t, tr.Cancel())
+// func newCanceledTraining(t *testing.T) *training.Training {
+// 	tr := newExampleTraining(t)
+// 	require.NoError(t, tr.Cancel())
 
-	return tr
-}
+// 	return tr
+// }

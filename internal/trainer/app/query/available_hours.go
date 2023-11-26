@@ -24,12 +24,10 @@ type availableHoursHandler struct {
 func NewAvailableHoursHandler(
 	repo QueryRepository,
 	logger log.Logger,
-	metricsClient decorator.MetricsClient,
 ) AvailableHoursHandler {
 	return decorator.ApplyQueryDecorators[AvailableHours, Date](
 		availableHoursHandler{repo: repo},
 		logger,
-		metricsClient,
 	)
 }
 

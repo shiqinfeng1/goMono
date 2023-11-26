@@ -26,7 +26,6 @@ type cancelTrainingHandler struct {
 func NewCancelTrainingHandler(
 	hourRepo hour.CmdRepo,
 	logger log.Logger,
-	metricsClient decorator.MetricsClient,
 ) CancelTrainingHandler {
 	if hourRepo == nil {
 		panic("nil hourRepo")
@@ -35,7 +34,6 @@ func NewCancelTrainingHandler(
 	return decorator.ApplyCommandDecorators[CancelTraining](
 		cancelTrainingHandler{hourRepo: hourRepo},
 		logger,
-		metricsClient,
 	)
 }
 

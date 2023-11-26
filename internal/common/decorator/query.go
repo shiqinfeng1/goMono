@@ -6,12 +6,9 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 )
 
-func ApplyQueryDecorators[H any, R any](handler QueryHandler[H, R], logger log.Logger, metricsClient MetricsClient) QueryHandler[H, R] {
+func ApplyQueryDecorators[H any, R any](handler QueryHandler[H, R], logger log.Logger) QueryHandler[H, R] {
 	return queryLoggingDecorator[H, R]{
-		base: queryMetricsDecorator[H, R]{
-			base:   handler,
-			client: metricsClient,
-		},
+		base:   handler,
 		logger: logger,
 	}
 }

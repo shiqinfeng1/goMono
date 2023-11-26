@@ -6,8 +6,11 @@ option go_package = "github.com/shiqinfeng1/goMono/api/training/v1;v1";
 import "errors/errors.proto";
 
 enum TrainingErrorReason {
+  // 设置缺省错误码
   option (errors.default_code) = 500;
   
-  TRAINER_UNSPECIFIED = 0;
-  USER_NOT_FOUND = 1;
+  USER_NOT_FOUND = 0 [(errors.code) = 404];
+  USER_AUTH_FAIL = 1 [(errors.code) = 401];
+  INCORRECT_INPUT = 2  [(errors.code) = 400];
+  QUERY_FAIL = 3  [(errors.code) = 500];
 }

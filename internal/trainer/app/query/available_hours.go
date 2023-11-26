@@ -6,8 +6,8 @@ import (
 
 	"github.com/go-kratos/kratos/v2/log"
 
+	v1 "github.com/shiqinfeng1/goMono/api/trainer/v1"
 	"github.com/shiqinfeng1/goMono/internal/common/decorator"
-	"github.com/shiqinfeng1/goMono/internal/common/errors"
 )
 
 type AvailableHours struct {
@@ -46,7 +46,7 @@ type QueryRepository interface {
 func (h availableHoursHandler) Handle(ctx context.Context, query AvailableHours) (d Date, err error) {
 
 	if query.From.After(query.To) {
-		return Date{}, errors.NewIncorrectInputError("date-from-after-date-to", "Date from after date to")
+		return Date{}, v1.ErrorIncorrectInput("date from after date to")
 	}
 
 	return h.repo.AvailableHours(ctx, query.From, query.To)

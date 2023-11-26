@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-kratos/kratos/v2/log"
 
+	v1 "github.com/shiqinfeng1/goMono/api/trainer/v1"
 	"github.com/shiqinfeng1/goMono/internal/common/decorator"
 	"github.com/shiqinfeng1/goMono/internal/trainer/domain/hour"
 )
@@ -39,7 +40,7 @@ func NewHourAvailabilityHandler(
 func (h hourAvailabilityHandler) Handle(ctx context.Context, query HourAvailability) (bool, error) {
 	hour, err := h.hourRepo.GetHour(ctx, query.Hour)
 	if err != nil {
-		return false, err
+		return false, v1.ErrorQueryFail("query availability fail by %v", query.Hour).WithCause(err)
 	}
 
 	return hour.IsAvailable(), nil

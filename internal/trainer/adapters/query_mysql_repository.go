@@ -12,15 +12,15 @@ import (
 )
 
 type DateModel struct {
-	Date         time.Time   `firestore:"Date"`
-	HasFreeHours bool        `firestore:"HasFreeHours"`
-	Hours        []HourModel `firestore:"Hours"`
+	Date         time.Time   `db:"date"`
+	HasFreeHours bool        `db:"has_free_hours"`
+	Hours        []HourModel `db:"hours"`
 }
 
 type HourModel struct {
-	Available            bool      `firestore:"Available"`
-	HasTrainingScheduled bool      `firestore:"HasTrainingScheduled"`
-	Hour                 time.Time `firestore:"Hour"`
+	Available            bool      `db:"available"`
+	HasTrainingScheduled bool      `db:"has_training_scheduled"`
+	Hour                 time.Time `db:"hour"`
 }
 
 type DatesMysqlRepo struct {
@@ -35,7 +35,7 @@ func NewDatesMysqlRepo(pubCfg *config.Adapter, logger log.Logger) query.QueryRep
 		return nil
 	}
 	return &DatesMysqlRepo{
-		log: log.NewHelper(logger),
+		log: log.NewHelper(log.With(logger, "module", "trainer/adapters/query")),
 		db:  db,
 		hourFactory: hour.MustNewFactory(hour.FactoryConfig{
 			MaxWeeksInTheFutureToSet: 100,
@@ -45,9 +45,10 @@ func NewDatesMysqlRepo(pubCfg *config.Adapter, logger log.Logger) query.QueryRep
 	}
 }
 
+// 查询可用的Hour
 func (d DatesMysqlRepo) AvailableHours(ctx context.Context, from time.Time, to time.Time) (query.Date, error) {
 	date := DateModel{}
-	// date to Date
+	// todo：query date from db，then convert date to Date
 	qd := dateModelToApp(date)
 	return qd, nil
 }
@@ -61,7 +62,6 @@ func dateModelToApp(dm DateModel) query.Date {
 			Hour:                 h.Hour,
 		})
 	}
-
 	return query.Date{
 		Date:         dm.Date,
 		HasFreeHours: dm.HasFreeHours,

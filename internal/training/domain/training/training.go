@@ -4,8 +4,6 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-
-	commonErrors "github.com/shiqinfeng1/goMono/internal/common/errors"
 )
 
 // 领域层的核心数据结构
@@ -92,7 +90,7 @@ func (t Training) Time() time.Time {
 	return t.time
 }
 
-var ErrNoteTooLong = commonErrors.NewIncorrectInputError("Note too long", "note-too-long")
+var ErrNoteTooLong = errors.New("Note too long")
 
 func (t *Training) UpdateNotes(notes string) error {
 	if len(notes) > 1000 {

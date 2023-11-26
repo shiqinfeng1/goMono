@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
+	v1 "github.com/shiqinfeng1/goMono/api/trainer/v1"
 	"github.com/shiqinfeng1/goMono/internal/common/decorator"
-	"github.com/shiqinfeng1/goMono/internal/common/errors"
 	"github.com/shiqinfeng1/goMono/internal/trainer/domain/hour"
 )
 
@@ -36,17 +36,16 @@ func NewMakeHoursAvailableHandler(
 	)
 }
 
-func (c makeHoursAvailableHandler) Handle(ctx context.Context, cmd MakeHoursAvailable) error {
+func (h makeHoursAvailableHandler) Handle(ctx context.Context, cmd MakeHoursAvailable) error {
 	for _, hourToUpdate := range cmd.Hours {
-		if err := c.hourRepo.UpdateHour(ctx, hourToUpdate, func(h *hour.Hour) (*hour.Hour, error) {
-			if err := h.MakeAvailable(); err != nil {
+		if err := h.hourRepo.UpdateHour(ctx, hourToUpdate, func(hr *hour.Hour) (*hour.Hour, error) {
+			if err := hr.MakeAvailable(); err != nil {
 				return nil, err
 			}
-			return h, nil
+			return hr, nil
 		}); err != nil {
-			return errors.NewSlugError(err.Error(), "unable-to-update-availability")
+			return v1.ErrorUpdateAvailabilityFail("unable to enable availability").WithCause(err)
 		}
 	}
-
 	return nil
 }

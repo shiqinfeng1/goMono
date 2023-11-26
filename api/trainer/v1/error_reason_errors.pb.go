@@ -11,26 +11,74 @@ import (
 // is compatible with the kratos package it is being compiled against.
 const _ = errors.SupportPackageIsVersion1
 
-func IsTrainingUnspecified(err error) bool {
-	if err == nil {
-		return false
-	}
-	e := errors.FromError(err)
-	return e.Reason == TrainerErrorReason_TRAINING_UNSPECIFIED.String() && e.Code == 500
-}
-
-func ErrorTrainingUnspecified(format string, args ...interface{}) *errors.Error {
-	return errors.New(500, TrainerErrorReason_TRAINING_UNSPECIFIED.String(), fmt.Sprintf(format, args...))
-}
-
 func IsUserNotFound(err error) bool {
 	if err == nil {
 		return false
 	}
 	e := errors.FromError(err)
-	return e.Reason == TrainerErrorReason_USER_NOT_FOUND.String() && e.Code == 500
+	return e.Reason == TrainerErrorReason_USER_NOT_FOUND.String() && e.Code == 404
 }
 
 func ErrorUserNotFound(format string, args ...interface{}) *errors.Error {
-	return errors.New(500, TrainerErrorReason_USER_NOT_FOUND.String(), fmt.Sprintf(format, args...))
+	return errors.New(404, TrainerErrorReason_USER_NOT_FOUND.String(), fmt.Sprintf(format, args...))
+}
+
+func IsUserAuthFail(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == TrainerErrorReason_USER_AUTH_FAIL.String() && e.Code == 401
+}
+
+func ErrorUserAuthFail(format string, args ...interface{}) *errors.Error {
+	return errors.New(401, TrainerErrorReason_USER_AUTH_FAIL.String(), fmt.Sprintf(format, args...))
+}
+
+func IsIncorrectInput(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == TrainerErrorReason_INCORRECT_INPUT.String() && e.Code == 400
+}
+
+func ErrorIncorrectInput(format string, args ...interface{}) *errors.Error {
+	return errors.New(400, TrainerErrorReason_INCORRECT_INPUT.String(), fmt.Sprintf(format, args...))
+}
+
+func IsQueryFail(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == TrainerErrorReason_QUERY_FAIL.String() && e.Code == 500
+}
+
+func ErrorQueryFail(format string, args ...interface{}) *errors.Error {
+	return errors.New(500, TrainerErrorReason_QUERY_FAIL.String(), fmt.Sprintf(format, args...))
+}
+
+func IsCancelTrainingFail(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == TrainerErrorReason_CANCEL_TRAINING_FAIL.String() && e.Code == 500
+}
+
+func ErrorCancelTrainingFail(format string, args ...interface{}) *errors.Error {
+	return errors.New(500, TrainerErrorReason_CANCEL_TRAINING_FAIL.String(), fmt.Sprintf(format, args...))
+}
+
+func IsUpdateAvailabilityFail(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == TrainerErrorReason_UPDATE_AVAILABILITY_FAIL.String() && e.Code == 500
+}
+
+func ErrorUpdateAvailabilityFail(format string, args ...interface{}) *errors.Error {
+	return errors.New(500, TrainerErrorReason_UPDATE_AVAILABILITY_FAIL.String(), fmt.Sprintf(format, args...))
 }

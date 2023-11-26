@@ -27,7 +27,6 @@ type Queries struct {
 
 func NewApplication(logger log.Logger, hourCmdRepo hour.CmdRepo, hourQueryRepo query.QueryRepository) Application {
 	return newApplication(logger, hourCmdRepo, hourQueryRepo)
-
 }
 
 func newApplication(logger log.Logger, hourCmdRepo hour.CmdRepo, hourQueryRepo query.QueryRepository) Application {

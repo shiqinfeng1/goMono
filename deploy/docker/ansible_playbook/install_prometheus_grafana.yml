@@ -1,5 +1,5 @@
 ---
-- name: Get docker Image Registry Hostname
+- name: Get Docker Image Registry Hostname
   hosts: registry
   tasks:
   - name: get registry hostname

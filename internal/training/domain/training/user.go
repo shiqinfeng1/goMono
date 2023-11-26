@@ -4,8 +4,9 @@ import (
 	"fmt"
 
 	"github.com/pkg/errors"
-	commonErrors "github.com/shiqinfeng1/goMono/internal/common/errors"
 )
+
+var ErrIncorrectInput = func(userType string) error { return errors.New(fmt.Sprintf("invalid '%s' role", userType)) }
 
 // UserType is enum-like type.
 // We are using struct instead of string, to ensure about immutability.
@@ -37,10 +38,7 @@ func NewUserTypeFromString(userType string) (UserType, error) {
 		return Attendee, nil
 	}
 
-	return UserType{}, commonErrors.NewIncorrectInputError(
-		fmt.Sprintf("invalid '%s' role", userType),
-		"invalid-role",
-	)
+	return UserType{}, ErrIncorrectInput(userType)
 }
 
 // 该User是training领域内的用户抽象，并且只用于自己领域。

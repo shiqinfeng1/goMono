@@ -8,6 +8,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 )
 
+// 命令的装饰器。最外层是日志，其次是测量，最后才是业务命令
 func ApplyCommandDecorators[H any](handler CommandHandler[H], logger log.Logger, metricsClient MetricsClient) CommandHandler[H] {
 	return commandLoggingDecorator[H]{
 		base: commandMetricsDecorator[H]{
@@ -18,6 +19,7 @@ func ApplyCommandDecorators[H any](handler CommandHandler[H], logger log.Logger,
 	}
 }
 
+// 根据C定义不同的命令接口
 type CommandHandler[C any] interface {
 	Handle(ctx context.Context, cmd C) error
 }

@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
+	v1 "github.com/shiqinfeng1/goMono/api/trainer/v1"
 	"github.com/shiqinfeng1/goMono/internal/common/decorator"
-	"github.com/shiqinfeng1/goMono/internal/common/errors"
 	"github.com/shiqinfeng1/goMono/internal/trainer/domain/hour"
 )
 
@@ -37,14 +37,13 @@ func NewScheduleTrainingHandler(
 }
 
 func (h scheduleTrainingHandler) Handle(ctx context.Context, cmd ScheduleTraining) error {
-	if err := h.hourRepo.UpdateHour(ctx, cmd.Hour, func(h *hour.Hour) (*hour.Hour, error) {
-		if err := h.ScheduleTraining(); err != nil {
+	if err := h.hourRepo.UpdateHour(ctx, cmd.Hour, func(hr *hour.Hour) (*hour.Hour, error) {
+		if err := hr.ScheduleTraining(); err != nil {
 			return nil, err
 		}
-		return h, nil
+		return hr, nil
 	}); err != nil {
-		return errors.NewSlugError(err.Error(), "unable-to-update-availability")
+		return v1.ErrorUpdateAvailabilityFail("unable to schedule").WithCause(err)
 	}
-
 	return nil
 }

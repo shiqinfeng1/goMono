@@ -5,8 +5,9 @@ import (
 	"fmt"
 
 	userApi "github.com/shiqinfeng1/goMono/api/user/v1"
+	"github.com/shiqinfeng1/goMono/internal/common/client"
 	"github.com/shiqinfeng1/goMono/internal/common/config"
-	"github.com/shiqinfeng1/goMono/internal/common/grpc"
+	"github.com/shiqinfeng1/goMono/internal/common/discovery"
 )
 
 type UserGrpc struct {
@@ -27,11 +28,11 @@ func (s UserGrpc) Close() {
 }
 func (s *UserGrpc) getClient() userApi.UserServiceClient {
 	once.Do(func() {
-		dis, err := grpc.EtcdDiscovery(s.endpoints)
+		dis, err := discovery.EtcdDiscovery(s.endpoints)
 		if err != nil {
 			panic(fmt.Errorf("invalid discovery %v: %w", s.endpoints, err))
 		}
-		conn, err := grpc.NewGrpcClientConn(dis, "user")
+		conn, err := client.NewGrpcConn(dis, "user")
 		if err != nil {
 			panic(fmt.Errorf("invalid trainer client from %v: %w", s.endpoints, err))
 		}

@@ -10,6 +10,7 @@ require (
 	github.com/go-kratos/kratos/contrib/log/zerolog/v2 v2.0.0-20231116090954-1e4e37ad8735
 	github.com/go-kratos/kratos/contrib/metrics/prometheus/v2 v2.0.0-20231122041305-e84cddeabddb
 	github.com/go-kratos/kratos/contrib/registry/etcd/v2 v2.0.0-20231107125212-e38a364340c5
+	github.com/go-kratos/kratos/contrib/registry/nacos/v2 v2.0.0-20231122041305-e84cddeabddb
 	github.com/go-kratos/kratos/v2 v2.7.1
 	github.com/go-kratos/swagger-api v1.0.1
 	github.com/go-sql-driver/mysql v1.7.1

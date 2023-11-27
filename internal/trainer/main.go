@@ -11,6 +11,7 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/shiqinfeng1/goMono/internal/common/config"
 	conf "github.com/shiqinfeng1/goMono/internal/common/config/trainer"
+	"github.com/shiqinfeng1/goMono/internal/common/discovery"
 	"github.com/shiqinfeng1/goMono/internal/common/log"
 	"github.com/shiqinfeng1/goMono/internal/common/types"
 
@@ -53,6 +54,7 @@ func newApp(logger klog.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
 			gs,
 			hs,
 		),
+		kratos.Registrar(discovery.MustNacosRegistrar()),
 	)
 }
 

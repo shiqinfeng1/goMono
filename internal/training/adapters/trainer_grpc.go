@@ -8,8 +8,9 @@ import (
 
 	"github.com/pkg/errors"
 	trainerApi "github.com/shiqinfeng1/goMono/api/trainer/v1"
+	"github.com/shiqinfeng1/goMono/internal/common/client"
 	"github.com/shiqinfeng1/goMono/internal/common/config"
-	"github.com/shiqinfeng1/goMono/internal/common/grpc"
+	"github.com/shiqinfeng1/goMono/internal/common/discovery"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -35,11 +36,11 @@ func (s TrainerGrpc) Close() {
 }
 func (s *TrainerGrpc) getClient() trainerApi.TrainerServiceClient {
 	once.Do(func() {
-		dis, err := grpc.EtcdDiscovery(s.endpoints)
+		dis, err := discovery.EtcdDiscovery(s.endpoints)
 		if err != nil {
 			panic(fmt.Errorf("invalid discovery %v: %w", s.endpoints, err))
 		}
-		conn, err := grpc.NewGrpcClientConn(dis, "trainer")
+		conn, err := client.NewGrpcConn(dis, "trainer")
 		if err != nil {
 			panic(fmt.Errorf("invalid trainer client from %v: %w", s.endpoints, err))
 		}

@@ -53,6 +53,7 @@ func MustNewNacosSource(group, cfgFile string) cfg.Source {
 	return nacos.NewConfigSource(client, nacos.WithGroup(group), nacos.WithDataID(cfgFile))
 }
 
+// 配置中心的地址需通过环境变量配置，其他配置从配置找你想你获取
 func NewNacosSource(group, cfgFile string) (cfg.Source, error) {
 	host := os.Getenv("NACOS_HOST")
 	port, err := strconv.Atoi(os.Getenv("NACOS_PORT"))

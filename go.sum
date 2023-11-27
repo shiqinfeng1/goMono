@@ -112,6 +112,8 @@ github.com/go-kratos/kratos/contrib/metrics/prometheus/v2 v2.0.0-20231122041305-
 github.com/go-kratos/kratos/contrib/metrics/prometheus/v2 v2.0.0-20231122041305-e84cddeabddb/go.mod h1:23No2LmFnOndmGkUZrAZ2mx71iJDPik9fcRIx4J2cnk=
 github.com/go-kratos/kratos/contrib/registry/etcd/v2 v2.0.0-20231107125212-e38a364340c5 h1:IyBjHTx/ELr7xL8EEB+IFYCZGQbV8oTw2f6Fv8vyhh4=
 github.com/go-kratos/kratos/contrib/registry/etcd/v2 v2.0.0-20231107125212-e38a364340c5/go.mod h1:0R3j0l9DqSw731za6012NzrnFYcmPYM2oUtLq3dQPbM=
+github.com/go-kratos/kratos/contrib/registry/nacos/v2 v2.0.0-20231122041305-e84cddeabddb h1:5uLnwI5eMA3thTW/rQ46e3wqnsdZMGxyuHfALGbmPM0=
+github.com/go-kratos/kratos/contrib/registry/nacos/v2 v2.0.0-20231122041305-e84cddeabddb/go.mod h1:Kf3zWQMJaS/9CMVXUh2HRzd7TJYdyRKCHQliigy6kcg=
 github.com/go-kratos/kratos/v2 v2.0.3/go.mod h1:Hgl0YPry9YyLtwTTfwLfowPKg+YS0dgZ06O5NHqz5hE=
 github.com/go-kratos/kratos/v2 v2.7.1 h1:PNMUaWxS5ZGDp1EyID5ZosJb1OA/YiHnBxB0yUmocnc=
 github.com/go-kratos/kratos/v2 v2.7.1/go.mod h1:CPn82O93OLHjtnbuyOKhAG5TkSvw+mFnL32c4lZFDwU=

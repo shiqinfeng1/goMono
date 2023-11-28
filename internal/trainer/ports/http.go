@@ -15,8 +15,8 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	v1 "github.com/shiqinfeng1/goMono/api/trainer/v1"
+	"github.com/shiqinfeng1/goMono/internal/common/client"
 	conf "github.com/shiqinfeng1/goMono/internal/common/config/trainer"
-	"github.com/shiqinfeng1/goMono/internal/common/metrics"
 	"github.com/shiqinfeng1/goMono/internal/trainer/service"
 	"go.opentelemetry.io/otel/sdk/trace"
 )
@@ -41,8 +41,8 @@ func NewHTTPServer(c *conf.HTTP, ac *conf.Auth, logger log.Logger, tp *trace.Tra
 					})),
 			).Build(),
 			kmetrics.Server(
-				kmetrics.WithSeconds(prom.NewHistogram(metrics.Seconds)),
-				kmetrics.WithRequests(prom.NewCounter(metrics.Requests)),
+				kmetrics.WithSeconds(prom.NewHistogram(client.MetricsSeconds)),
+				kmetrics.WithRequests(prom.NewCounter(client.MetricsRequests)),
 			),
 		),
 		http.Filter(handlers.CORS(

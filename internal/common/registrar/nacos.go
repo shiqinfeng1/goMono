@@ -1,4 +1,4 @@
-package discovery
+package registrar
 
 import (
 	"github.com/go-kratos/kratos/contrib/registry/nacos/v2"
@@ -6,7 +6,7 @@ import (
 	"github.com/shiqinfeng1/goMono/internal/common/client"
 )
 
-func MustNacosDiscovery(endpoint string) registry.Discovery {
+func MustNacosRegistrar(endpoint string) registry.Registrar {
 	c, err := client.NewNacosNamingClient(endpoint)
 	if err != nil {
 		panic(err)

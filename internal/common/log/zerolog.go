@@ -4,16 +4,13 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"net"
-	"net/url"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 
-	"github.com/fluent/fluent-logger-golang/fluent"
 	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/rs/zerolog"
+	"github.com/shiqinfeng1/goMono/internal/common/client"
 	"github.com/shiqinfeng1/goMono/internal/common/config"
 	"github.com/shiqinfeng1/goMono/internal/common/types"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -54,71 +51,20 @@ func newFileWriter(logPath string, fcfg *config.File) io.Writer {
 	}
 }
 
-type fluentWriteSyncer struct {
-	output *fluent.Fluent
-}
-
-func newFluentWriteSyncer(addr string) (*fluentWriteSyncer, error) {
-	c := fluent.Config{
-		Async:              true,
-		ForceStopAsyncSend: true,
-	}
-	u, err := url.Parse(addr)
-	if err != nil {
-		return nil, err
-	}
-	switch u.Scheme {
-	case "tcp":
-		host, port, err2 := net.SplitHostPort(u.Host)
-		if err2 != nil {
-			return nil, err2
-		}
-		if c.FluentPort, err = strconv.Atoi(port); err != nil {
-			return nil, err
-		}
-		c.FluentNetwork = u.Scheme
-		c.FluentHost = host
-	case "unix":
-		c.FluentNetwork = u.Scheme
-		c.FluentSocketPath = u.Path
-	default:
-		return nil, fmt.Errorf("unknown network: %s", u.Scheme)
-	}
-	// 检查地址是否存在服务
-	_, err = net.Dial(u.Scheme, u.Host)
-	if err != nil {
-		return nil, err
-	}
-	fl, err := fluent.New(c)
-	if err != nil {
-		return nil, err
-	}
-	return &fluentWriteSyncer{
-		output: fl,
-	}, nil
-}
-
-func (x *fluentWriteSyncer) Write(data []byte) (n int, err error) {
-	if err := x.output.Post("zerolog", data); err != nil {
-		return 0, err
-	}
-	return len(data), nil
-}
-
 // zerolog的日志监控输出
 func mustNewMonitorWriter(endpoint string) io.Writer {
 	// EFK: Elasticsearch + Fluentd + Kibana
 	if endpoint == "" {
 		panic(ErrInvalidMoitorAddr)
 	}
-	logger, err := newFluentWriteSyncer(endpoint)
+	logger, err := client.NewFluentWriteSyncer(endpoint)
 	if err != nil { // 如果远程日志服务器链接失败，那么重定向到默认输出（屏幕）
 		panic(ErrFailCreateMoitorClient(err))
 	}
 	return logger
 }
 func newMonitorWriter(endpoint string) io.Writer {
-	logger, err := newFluentWriteSyncer(endpoint)
+	logger, err := client.NewFluentWriteSyncer(endpoint)
 	if err != nil { // 如果远程日志服务器链接失败，那么重定向到默认输出（屏幕）
 		return klog.NewWriter(klog.DefaultLogger, klog.WithWriteMessageKey(fmt.Sprintf("(NO LogMonitor: %v)", err)))
 	}

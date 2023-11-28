@@ -1,4 +1,4 @@
-package discovery
+package registrar
 
 import (
 	"github.com/go-kratos/kratos/contrib/registry/etcd/v2"
@@ -6,7 +6,7 @@ import (
 	"github.com/shiqinfeng1/goMono/internal/common/client"
 )
 
-func EtcdDiscovery(endpoints []string) (registry.Discovery, error) {
+func EtcdRegistrar(endpoints []string) (registry.Registrar, error) {
 	eclient, err := client.NewEtcd(endpoints)
 	if err != nil {
 		return nil, err

@@ -16,8 +16,8 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/gorilla/handlers"
 	v1 "github.com/shiqinfeng1/goMono/api/training/v1"
+	"github.com/shiqinfeng1/goMono/internal/common/client"
 	conf "github.com/shiqinfeng1/goMono/internal/common/config/training"
-	"github.com/shiqinfeng1/goMono/internal/common/metrics"
 	"github.com/shiqinfeng1/goMono/internal/training/service"
 	"go.opentelemetry.io/otel/sdk/trace"
 )
@@ -55,8 +55,8 @@ func NewHTTPServer(c *conf.HTTP, ac *conf.Auth, logger log.Logger, tp *trace.Tra
 					})),
 			).Match(NewWhiteListMatcher()).Build(),
 			kmetrics.Server(
-				kmetrics.WithSeconds(prom.NewHistogram(metrics.Seconds)),
-				kmetrics.WithRequests(prom.NewCounter(metrics.Requests)),
+				kmetrics.WithSeconds(prom.NewHistogram(client.MetricsSeconds)),
+				kmetrics.WithRequests(prom.NewCounter(client.MetricsRequests)),
 			),
 		),
 		http.Filter(handlers.CORS(

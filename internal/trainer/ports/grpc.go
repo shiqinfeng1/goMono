@@ -2,8 +2,8 @@ package ports
 
 import (
 	v1 "github.com/shiqinfeng1/goMono/api/trainer/v1"
+	"github.com/shiqinfeng1/goMono/internal/common/client"
 	conf "github.com/shiqinfeng1/goMono/internal/common/config/trainer"
-	"github.com/shiqinfeng1/goMono/internal/common/metrics"
 	"github.com/shiqinfeng1/goMono/internal/trainer/service"
 
 	prom "github.com/go-kratos/kratos/contrib/metrics/prometheus/v2"
@@ -18,8 +18,8 @@ func NewGRPCServer(c *conf.GRPC, trainer service.GrpcService) *grpc.Server {
 		grpc.Middleware(
 			recovery.Recovery(),
 			kmetrics.Server(
-				kmetrics.WithSeconds(prom.NewHistogram(metrics.Seconds)),
-				kmetrics.WithRequests(prom.NewCounter(metrics.Requests)),
+				kmetrics.WithSeconds(prom.NewHistogram(client.MetricsSeconds)),
+				kmetrics.WithRequests(prom.NewCounter(client.MetricsRequests)),
 			),
 		),
 	}

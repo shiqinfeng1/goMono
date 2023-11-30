@@ -7,12 +7,12 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	kcfg "github.com/go-kratos/kratos/v2/config"
 	klog "github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/shiqinfeng1/goMono/internal/common/config"
 	conf "github.com/shiqinfeng1/goMono/internal/common/config/trainer"
 	"github.com/shiqinfeng1/goMono/internal/common/log"
-	"github.com/shiqinfeng1/goMono/internal/common/registrar"
 	"github.com/shiqinfeng1/goMono/internal/common/types"
 
 	_ "go.uber.org/automaxprocs"
@@ -43,7 +43,7 @@ func init() {
 	)
 }
 
-func newApp(logger klog.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
+func newApp(logger klog.Logger, regstr registry.Registrar, gs *grpc.Server, hs *http.Server) *kratos.App {
 	return kratos.New(
 		kratos.ID(ID),
 		kratos.Name(Name),
@@ -54,7 +54,7 @@ func newApp(logger klog.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
 			gs,
 			hs,
 		),
-		kratos.Registrar(registrar.MustNacosRegistrar()),
+		kratos.Registrar(regstr),
 	)
 }
 

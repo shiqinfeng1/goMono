@@ -13,6 +13,7 @@ import (
 	"github.com/shiqinfeng1/goMono/internal/common/config"
 	"github.com/shiqinfeng1/goMono/internal/common/config/trainer"
 	"github.com/shiqinfeng1/goMono/internal/common/log"
+	"github.com/shiqinfeng1/goMono/internal/common/registrar"
 	"github.com/shiqinfeng1/goMono/internal/common/trace"
 	"github.com/shiqinfeng1/goMono/internal/common/types"
 	"github.com/shiqinfeng1/goMono/internal/trainer/adapters"
@@ -39,5 +40,6 @@ func wireApp(
 		app.ProviderSet,
 		ports.ProviderSet,
 		service.ProviderSet,
+		registrar.ProviderSet,
 		newApp))
 }

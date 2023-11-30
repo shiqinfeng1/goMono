@@ -7,6 +7,7 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	kcfg "github.com/go-kratos/kratos/v2/config"
 	klog "github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/shiqinfeng1/goMono/internal/common/config"
 	conf "github.com/shiqinfeng1/goMono/internal/common/config/training"
@@ -39,7 +40,7 @@ func init() {
 	)
 }
 
-func newApp(logger klog.Logger, hs *http.Server) *kratos.App {
+func newApp(logger klog.Logger, regstr registry.Registrar, hs *http.Server) *kratos.App {
 	return kratos.New(
 		kratos.ID(ID),
 		kratos.Name(Name),
@@ -49,6 +50,7 @@ func newApp(logger klog.Logger, hs *http.Server) *kratos.App {
 		kratos.Server(
 			hs,
 		),
+		kratos.Registrar(regstr),
 	)
 }
 

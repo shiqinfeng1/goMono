@@ -4,10 +4,14 @@ import (
 	"github.com/go-kratos/kratos/contrib/registry/etcd/v2"
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/shiqinfeng1/goMono/internal/common/client"
+	"github.com/shiqinfeng1/goMono/internal/common/config"
 )
 
-func EtcdRegistrar(endpoints []string) (registry.Registrar, error) {
-	eclient, err := client.NewEtcd(endpoints)
+func EtcdRegistrar(dis *config.Discovery) (registry.Registrar, error) {
+	if len(dis.Endpoints) == 0 {
+		panic("no such discovery config endpoint")
+	}
+	eclient, err := client.NewEtcd(dis.Endpoints)
 	if err != nil {
 		return nil, err
 	}

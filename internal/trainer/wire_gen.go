@@ -12,6 +12,7 @@ import (
 	"github.com/shiqinfeng1/goMono/internal/common/config"
 	"github.com/shiqinfeng1/goMono/internal/common/config/trainer"
 	"github.com/shiqinfeng1/goMono/internal/common/log"
+	"github.com/shiqinfeng1/goMono/internal/common/registrar"
 	"github.com/shiqinfeng1/goMono/internal/common/trace"
 	"github.com/shiqinfeng1/goMono/internal/common/types"
 	"github.com/shiqinfeng1/goMono/internal/trainer/adapters"
@@ -29,6 +30,7 @@ import (
 // wireApp init kratos application.
 func wireApp(contextContext context.Context, srvInfo *types.SrvInfo, discovery *config.Discovery, configLog *config.Log, configTrace *config.Trace, adapter *config.Adapter, http *trainer.HTTP, grpc *trainer.GRPC, auth *trainer.Auth) (*kratos.App, func(), error) {
 	logger := log.New(srvInfo, configLog)
+	registryRegistrar := registrar.MustNacosRegistrar(discovery)
 	cmdRepo := adapters.NewHourRepo(adapter, logger)
 	queryRepository := adapters.NewDatesMysqlRepo(adapter, logger)
 	application := app.NewApplication(logger, cmdRepo, queryRepository)
@@ -37,7 +39,7 @@ func wireApp(contextContext context.Context, srvInfo *types.SrvInfo, discovery *
 	tracerProvider := trace.New(contextContext, srvInfo, configTrace)
 	httpService := service.NewHttpService(application)
 	httpServer := ports.NewHTTPServer(http, auth, logger, tracerProvider, httpService)
-	kratosApp := newApp(logger, server, httpServer)
+	kratosApp := newApp(logger, registryRegistrar, server, httpServer)
 	return kratosApp, func() {
 	}, nil
 }

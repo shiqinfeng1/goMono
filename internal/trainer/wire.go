@@ -17,7 +17,7 @@ import (
 	"github.com/shiqinfeng1/goMono/internal/common/trace"
 	"github.com/shiqinfeng1/goMono/internal/common/types"
 	"github.com/shiqinfeng1/goMono/internal/trainer/adapters"
-	"github.com/shiqinfeng1/goMono/internal/trainer/app"
+	"github.com/shiqinfeng1/goMono/internal/trainer/application"
 	"github.com/shiqinfeng1/goMono/internal/trainer/ports"
 	"github.com/shiqinfeng1/goMono/internal/trainer/service"
 )
@@ -37,7 +37,7 @@ func wireApp(
 		log.ProviderSet,
 		trace.ProviderSet,
 		adapters.ProviderSet,
-		app.ProviderSet,
+		application.ProviderSet,
 		ports.ProviderSet,
 		service.ProviderSet,
 		registrar.ProviderSet,

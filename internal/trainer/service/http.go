@@ -7,7 +7,7 @@ import (
 
 	v1 "github.com/shiqinfeng1/goMono/api/trainer/v1"
 	"github.com/shiqinfeng1/goMono/internal/common/auth"
-	"github.com/shiqinfeng1/goMono/internal/trainer/app"
+	"github.com/shiqinfeng1/goMono/internal/trainer/application"
 	"github.com/shiqinfeng1/goMono/internal/trainer/application/command"
 	"github.com/shiqinfeng1/goMono/internal/trainer/application/query"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -15,10 +15,10 @@ import (
 )
 
 type HttpService struct {
-	app app.Application
+	app application.Application
 }
 
-func NewHttpService(application app.Application) *HttpService {
+func NewHttpService(application application.Application) *HttpService {
 	return &HttpService{
 		app: application,
 	}

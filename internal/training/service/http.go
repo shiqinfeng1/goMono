@@ -10,17 +10,17 @@ import (
 	"github.com/google/uuid"
 	v1 "github.com/shiqinfeng1/goMono/api/training/v1"
 	"github.com/shiqinfeng1/goMono/internal/common/auth"
-	"github.com/shiqinfeng1/goMono/internal/training/app"
+	"github.com/shiqinfeng1/goMono/internal/training/application"
 	"github.com/shiqinfeng1/goMono/internal/training/application/command"
 	"github.com/shiqinfeng1/goMono/internal/training/application/query"
 	"github.com/shiqinfeng1/goMono/internal/training/domain/training"
 )
 
 type HttpService struct {
-	app app.Application
+	app application.Application
 }
 
-func NewHttpService(app app.Application) *HttpService {
+func NewHttpService(app application.Application) *HttpService {
 	return &HttpService{app}
 }
 

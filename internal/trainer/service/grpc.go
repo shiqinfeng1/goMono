@@ -7,7 +7,7 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/golang/protobuf/ptypes/timestamp"
 	v1 "github.com/shiqinfeng1/goMono/api/trainer/v1"
-	"github.com/shiqinfeng1/goMono/internal/trainer/app"
+	"github.com/shiqinfeng1/goMono/internal/trainer/application"
 	"github.com/shiqinfeng1/goMono/internal/trainer/application/command"
 	"github.com/shiqinfeng1/goMono/internal/trainer/application/query"
 	"google.golang.org/grpc/codes"
@@ -17,10 +17,10 @@ import (
 
 type GrpcService struct {
 	v1.UnimplementedTrainerServiceServer
-	app app.Application
+	app application.Application
 }
 
-func NewGrpcService(application app.Application) GrpcService {
+func NewGrpcService(application application.Application) GrpcService {
 	return GrpcService{app: application}
 }
 

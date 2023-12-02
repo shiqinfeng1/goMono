@@ -16,7 +16,7 @@ import (
 	"github.com/shiqinfeng1/goMono/internal/common/trace"
 	"github.com/shiqinfeng1/goMono/internal/common/types"
 	"github.com/shiqinfeng1/goMono/internal/trainer/adapters"
-	"github.com/shiqinfeng1/goMono/internal/trainer/app"
+	"github.com/shiqinfeng1/goMono/internal/trainer/application"
 	"github.com/shiqinfeng1/goMono/internal/trainer/ports"
 	"github.com/shiqinfeng1/goMono/internal/trainer/service"
 )
@@ -33,13 +33,13 @@ func wireApp(contextContext context.Context, srvInfo *types.SrvInfo, discovery *
 	registryRegistrar := registrar.MustNacosRegistrar(discovery)
 	cmdRepo := adapters.NewHourRepo(adapter, logger)
 	queryRepository := adapters.NewDatesMysqlRepo(adapter, logger)
-	application := app.NewApplication(logger, cmdRepo, queryRepository)
-	grpcService := service.NewGrpcService(application)
+	applicationApplication := application.NewApplication(logger, cmdRepo, queryRepository)
+	grpcService := service.NewGrpcService(applicationApplication)
 	server := ports.NewGRPCServer(grpc, grpcService)
 	tracerProvider := trace.New(contextContext, srvInfo, configTrace)
-	httpService := service.NewHttpService(application)
+	httpService := service.NewHttpService(applicationApplication)
 	httpServer := ports.NewHTTPServer(http, auth, logger, tracerProvider, httpService)
-	kratosApp := newApp(logger, registryRegistrar, server, httpServer)
-	return kratosApp, func() {
+	app := newApp(logger, registryRegistrar, server, httpServer)
+	return app, func() {
 	}, nil
 }

@@ -1,9 +1,10 @@
 package training
 
 import (
-	"errors"
 	"fmt"
 	"time"
+
+	"github.com/pkg/errors"
 )
 
 func (t Training) CanBeCanceledForFree() bool {

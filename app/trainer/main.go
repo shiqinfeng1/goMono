@@ -28,6 +28,7 @@ var (
 )
 
 func init() {
+	// 动态更新配置。key：需要监听的字段；value：配置变化后的处理函数
 	onChanges := map[string]func(key string, value kcfg.Value){
 		"log.level": func(key string, value kcfg.Value) {
 			_ = key
@@ -37,7 +38,7 @@ func init() {
 		// 这里添加需要监听的字段，及处理函数
 	}
 	config.Bootstrap(
-		[]string{"public.yaml", "trainer.yaml"},
+		[]string{"public.yaml", "trainer.yaml"}, // 指定要加载的配置文件
 		[]interface{}{&pubCfg, &srvCfg},
 		onChanges,
 	)

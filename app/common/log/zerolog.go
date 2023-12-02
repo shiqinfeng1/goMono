@@ -1,12 +1,13 @@
 package log
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/pkg/errors"
 
 	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/rs/zerolog"
@@ -74,7 +75,7 @@ func newMonitorWriter(endpoint string) io.Writer {
 // 生成一个zero的日志器，支持输出到屏幕、日志文件、远端日志服务
 func newZeroLogger(fileName string, lvl zerolog.Level, fcfg *config.File, mcfg *config.Monitor) *zerolog.Logger {
 	zerolog.TimeFieldFormat = timeFormat
-	m, _ := types.NewModeFromString(os.Getenv("MODE"))
+	m := types.NewModeFromString(os.Getenv("MODE"))
 	if !m.IsValid() {
 		panic(m.ErrInvaild())
 	}

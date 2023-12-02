@@ -15,7 +15,7 @@ func MustNewNacosSource(group, cfgFile string) kcfg.Source {
 	return nacos.NewConfigSource(c, nacos.WithGroup(group), nacos.WithDataID(cfgFile))
 }
 
-// 配置中心的地址需通过环境变量配置，其他配置从配置找你想你获取
+// 配置中心的地址需通过环境变量配置，其他配置从配置文件获取
 func NewNacosSource(group, cfgFile string) (kcfg.Source, error) {
 	c, err := client.NewNacosConfigClient()
 	if err != nil {

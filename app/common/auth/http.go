@@ -2,7 +2,8 @@ package auth
 
 import (
 	"context"
-	"errors"
+
+	"github.com/pkg/errors"
 )
 
 type User struct {

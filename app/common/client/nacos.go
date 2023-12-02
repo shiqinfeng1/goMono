@@ -1,11 +1,12 @@
 package client
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/pkg/errors"
 
 	"github.com/nacos-group/nacos-sdk-go/clients"
 	"github.com/nacos-group/nacos-sdk-go/clients/config_client"
@@ -30,12 +31,14 @@ var (
 	ErrCreateClient = func(err error) error { return fmt.Errorf("create nacos client:%w", err) }
 )
 
+// NewNacosConfigClient 返回作为配置中心的nacos的客户端实例，naco的地址需要通过环境变量配置
 func NewNacosConfigClient() (config_client.IConfigClient, error) {
 	host := os.Getenv("NACOS_HOST")
 	port, err := strconv.Atoi(os.Getenv("NACOS_PORT"))
 	if host == "" || err != nil || port == 0 {
 		return nil, ErrInvalidAddr
 	}
+
 	sc := []constant.ServerConfig{
 		*constant.NewServerConfig(host, uint64(port)),
 	}
@@ -52,6 +55,7 @@ func NewNacosConfigClient() (config_client.IConfigClient, error) {
 	return client, nil
 }
 
+// NewNacosNamingClient 返回一般nacos客户端
 func NewNacosNamingClient(endpoint string) (naming_client.INamingClient, error) {
 	addr := strings.Split(endpoint, ":")
 	if len(addr) != 2 {

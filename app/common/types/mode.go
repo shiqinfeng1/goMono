@@ -43,11 +43,6 @@ func (m Mode) Is(expect Mode) bool {
 func (m Mode) ErrInvaild() error {
 	return errors.New(fmt.Sprintf("env.mode=%s is invalid, not in %v", m.s, modeValues))
 }
-func NewModeFromString(modeStr string) (Mode, error) {
-	for _, mode := range modeValues {
-		if mode.String() == modeStr {
-			return mode, nil
-		}
-	}
-	return Mode{}, errors.Errorf("unknown '%s' mode", modeStr)
+func NewModeFromString(modeStr string) Mode {
+	return Mode{s: modeStr}
 }

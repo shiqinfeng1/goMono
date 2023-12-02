@@ -1,10 +1,11 @@
 package log
 
 import (
-	"errors"
 	"fmt"
 	"sync"
 	"time"
+
+	"github.com/pkg/errors"
 
 	zlog "github.com/go-kratos/kratos/contrib/log/zerolog/v2"
 	klog "github.com/go-kratos/kratos/v2/log"

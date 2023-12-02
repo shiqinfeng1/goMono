@@ -8,10 +8,10 @@ ifeq ($(GOHOSTOS), windows)
 	#Git_Bash= $(subst cmd\,bin\bash.exe,$(dir $(shell where git)))
 	Git_Bash=$(subst \,/,$(subst cmd\,bin\bash.exe,$(dir $(shell where git))))
 	API_PROTO_FILES=$(shell $(Git_Bash) -c "find api -name *.proto")
-	INTERNAL_PROTO_FILES=$(shell $(Git_Bash) -c "find internal/common/config -name *.proto")
+	INTERNAL_PROTO_FILES=$(shell $(Git_Bash) -c "find app/common/config -name *.proto")
 else 
 	API_PROTO_FILES=$(shell find api -name *.proto)
-	INTERNAL_PROTO_FILES=$(shell find internal/common/config -name *.proto)
+	INTERNAL_PROTO_FILES=$(shell find app/common/config -name *.proto)
 	ifeq ($(GOHOSTOS), darwin)
 		configCmd=xargs -I F sh -c 'cd F && echo && $(MAKE) config'
 		wireCmd=xargs -I F sh -c 'cd F && echo && $(MAKE) wire'
@@ -34,12 +34,12 @@ init:
 	go install github.com/google/wire/cmd/wire@latest
 
 .PHONY: config
-# generate internal proto
+# generate app proto
 config:
 	for var in $(INTERNAL_PROTO_FILES); do \
-        protoc --proto_path=./internal/common/config \
+        protoc --proto_path=./app/common/config \
 	       --proto_path=./third_party \
- 	       --go_out=paths=source_relative:./internal/common/config \
+ 	       --go_out=paths=source_relative:./app/common/config \
 	       $$var; \
     done
 
@@ -65,14 +65,14 @@ build:
 .PHONY: generate
 # generate wire_gen.go
 wire:
-	find internal  -mindepth 1 -maxdepth 1 | grep -v common | $(wireCmd)
+	find app  -mindepth 1 -maxdepth 1 | grep -v common | $(wireCmd)
 
 .PHONY: all
 # generate all
 all:
 	make init
 	make api
-	find internal  -mindepth 1 -maxdepth 1 | grep -v common | $(allCmd)
+	find app  -mindepth 1 -maxdepth 1 | grep -v common | $(allCmd)
 	make build
 
 # show help

@@ -185,7 +185,7 @@ make api
 ## 本地运行
 
 ```bash
-./bin/training -conf ./app/training/configs
+./bin/training -conf ./application/training/configs
 ```
 
 ## Docker运行

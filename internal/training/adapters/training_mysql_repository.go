@@ -5,7 +5,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/shiqinfeng1/goMono/internal/common/config"
-	"github.com/shiqinfeng1/goMono/internal/training/app/query"
+	"github.com/shiqinfeng1/goMono/internal/training/application/query"
 	"github.com/shiqinfeng1/goMono/internal/training/domain/training"
 
 	"github.com/go-kratos/kratos/v2/log"

@@ -2,8 +2,8 @@ package app
 
 import (
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/shiqinfeng1/goMono/internal/trainer/app/command"
-	"github.com/shiqinfeng1/goMono/internal/trainer/app/query"
+	"github.com/shiqinfeng1/goMono/internal/trainer/application/command"
+	"github.com/shiqinfeng1/goMono/internal/trainer/application/query"
 	"github.com/shiqinfeng1/goMono/internal/trainer/domain/hour"
 )
 

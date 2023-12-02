@@ -3,8 +3,8 @@ package app
 import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/shiqinfeng1/goMono/internal/training/adapters"
-	"github.com/shiqinfeng1/goMono/internal/training/app/command"
-	"github.com/shiqinfeng1/goMono/internal/training/app/query"
+	"github.com/shiqinfeng1/goMono/internal/training/application/command"
+	"github.com/shiqinfeng1/goMono/internal/training/application/query"
 	"github.com/shiqinfeng1/goMono/internal/training/domain/training"
 )
 

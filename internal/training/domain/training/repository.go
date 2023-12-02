@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/shiqinfeng1/goMono/internal/training/app/query"
+	"github.com/shiqinfeng1/goMono/internal/training/application/query"
 )
 
 // 公共错误，所有实现Repository接口的实例，都会用到该错误

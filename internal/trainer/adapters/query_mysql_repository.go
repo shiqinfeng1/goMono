@@ -7,7 +7,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/jmoiron/sqlx"
 	"github.com/shiqinfeng1/goMono/internal/common/config"
-	"github.com/shiqinfeng1/goMono/internal/trainer/app/query"
+	"github.com/shiqinfeng1/goMono/internal/trainer/application/query"
 	"github.com/shiqinfeng1/goMono/internal/trainer/domain/hour"
 )
 

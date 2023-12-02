@@ -15,10 +15,10 @@ import (
 	"github.com/shiqinfeng1/goMono/internal/common/registrar"
 	"github.com/shiqinfeng1/goMono/internal/common/trace"
 	"github.com/shiqinfeng1/goMono/internal/common/types"
-	"github.com/shiqinfeng1/goMono/internal/training/adapters"
-	"github.com/shiqinfeng1/goMono/internal/training/application"
-	"github.com/shiqinfeng1/goMono/internal/training/ports"
-	"github.com/shiqinfeng1/goMono/internal/training/service"
+	"github.com/shiqinfeng1/goMono/internal/training/internal/adapters"
+	"github.com/shiqinfeng1/goMono/internal/training/internal/application"
+	"github.com/shiqinfeng1/goMono/internal/training/internal/ports"
+	"github.com/shiqinfeng1/goMono/internal/training/internal/service"
 )
 
 import (

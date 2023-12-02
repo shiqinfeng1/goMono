@@ -50,10 +50,10 @@ ansible --version  # 输出版本信息，例如： ansible 2.9.27
 ubuntu
 
 ```bash
-$ sudo apt update
-$ sudo apt install software-properties-common
-$ sudo add-apt-repository --yes --update ppa:ansible/ansible
-$ sudo apt install ansible
+sudo apt update
+sudo apt install software-properties-common
+sudo add-apt-repository --yes --update ppa:ansible/ansible
+sudo apt install ansible
 ```
 
 安装完成后，默认配置文件在 `/etc/ansible/` 下
@@ -141,24 +141,25 @@ ansible-playbook ./deploy/docker/ansible_playbook/modify_hostname.yml
     ```
 
 3. 拉取和打包镜像
-   
+
    ```bash
    ansible-playbook ./deploy/docker/prepare-infra-images.yml
    ```
 
 4. 部署nacos
-    
+
    ```bash
    ansible-playbook ./deploy/docker/install_nacos.yml
    ```
 
-4. 部署prometheus和grafana
-    
+5. 部署prometheus和grafana
+
    ```bash
    ansible-playbook ./deploy/docker/install_prometheus_grafana.yml
    ```
 
   注意：
+  
   - 默认只设置了nacos的数据源，如果需要增加其他数据源，修改 `./deploy/docker/config_prometheus.env` 配置
   - nacos的dashboard配置是： `deploy/docker/config_nacos_grafana_dashboard.json`
 

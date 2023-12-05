@@ -16,7 +16,7 @@
   tasks:
   - name: Copy Prometheus&Grafana Docker-Compose Files
     template: 
-      src: ../{{ item }}
+      src: ../tmpl/{{ item }}
       dest: /tmp/{{ item }}
       force: true
     loop:

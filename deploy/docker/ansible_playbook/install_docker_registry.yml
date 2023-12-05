@@ -35,7 +35,7 @@
 
   - name: Copy Docker Compose files
     template: 
-      src: ../{{ item }}
+      src: ../tmpl/{{ item }}
       dest: /tmp/{{ item }}
       force: true
     loop:

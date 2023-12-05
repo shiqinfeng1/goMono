@@ -24,7 +24,7 @@
 
   - name: Copy Dockerfiles
     copy: 
-      src: "../{{ item }}" 
+      src: "../tmpl/{{ item }}" 
       dest: "/tmp/{{ item }}"
       mode: 777
     loop:

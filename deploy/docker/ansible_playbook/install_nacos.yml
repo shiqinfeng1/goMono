@@ -16,7 +16,7 @@
   tasks:
   - name: Copy Nacos Docker-Compose & Config Files
     template: 
-      src: ../{{ item }}
+      src: ../tmpl/{{ item }}
       dest: /tmp/{{ item }}
       force: true
     loop:

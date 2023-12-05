@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  redis:
+    image: "{{PRD_REDIS_IMAGE}}"
+    command: redis-server --requirepass $redis_password --appendonly yes
+    hostname: redis
+    ports:
+      - "{{redis_srv_port}}:6379"
+    restart: always
+    healthcheck:
+      test: [ 'CMD-SHELL', "redis-cli PING || exit 1" ]
+      interval: 10s
+      timeout: 2s
+      retries: 6
+    volumes:
+      - "{{redis_data_dir}}:/data"
+
+  redis-salve:
+    image: "{{PRD_REDIS_IMAGE}}"
+    command: redis-server --requirepass {{redis_password}} --masterauth {{redis_password}} --appendonly yes --slaveof redis 6379
+    hostname: redis-slave
+    ports:
+      - "{{redis_slave_srv_port}}:6379"
+    depends_on:
+      - redis
+    restart: always
+    healthcheck:
+      test: [ 'CMD-SHELL', "redis-cli PING || exit 1" ]
+      interval: 10s
+      timeout: 2s
+      retries: 6
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "{{redis_slave_data_dir}}:/data"
+

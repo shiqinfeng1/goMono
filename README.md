@@ -119,6 +119,7 @@ become_method=sudo
 ansible-playbook ./deploy/docker/ansible_playbook/ssh_login_no_password.yml
 ```
 
+如果安装失败，需要手动复制key：`ssh-copy-id user@192.168.72.84`
 ### 批量设置hostname
 
 ```bash

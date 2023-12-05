@@ -62,3 +62,12 @@ grafana_srv_port: 3000 # grafana的服务端口
 config_prometheus: config_prometheus.yaml  # prometheus的配置文件名称
 prometheus_compose_file: docker_compose_prometheus_grafana.yml  # prometheus的compose文件
 
+#########################################################################
+# redis相关配置
+#########################################################################
+redis_image: grafana/grafana:latest
+redis_srv_port: 26379
+redis_slave_srv_port: 26378
+redis_password: 123456
+redis_data_dir: /data/redis2
+redis_slave_data_dir: /data/redis2-slave

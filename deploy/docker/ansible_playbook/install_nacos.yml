@@ -14,7 +14,7 @@
     - registry_addr: "{{registry_hostname.stdout}}:{{registry_srv_port}}"
   become: true
   tasks:
-  - name: Copy Nacos Docker-Compose Files
+  - name: Copy Nacos Docker-Compose & Config Files
     template: 
       src: ../tmpl/{{ item }}
       dest: /tmp/{{ item }}

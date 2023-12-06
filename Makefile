@@ -14,6 +14,7 @@ endif
 ifeq (${IMAGE_TAG},)
 IMAGE_TAG := ${SHORT_COMMIT}
 endif
+CONTAINER_REGISTRY=
 # Name of the cover profile
 COVER_PROFILE := coverage.txt
 # Disable go sum database lookup for private repos
@@ -91,12 +92,12 @@ build:
 wire:
 	find app  -mindepth 1 -maxdepth 1 | grep -v common | $(wireCmd)
 
-export CONTAINER_REGISTRY := gcr.io/flow-container-registry
+
 export DOCKER_BUILDKIT := 1
 
 names=$(shell find app  -mindepth 1 -maxdepth 1 | grep -v common |xargs -I X basename X)
-.PHONY: build-docker
-build-docker:
+.PHONY: build-docker-production
+build-docker-production:
 	for x in $(names); do \
 		docker build -f Dockerfile  \
 			--build-arg TARGET=./app/$$x \
@@ -106,11 +107,26 @@ build-docker:
 			--target production \
 			--secret id=git_creds,env=GITHUB_CREDS --build-arg GOPRIVATE=$(GOPRIVATE) \
 			--label "git_commit=${COMMIT}" --label "git_tag=${IMAGE_TAG}" \
-			-t "$(CONTAINER_REGISTRY)/$$x:latest" \
-			-t "$(CONTAINER_REGISTRY)/$$x:$(SHORT_COMMIT)" \
-			-t "$(CONTAINER_REGISTRY)/$$x:$(IMAGE_TAG)"  .;\
+			-t "$(CONTAINER_REGISTRY)$$x:latest" \
+			-t "$(CONTAINER_REGISTRY)$$x:$(SHORT_COMMIT)" \
+			-t "$(CONTAINER_REGISTRY)$$x:$(IMAGE_TAG)"  .;\
 	done
-	
+
+.PHONY: build-docker-debug
+build-docker-debug:
+	for x in $(names); do \
+		docker build -f Dockerfile  \
+			--build-arg TARGET=./app/$$x \
+			--build-arg COMMIT=$(COMMIT)  \
+			--build-arg VERSION=$(IMAGE_TAG) \
+			--build-arg GOARCH=$(GOARCH) \
+			--target debug \
+			--secret id=git_creds,env=GITHUB_CREDS --build-arg GOPRIVATE=$(GOPRIVATE) \
+			--label "git_commit=${COMMIT}" --label "git_tag=${IMAGE_TAG}" \
+			-t "$(CONTAINER_REGISTRY)$$x-debug:latest" \
+			-t "$(CONTAINER_REGISTRY)$$x-debug:$(SHORT_COMMIT)" \
+			-t "$(CONTAINER_REGISTRY)$$x-debug:$(IMAGE_TAG)"  .;\
+	done
 
 .PHONY: all
 # generate all

@@ -15,7 +15,7 @@ ARG VERSION
 
 ENV GOPRIVATE=
 
-RUN go env -w GOPROXY=https://goproxy.cn
+RUN go env -w GOPROXY=https://goproxy.cn,direct
 
 COPY . .
 
@@ -65,7 +65,7 @@ RUN chmod a+x /app/bin/app
 
 ## (4) Add the statically linked debug binary to a distroless image configured for debugging
 FROM dockerproxy.com/library/golang:1.21-bullseye as debug
-
+RUN go env -w GOPROXY=https://goproxy.cn,direct
 RUN go install github.com/go-delve/delve/cmd/dlv@latest
 
 COPY --from=build-debug /app/bin/app /bin/app

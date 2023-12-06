@@ -5,13 +5,52 @@
   - name: get registry hostname
     command: cat /etc/hostname
     register: registry_hostname
-
-- name: Prepare Infra Images
-  hosts: master
+    
+- name: Stop Nacos Containers
+  hosts: nacos
   vars_files:
     - vars.yml
+  vars:
+    - registry_addr: "{{registry_hostname.stdout}}:{{registry_srv_port}}"
+  become: true
   tasks:
+  - name: Copy Prometheus&Grafana Docker-Compose Files
+    template: 
+      src: ../tmpl/{{ item }}
+      dest: /tmp/{{ item }}
+      force: true
+    loop:
+      - "{{nacos1_compose_file}}"
+      - "{{nacos2_compose_file}}"
+      - "{{nacos3_compose_file}}"
+      - "{{nacos_mysql_compose_file}}"
   - name: Stop Nacos-MySQL
     shell:
-      cmd: "docker-compose -f /tmp/{{nacos_mysql_compose_file}} down"
+      cmd: "docker-compose -f /tmp/{{nacos_mysql_compose_file}} down --remove-orphans"
     when: nacos_mysql_host == ansible_hostname
+  - name: Start Nacos
+    shell:
+      cmd: "docker-compose -f /tmp/{{item.1}} down --remove-orphans"
+    when: item.0 == ansible_hostname
+    with_together: 
+      - "{{[nacos1_host,nacos2_host,nacos3_host]}}"
+      - "{{[nacos1_compose_file,nacos2_compose_file,nacos3_compose_file]}}"
+
+- name: Stop Prometheus&Grafana Containers
+  hosts: prometheus
+  vars_files:
+    - vars.yml
+  vars:
+    - registry_addr: "{{registry_hostname.stdout}}:{{registry_srv_port}}"
+  become: true
+  tasks:
+  - name: Copy Prometheus&Grafana Docker-Compose Files
+    template: 
+      src: ../tmpl/{{ item }}
+      dest: /tmp/{{ item }}
+      force: true
+    loop:
+      - "{{prometheus_compose_file}}"
+  - name: Stop Prometheus & Grafana
+    shell:
+      cmd: "docker-compose -f /tmp/{{prometheus_compose_file}} down --remove-orphans"

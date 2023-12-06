@@ -6,7 +6,7 @@ services:
     hostname: prometheus
     image: "{{registry_addr}}/{{prometheus_image}}"
     volumes:
-      - ./{{config_prometheus}}:/etc/prometheus/prometheus.yml
+      - /tmp/{{config_prometheus}}:/etc/prometheus/prometheus.yml
     ports:
       - "{{prometheus_srv_port}}:9090"
     restart: always

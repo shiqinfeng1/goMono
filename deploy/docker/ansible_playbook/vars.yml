@@ -59,7 +59,7 @@ nacos3_srv_port: 8868
 #########################################################################
 prometheus_srv_port: 9090  # prometheus的服务端口
 grafana_srv_port: 3000 # grafana的服务端口
-config_prometheus: config_prometheus.yaml  # prometheus的配置文件名称
+config_prometheus: prometheus.yml  # prometheus的配置文件名称
 prometheus_compose_file: docker_compose_prometheus_grafana.yml  # prometheus的compose文件
 
 #########################################################################

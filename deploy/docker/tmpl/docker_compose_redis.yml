@@ -2,8 +2,9 @@ version: '3'
 
 services:
   redis:
-    image: "{{PRD_REDIS_IMAGE}}"
-    command: redis-server --requirepass $redis_password --appendonly yes
+    image: "{{registry_addr}}/{{redis_image}}"
+    container_name: redis
+    command: redis-server --requirepass {{redis_password}} --appendonly yes
     hostname: redis
     ports:
       - "{{redis_srv_port}}:6379"
@@ -16,8 +17,9 @@ services:
     volumes:
       - "{{redis_data_dir}}:/data"
 
-  redis-salve:
-    image: "{{PRD_REDIS_IMAGE}}"
+  redis-slave:
+    image: "{{registry_addr}}/{{redis_image}}"
+    container_name: redis-slave
     command: redis-server --requirepass {{redis_password}} --masterauth {{redis_password}} --appendonly yes --slaveof redis 6379
     hostname: redis-slave
     ports:

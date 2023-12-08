@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  mysql:
+    image: "{{registry_addr}}/{{mysql_image}}"
+    hostname: "{{mysql_host}}"
+    container_name: mysql
+    restart: always
+    ports:
+      - "{{mysql_port}}:3306"
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "{{mysql_data_dir}}:/bitnami/mysql/data"
+    environment:
+      # allow_empty_password is recommended only for development.
+      - ALLOW_EMPTY_PASSWORD={{allow_empty_password}}
+      - MYSQL_ROOT_PASSWORD={{mysql_root_password}}
+      - MYSQL_DATABASE={{mysql_database}}
+      - MYSQL_USER={{mysql_user}}
+      - MYSQL_PASSWORD={{mysql_password}}
+      - MYSQL_AUTHENTICATION_PLUGIN={{mysql_authentication_plugin}}
+      - MYSQL_SQL_MODE={{mysql_sql_mode}}
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/bitnami/scripts/mysql/healthcheck.sh"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '5m'
+  

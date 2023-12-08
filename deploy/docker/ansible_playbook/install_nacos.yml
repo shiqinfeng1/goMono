@@ -29,7 +29,7 @@
   
   - name: Start Nacos-MySQL
     shell:
-      cmd: "docker-compose -f /tmp/{{nacos_mysql_compose_file}} up -d"
+      cmd: "docker-compose -p infra -f /tmp/{{nacos_mysql_compose_file}} up -d"
     when: nacos_mysql_host == ansible_hostname
 
   - name: Check Nacos-MySQL Running Status
@@ -45,7 +45,7 @@
 
   - name: Start Nacos ...
     shell:
-      cmd: "docker-compose -f /tmp/{{item.1}} up -d"
+      cmd: "docker-compose -p infra -f /tmp/{{item.1}} up -d"
     when: item.0 == ansible_hostname
     with_together: 
       - "{{[nacos1_host,nacos2_host,nacos3_host]}}"

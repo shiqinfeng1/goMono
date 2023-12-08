@@ -8,6 +8,9 @@
       file:
         path: /tmp/hostctl
         state: directory
+        owner: "{{ansible_user}}"
+        group: "{{ansible_user}}"
+        mode: 0777
     - name: download hostctl_1.1.4_linux_64-bit.tar.gz 
       command: 
         cmd: wget https://github.com/guumaster/hostctl/releases/download/v1.1.4/hostctl_1.1.4_linux_64-bit.tar.gz 

@@ -6,28 +6,38 @@
     command: cat /etc/hostname
     register: registry_hostname
 
-- name: Install Prometheus & Grafana
-  hosts: prometheus
+- name: Install Redis
+  hosts: redis
   vars_files:
     - vars.yml
   vars:
     - registry_addr: "{{registry_hostname.stdout}}:{{registry_srv_port}}"
   become: true
   tasks:
-  - name: Copy Prometheus&Grafana Docker-Compose Files
+  - name: Creates Redis Data Directory
+    file:
+      path: "{{item}}"
+      state: directory
+      owner: "{{ansible_user}}"
+      group: "{{ansible_user}}"
+      mode: 0777
+    loop:
+      - "{{redis_data_dir}}"
+      - "{{redis_slave_data_dir}}"
+
+  - name: Copy Redis Docker-Compose Files
     template: 
       src: ../tmpl/{{ item }}
       dest: /tmp/{{ item }}
       force: true
     loop:
-      - "{{prometheus_compose_file}}"
-      - "{{config_prometheus}}"
+      - "{{redis_compose_file}}"
   
-  - name: Start Prometheus & Grafana
+  - name: Start Redis
     shell:
-      cmd: "docker-compose -p infra -f /tmp/{{prometheus_compose_file}} up -d"
+      cmd: "docker-compose -p infra -f /tmp/{{redis_compose_file}} up -d"
 
-  - name: Check Prometheus & Grafana Running Status
+  - name: Check Redis Status
     docker_container_info:
       name: "{{item}}"
     register: result
@@ -35,8 +45,8 @@
     retries: 10
     delay: 5
     loop:
-      - "prometheus"
-      - "grafana"
+      - "redis"
+      - "redis-slave"
 
   # - name: Delete docker-compose.yml
   #   file: 

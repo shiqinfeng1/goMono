@@ -47,4 +47,4 @@
 
   - name: Start Docker Image Registry
     shell:
-      cmd: "docker-compose -f /tmp/{{docker_registry_compose_file}} up -d --remove-orphans"
+      cmd: "docker-compose -p infra -f /tmp/{{docker_registry_compose_file}} up -d"

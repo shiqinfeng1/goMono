@@ -26,11 +26,11 @@
       - "{{nacos_mysql_compose_file}}"
   - name: Stop Nacos-MySQL
     shell:
-      cmd: "docker-compose -f /tmp/{{nacos_mysql_compose_file}} down --remove-orphans"
+      cmd: "docker-compose -p infra -f /tmp/{{nacos_mysql_compose_file}} down"
     when: nacos_mysql_host == ansible_hostname
   - name: Start Nacos
     shell:
-      cmd: "docker-compose -f /tmp/{{item.1}} down --remove-orphans"
+      cmd: "docker-compose -p infra -f /tmp/{{item.1}} down"
     when: item.0 == ansible_hostname
     with_together: 
       - "{{[nacos1_host,nacos2_host,nacos3_host]}}"
@@ -53,4 +53,41 @@
       - "{{prometheus_compose_file}}"
   - name: Stop Prometheus & Grafana
     shell:
-      cmd: "docker-compose -f /tmp/{{prometheus_compose_file}} down --remove-orphans"
+      cmd: "docker-compose -p infra -f /tmp/{{prometheus_compose_file}} down"
+
+- name: Stop Redis
+  hosts: redis
+  vars_files:
+    - vars.yml
+  vars:
+    - registry_addr: "{{registry_hostname.stdout}}:{{registry_srv_port}}"
+  become: true
+  tasks:
+  - name: Copy Redis Docker-Compose Files
+    template: 
+      src: ../tmpl/{{ item }}
+      dest: /tmp/{{ item }}
+      force: true
+    loop:
+      - "{{redis_compose_file}}"
+  - name: Stop Redis
+    shell:
+      cmd: "docker-compose -p infra -f /tmp/{{redis_compose_file}} down"
+- name: Stop Mysql
+  hosts: mysql
+  vars_files:
+    - vars.yml
+  vars:
+    - registry_addr: "{{registry_hostname.stdout}}:{{registry_srv_port}}"
+  become: true
+  tasks:
+  - name: Copy Redis Docker-Compose Files
+    template: 
+      src: ../tmpl/{{ item }}
+      dest: /tmp/{{ item }}
+      force: true
+    loop:
+      - "{{mysql_compose_file}}"
+  - name: Stop Mysql
+    shell:
+      cmd: "docker-compose -p infra -f /tmp/{{mysql_compose_file}} down"

@@ -1,0 +1,96 @@
+---
+- name: Get Docker Image Registry Hostname
+  hosts: registry
+  tasks:
+  - name: get registry hostname
+    command: cat /etc/hostname
+    register: registry_hostname
+
+- name: Install Mysql
+  hosts: mysql
+  vars_files:
+    - vars.yml
+  vars:
+    - registry_addr: "{{registry_hostname.stdout}}:{{registry_srv_port}}"
+  become: true
+  tasks:
+  - name: Creates Mysql Data Directory
+    file:
+      path: "{{item}}"
+      state: directory
+      owner: "{{ansible_user}}"
+      group: "{{ansible_user}}"
+      mode: 0777
+    loop:
+      - "{{mysql_data_dir}}"
+
+  - name: Copy Mysql Docker Compose Files
+    template: 
+      src: ../tmpl/{{ item }}
+      dest: /tmp/{{ item }}
+      force: true
+    loop:
+      - "{{mysql_compose_file}}"
+  
+  - name: Start Mysql
+    shell:
+      cmd: "docker-compose --project-name infra -f /tmp/{{mysql_compose_file}} up -d"
+
+  - name: Check Mysql Status
+    docker_container_info:
+      name: "{{item}}"
+    register: result
+    until: result.container['State']['Status'] == "running"
+    retries: 10
+    delay: 5
+    loop:
+      - "mysql"
+
+- name: Install Mysql Slave
+  hosts: mysql_slave
+  vars_files:
+    - vars.yml
+  vars:
+    - registry_addr: "{{registry_hostname.stdout}}:{{registry_srv_port}}"
+  become: true
+  tasks:
+  - name: Creates Mysql Slave Data Directory
+    file:
+      path: "{{item}}"
+      state: directory
+      owner: "{{ansible_user}}"
+      group: "{{ansible_user}}"
+      mode: 0777
+    loop:
+      - "{{mysql_slave_data_dir}}"
+      - "{{mysql_backup_data_dir}}"
+      
+  - name: Copy Mysql Slave Docker Compose Files
+    template: 
+      src: ../tmpl/{{ item }}
+      dest: /tmp/{{ item }}
+      force: true
+    loop:
+      - "{{mysql_slave_compose_file}}"
+  
+  - name: Start Mysql Slave
+    shell:
+      cmd: "docker-compose -p infra -f /tmp/{{mysql_slave_compose_file}} up -d"
+
+  - name: Check Mysql Slave Status
+    docker_container_info:
+      name: "{{item}}"
+    register: result
+    until: result.container['State']['Status'] == "running"
+    retries: 10
+    delay: 5
+    loop:
+      - "mysql-slave"
+      - "mysql-backup"
+
+  - name: Delete docker-compose.yml
+    file: 
+      dest: /tmp/{{ item }}
+      state: absent
+    loop:
+      - "{{prometheus_compose_file}}"

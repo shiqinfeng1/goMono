@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/shiqinfeng1/goMono/app/training/internal/domain/training"
+	"github.com/shiqinfeng1/goMono/app/biz-training/internal/domain/training"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

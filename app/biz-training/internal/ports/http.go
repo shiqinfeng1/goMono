@@ -16,9 +16,9 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/gorilla/handlers"
 	v1 "github.com/shiqinfeng1/goMono/api/training/v1"
+	conf "github.com/shiqinfeng1/goMono/app/biz-training/internal/conf"
+	"github.com/shiqinfeng1/goMono/app/biz-training/internal/service"
 	"github.com/shiqinfeng1/goMono/app/common/client"
-	conf "github.com/shiqinfeng1/goMono/app/common/config/training"
-	"github.com/shiqinfeng1/goMono/app/training/internal/service"
 	"go.opentelemetry.io/otel/sdk/trace"
 )
 

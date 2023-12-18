@@ -10,8 +10,8 @@ import (
 	"github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
+	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/domain/hour"
 	"github.com/shiqinfeng1/goMono/app/common/config"
-	"github.com/shiqinfeng1/goMono/app/trainer/internal/domain/hour"
 	"go.uber.org/multierr"
 )
 

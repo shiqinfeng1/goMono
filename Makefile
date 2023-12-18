@@ -62,9 +62,9 @@ init:
 # generate app proto
 config:
 	for var in $(INTERNAL_PROTO_FILES); do \
-        protoc --proto_path=./app/common/config \
+        protoc --proto_path=./app \
 	       --proto_path=./third_party \
- 	       --go_out=paths=source_relative:./app/common/config \
+ 	       --go_out=paths=source_relative:./app \
 	       $$var; \
     done
 

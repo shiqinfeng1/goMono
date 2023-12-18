@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/shiqinfeng1/goMono/app/biz-training/internal/application/query"
+	"github.com/shiqinfeng1/goMono/app/biz-training/internal/domain/training"
 	"github.com/shiqinfeng1/goMono/app/common/config"
-	"github.com/shiqinfeng1/goMono/app/training/internal/application/query"
-	"github.com/shiqinfeng1/goMono/app/training/internal/domain/training"
 
 	"github.com/go-kratos/kratos/v2/log"
 )

@@ -9,11 +9,11 @@ import (
 
 	"github.com/google/uuid"
 	v1 "github.com/shiqinfeng1/goMono/api/training/v1"
+	"github.com/shiqinfeng1/goMono/app/biz-training/internal/application"
+	"github.com/shiqinfeng1/goMono/app/biz-training/internal/application/command"
+	"github.com/shiqinfeng1/goMono/app/biz-training/internal/application/query"
+	"github.com/shiqinfeng1/goMono/app/biz-training/internal/domain/training"
 	"github.com/shiqinfeng1/goMono/app/common/auth"
-	"github.com/shiqinfeng1/goMono/app/training/internal/application"
-	"github.com/shiqinfeng1/goMono/app/training/internal/application/command"
-	"github.com/shiqinfeng1/goMono/app/training/internal/application/query"
-	"github.com/shiqinfeng1/goMono/app/training/internal/domain/training"
 )
 
 type HttpService struct {

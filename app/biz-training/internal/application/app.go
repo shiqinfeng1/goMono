@@ -2,10 +2,10 @@ package application
 
 import (
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/shiqinfeng1/goMono/app/training/internal/adapters"
-	"github.com/shiqinfeng1/goMono/app/training/internal/application/command"
-	"github.com/shiqinfeng1/goMono/app/training/internal/application/query"
-	"github.com/shiqinfeng1/goMono/app/training/internal/domain/training"
+	"github.com/shiqinfeng1/goMono/app/biz-training/internal/adapters"
+	"github.com/shiqinfeng1/goMono/app/biz-training/internal/application/command"
+	"github.com/shiqinfeng1/goMono/app/biz-training/internal/application/query"
+	"github.com/shiqinfeng1/goMono/app/biz-training/internal/domain/training"
 )
 
 // ProviderSet is service providers.

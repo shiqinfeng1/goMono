@@ -6,8 +6,8 @@ import (
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/pkg/errors"
+	"github.com/shiqinfeng1/goMono/app/biz-training/internal/domain/training"
 	"github.com/shiqinfeng1/goMono/app/common/decorator"
-	"github.com/shiqinfeng1/goMono/app/training/internal/domain/training"
 )
 
 type ScheduleTraining struct {

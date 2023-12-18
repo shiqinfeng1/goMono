@@ -6,9 +6,9 @@ import (
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/jmoiron/sqlx"
+	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/application/query"
+	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/domain/hour"
 	"github.com/shiqinfeng1/goMono/app/common/config"
-	"github.com/shiqinfeng1/goMono/app/trainer/internal/application/query"
-	"github.com/shiqinfeng1/goMono/app/trainer/internal/domain/hour"
 )
 
 type DateModel struct {

@@ -1,7 +1,7 @@
 syntax = "proto3";
 package kratos.config.training;
 
-option go_package = "github.com/shiqinfeng1/goMono/app/common/config/training;training";
+option go_package = "github.com/shiqinfeng1/goMono/app/biz-training/internal/conf;conf";
 import "google/protobuf/duration.proto";
 
 message Server {

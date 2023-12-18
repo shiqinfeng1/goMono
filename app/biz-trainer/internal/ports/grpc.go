@@ -2,9 +2,9 @@ package ports
 
 import (
 	v1 "github.com/shiqinfeng1/goMono/api/trainer/v1"
+	conf "github.com/shiqinfeng1/goMono/app/biz-trainer/internal/conf"
+	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/service"
 	"github.com/shiqinfeng1/goMono/app/common/client"
-	conf "github.com/shiqinfeng1/goMono/app/common/config/trainer"
-	"github.com/shiqinfeng1/goMono/app/trainer/internal/service"
 
 	prom "github.com/go-kratos/kratos/contrib/metrics/prometheus/v2"
 	kmetrics "github.com/go-kratos/kratos/v2/middleware/metrics"

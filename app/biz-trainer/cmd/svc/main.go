@@ -10,8 +10,8 @@ import (
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
+	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/conf"
 	"github.com/shiqinfeng1/goMono/app/common/config"
-	conf "github.com/shiqinfeng1/goMono/app/common/config/trainer"
 	"github.com/shiqinfeng1/goMono/app/common/log"
 	"github.com/shiqinfeng1/goMono/app/common/types"
 

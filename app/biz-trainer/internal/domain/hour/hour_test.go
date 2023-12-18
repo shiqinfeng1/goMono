@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/shiqinfeng1/goMono/app/trainer/internal/domain/hour"
+	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/domain/hour"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

@@ -6,10 +6,10 @@ import (
 	"time"
 
 	v1 "github.com/shiqinfeng1/goMono/api/trainer/v1"
+	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/application"
+	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/application/command"
+	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/application/query"
 	"github.com/shiqinfeng1/goMono/app/common/auth"
-	"github.com/shiqinfeng1/goMono/app/trainer/internal/application"
-	"github.com/shiqinfeng1/goMono/app/trainer/internal/application/command"
-	"github.com/shiqinfeng1/goMono/app/trainer/internal/application/query"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )

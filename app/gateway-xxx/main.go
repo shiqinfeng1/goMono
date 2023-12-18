@@ -66,24 +66,19 @@ func init() {
 	// flag.Var(&proxyAddrs, "addr", "proxy address, eg: -addr 0.0.0.0:8080")
 	// flag.StringVar(&proxyConfig, "conf", "config.yaml", "config path, eg: -conf config.yaml")
 	// 动态更新配置。key：需要监听的字段；value：配置变化后的处理函数
-	onChanges := map[string]func(key string, value kcfg.Value){
-		"log.level": func(key string, value kcfg.Value) {
-			_ = key
-			lvl, _ := value.String()
-			log.SetLevel(lvl) // 动态更新level等级
-		},
-		// todo： 这里添加需要监听的字段，及处理函数
-	}
-	config.Bootstrap(
-		[]string{"public.yaml", "trainer.yaml"}, // 指定要加载的配置文件
-		[]interface{}{&pubCfg, &srvCfg},
-		onChanges,
-	)
+	// onChanges := map[string]func(key string, value kcfg.Value){
+	// 	// todo： 这里添加需要监听的字段，及处理函数
+	// }
+	// config.Bootstrap(
+	// 	[]string{"public.yaml", "trainer.yaml"}, // 指定要加载的配置文件
+	// 	[]interface{}{&pubCfg, &srvCfg},
+	// 	onChanges,
+	// )
 }
 
 func main() {
 	flag.Parse()
-	clientFactory := client.NewFactory(discovery.MustNacosDiscovery())
+	clientFactory := client.NewFactory(discovery.MustNacosDiscovery(""))
 	p, err := proxy.New(clientFactory, middleware.Create)
 	if err != nil {
 		log.Fatalf("failed to new proxy: %v", err)

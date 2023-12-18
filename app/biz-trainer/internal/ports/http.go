@@ -15,9 +15,9 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	v1 "github.com/shiqinfeng1/goMono/api/trainer/v1"
+	conf "github.com/shiqinfeng1/goMono/app/biz-trainer/internal/conf"
+	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/service"
 	"github.com/shiqinfeng1/goMono/app/common/client"
-	conf "github.com/shiqinfeng1/goMono/app/common/config/trainer"
-	"github.com/shiqinfeng1/goMono/app/trainer/internal/service"
 	"go.opentelemetry.io/otel/sdk/trace"
 )
 

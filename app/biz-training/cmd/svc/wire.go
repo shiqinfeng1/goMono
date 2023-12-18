@@ -10,16 +10,16 @@ import (
 
 	"github.com/go-kratos/kratos/v2"
 	"github.com/google/wire"
+	"github.com/shiqinfeng1/goMono/app/biz-training/internal/adapters"
+	"github.com/shiqinfeng1/goMono/app/biz-training/internal/application"
+	"github.com/shiqinfeng1/goMono/app/biz-training/internal/conf"
+	"github.com/shiqinfeng1/goMono/app/biz-training/internal/ports"
+	"github.com/shiqinfeng1/goMono/app/biz-training/internal/service"
 	"github.com/shiqinfeng1/goMono/app/common/config"
-	"github.com/shiqinfeng1/goMono/app/common/config/training"
 	"github.com/shiqinfeng1/goMono/app/common/log"
 	"github.com/shiqinfeng1/goMono/app/common/registrar"
 	"github.com/shiqinfeng1/goMono/app/common/trace"
 	"github.com/shiqinfeng1/goMono/app/common/types"
-	"github.com/shiqinfeng1/goMono/app/training/internal/adapters"
-	"github.com/shiqinfeng1/goMono/app/training/internal/application"
-	"github.com/shiqinfeng1/goMono/app/training/internal/ports"
-	"github.com/shiqinfeng1/goMono/app/training/internal/service"
 )
 
 // wireApp init kratos application.
@@ -30,8 +30,8 @@ func wireApp(
 	*config.Log,
 	*config.Trace,
 	*config.Adapter,
-	*training.HTTP,
-	*training.Auth) (*kratos.App, func(), error) {
+	*conf.HTTP,
+	*conf.Auth) (*kratos.App, func(), error) {
 	panic(wire.Build(
 		log.ProviderSet,
 		trace.ProviderSet,

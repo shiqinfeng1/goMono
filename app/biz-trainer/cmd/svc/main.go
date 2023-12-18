@@ -35,7 +35,7 @@ func init() {
 			lvl, _ := value.String()
 			log.SetLevel(lvl) // 动态更新level等级
 		},
-		// 这里添加需要监听的字段，及处理函数
+		// todo： 这里添加需要监听的字段，及处理函数
 	}
 	config.Bootstrap(
 		[]string{"public.yaml", "trainer.yaml"}, // 指定要加载的配置文件

@@ -55,7 +55,7 @@ func Bootstrap(cfgFile []string, scanTarget []interface{}, onChanges map[string]
 				if len(ks) == 0 {
 					panic(ErrNoCfgSource)
 				}
-			case runMode.Is(types.ModeDevelop): // 从本地路径获取配置文件
+			case runMode.Is(types.ModeDevelop): // 开发环境：从本地路径获取配置文件
 				if !fileExists(f) {
 					panic(ErrFileNotExist(f))
 				}

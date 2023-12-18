@@ -33,10 +33,10 @@ ifeq ($(GOHOSTOS), windows)
 	# Git_Bash= $(subst cmd\,bin\bash.exe,$(dir $(shell where git)))
 	Git_Bash=$(subst \,/,$(subst cmd\,bin\bash.exe,$(dir $(shell where git))))
 	API_PROTO_FILES=$(shell $(Git_Bash) -c "find api -name *.proto")
-	INTERNAL_PROTO_FILES=$(shell $(Git_Bash) -c "find app/common/config -name *.proto")
+	INTERNAL_PROTO_FILES=$(shell $(Git_Bash) -c "find app -name *.proto")
 else 
 	API_PROTO_FILES=$(shell find api -name *.proto)
-	INTERNAL_PROTO_FILES=$(shell find app/common/config -name *.proto)
+	INTERNAL_PROTO_FILES=$(shell find app -name *.proto)
 	ifeq ($(GOHOSTOS), darwin)
 		configCmd=xargs -I F sh -c 'cd F && echo && $(MAKE) config'
 		wireCmd=xargs -I F sh -c 'cd F && echo && $(MAKE) wire'

@@ -8,13 +8,11 @@ import (
 	kcfg "github.com/go-kratos/kratos/v2/config"
 	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/registry"
-	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
-	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/conf"
+	conf "github.com/shiqinfeng1/goMono/app/biz-training/internal/conf"
 	"github.com/shiqinfeng1/goMono/app/common/config"
 	"github.com/shiqinfeng1/goMono/app/common/log"
 	"github.com/shiqinfeng1/goMono/app/common/types"
-
 	_ "go.uber.org/automaxprocs"
 )
 
@@ -28,23 +26,21 @@ var (
 )
 
 func init() {
-	// 动态更新配置。key：需要监听的字段；value：配置变化后的处理函数
 	onChanges := map[string]func(key string, value kcfg.Value){
 		"log.level": func(key string, value kcfg.Value) {
 			_ = key
 			lvl, _ := value.String()
 			log.SetLevel(lvl) // 动态更新level等级
 		},
-		// todo： 这里添加需要监听的字段，及处理函数
 	}
 	config.Bootstrap(
-		[]string{"public.yaml", "trainer.yaml"}, // 指定要加载的配置文件
+		[]string{"public.yaml", "training.yaml"},
 		[]interface{}{&pubCfg, &srvCfg},
 		onChanges,
 	)
 }
 
-func newApp(logger klog.Logger, regstr registry.Registrar, gs *grpc.Server, hs *http.Server) *kratos.App {
+func newApp(logger klog.Logger, regstr registry.Registrar, hs *http.Server) *kratos.App {
 	return kratos.New(
 		kratos.ID(ID),
 		kratos.Name(Name),
@@ -52,7 +48,6 @@ func newApp(logger klog.Logger, regstr registry.Registrar, gs *grpc.Server, hs *
 		kratos.Metadata(map[string]string{}),
 		kratos.Logger(logger),
 		kratos.Server(
-			gs,
 			hs,
 		),
 		kratos.Registrar(regstr),
@@ -60,6 +55,13 @@ func newApp(logger klog.Logger, regstr registry.Registrar, gs *grpc.Server, hs *
 }
 
 func main() {
+
+	// 	docker run -d --name jaeger \
+	//   -e COLLECTOR_OTLP_ENABLED=true \
+	//   -p 16686:16686 \
+	//   -p 4317:4317 \
+	//   -p 4318:4318 \
+	//   jaegertracing/all-in-one:latest
 	ctx := context.Background()
 	svcInfo := &types.SrvInfo{
 		ID:      ID,
@@ -71,10 +73,8 @@ func main() {
 		svcInfo,
 		pubCfg.Discovery,
 		pubCfg.Log,
-		pubCfg.Trace,
 		pubCfg.Adapter,
 		srvCfg.Http,
-		srvCfg.Grpc,
 		srvCfg.Auth,
 	)
 	if err != nil {

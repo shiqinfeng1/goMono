@@ -4,14 +4,14 @@ import (
 	"context"
 	"time"
 
+	"github.com/golang/protobuf/ptypes/empty"
+	"github.com/golang/protobuf/ptypes/timestamp"
 	v1 "github.com/shiqinfeng1/goMono/api/trainer/v1"
 	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/application"
 	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/application/command"
 	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/application/query"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/ptypes/empty"
-	"google.golang.org/protobuf/ptypes/timestamp"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 

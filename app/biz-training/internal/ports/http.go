@@ -10,7 +10,6 @@ import (
 	kmetrics "github.com/go-kratos/kratos/v2/middleware/metrics"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/middleware/selector"
-	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/go-kratos/swagger-api/openapiv2"
 	"github.com/golang-jwt/jwt/v4"
@@ -19,7 +18,6 @@ import (
 	conf "github.com/shiqinfeng1/goMono/app/biz-training/internal/conf"
 	"github.com/shiqinfeng1/goMono/app/biz-training/internal/service"
 	"github.com/shiqinfeng1/goMono/app/common/client"
-	"go.opentelemetry.io/otel/sdk/trace"
 )
 
 // 设置白名单
@@ -36,13 +34,10 @@ func NewWhiteListMatcher() selector.MatchFunc {
 }
 
 // NewHTTPServer new an HTTP server.
-func NewHTTPServer(c *conf.HTTP, ac *conf.Auth, logger log.Logger, tp *trace.TracerProvider, s *service.HttpService) *http.Server {
+func NewHTTPServer(c *conf.HTTP, ac *conf.Auth, logger log.Logger, s *service.HttpService) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
-			tracing.Server(
-				tracing.WithTracerProvider(tp),
-			),
 			logging.Server(logger),
 			selector.Server(
 				kjwt.Server(

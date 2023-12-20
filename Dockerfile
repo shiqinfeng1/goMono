@@ -35,7 +35,7 @@ ARG GOARCH=amd64
 RUN --mount=type=cache,sharing=locked,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=secret,id=git_creds,dst=/root/.netrc \
-    CGO_ENABLED=1 GOOS=linux go build  -ldflags "-extldflags -static \
+    CGO_ENABLED=1 GOOS=linux go build -ldflags "-extldflags -static \
     -X  'main.Version=${VERSION}'" \
     -o ./bin/app ${TARGET} 
 
@@ -57,7 +57,7 @@ ARG GOARCH=amd64
 RUN --mount=type=ssh \
     --mount=type=cache,sharing=locked,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
-    CGO_ENABLED=1 GOOS=linux go build  -ldflags "-extldflags -static \
+    CGO_ENABLED=1 GOOS=linux go build -ldflags "-extldflags -static \
     -X  'main.Version=${VERSION}'" \
     -gcflags="all=-N -l" -o ./bin/app ${TARGET}
 

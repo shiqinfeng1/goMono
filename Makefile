@@ -111,7 +111,7 @@ build-docker-debug:
 	done
 
 .PHONY: all
-all: init api wire build
+all: init api wire build build-docker-production
 
 # show help
 help:

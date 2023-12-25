@@ -70,12 +70,12 @@ api:
 .PHONY: build
 # build
 build:
-	mkdir -p bin/ && go build -ldflags "-X main.Version=$(VERSION)" -o ./bin/ ./...
+	mkdir -p bin/ && go build -ldflags "-X cmd.Version=$(VERSION)" -o ./bin/ ./...
 
 .PHONY: generate
 # generate wire_gen.go
 wire:
-	find app  -mindepth 3 -maxdepth 3 | grep cmd | $(wireCmd)
+	find app  -mindepth 2 -maxdepth 2 | grep cmd | $(wireCmd)
 
 export DOCKER_BUILDKIT := 1
 

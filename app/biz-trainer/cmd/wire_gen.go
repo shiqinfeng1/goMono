@@ -4,11 +4,15 @@
 //go:build !wireinject
 // +build !wireinject
 
-package main
+package cmd
 
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2"
+	log2 "github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/registry"
+	"github.com/go-kratos/kratos/v2/transport/grpc"
+	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/adapters"
 	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/application"
 	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/conf"
@@ -18,10 +22,6 @@ import (
 	"github.com/shiqinfeng1/goMono/app/common/log"
 	"github.com/shiqinfeng1/goMono/app/common/registrar"
 	"github.com/shiqinfeng1/goMono/app/common/types"
-)
-
-import (
-	_ "go.uber.org/automaxprocs"
 )
 
 // Injectors from wire.go:
@@ -40,4 +40,14 @@ func wireApp(contextContext context.Context, srvInfo *types.SrvInfo, discovery *
 	app := newApp(logger, registryRegistrar, server, httpServer)
 	return app, func() {
 	}, nil
+}
+
+// wire.go:
+
+func newApp(logger log2.Logger, regstr registry.Registrar, gs *grpc.Server, hs *http.Server) *kratos.App {
+	return kratos.New(kratos.ID(ID), kratos.Name(Name), kratos.Version(Version), kratos.Metadata(map[string]string{}), kratos.Logger(logger), kratos.Server(
+		gs,
+		hs,
+	), kratos.Registrar(regstr),
+	)
 }

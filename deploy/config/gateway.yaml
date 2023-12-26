@@ -1,0 +1,5 @@
+
+proxy:
+  debug: false
+  addrs:
+    - ":8080"

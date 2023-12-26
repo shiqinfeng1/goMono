@@ -11,7 +11,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/domain/hour"
-	"github.com/shiqinfeng1/goMono/app/common/config"
+	"github.com/shiqinfeng1/goMono/app/common/conf"
 	"go.uber.org/multierr"
 )
 
@@ -36,7 +36,7 @@ type HourRepo struct {
 }
 
 // NewTrainingRepo 实现领域层定义的repo，参数通过wire初始化自动注入
-func NewHourRepo(cfg *config.Adapter, logger log.Logger) hour.CmdRepo {
+func NewHourRepo(cfg *conf.Adapter, logger log.Logger) hour.CmdRepo {
 	// 使用sqlx连接到数据库
 	db, err := sqlx.Connect(cfg.Database.Driver, cfg.Database.Source)
 	if err != nil {

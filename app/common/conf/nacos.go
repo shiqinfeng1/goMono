@@ -1,4 +1,4 @@
-package config
+package conf
 
 import (
 	nacos "github.com/go-kratos/kratos/contrib/config/nacos/v2"

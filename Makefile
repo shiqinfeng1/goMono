@@ -70,7 +70,7 @@ api:
 .PHONY: build
 # build
 build:
-	mkdir -p bin/ && go build -ldflags "-X cmd.Version=$(VERSION)" -o ./bin/ ./...
+	mkdir -p deploy/bin/ && go build -ldflags "-X cmd.Version=$(VERSION)" -o ./deploy/bin/ ./...
 
 .PHONY: generate
 # generate wire_gen.go

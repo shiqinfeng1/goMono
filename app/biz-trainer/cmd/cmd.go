@@ -6,7 +6,7 @@ import (
 	kcfg "github.com/go-kratos/kratos/v2/config"
 	"github.com/gogf/gf/v2/os/gcmd"
 	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/conf"
-	"github.com/shiqinfeng1/goMono/app/common/config"
+	pubcfg "github.com/shiqinfeng1/goMono/app/common/conf"
 	"github.com/shiqinfeng1/goMono/app/common/log"
 	"github.com/shiqinfeng1/goMono/app/common/types"
 )
@@ -25,7 +25,7 @@ var svcInfo = &types.SrvInfo{
 }
 var (
 	srvCfg conf.Server // 应用配置参数
-	pubCfg config.Public
+	pubCfg pubcfg.Public
 )
 
 func init() {
@@ -38,7 +38,7 @@ func init() {
 		},
 		// todo： 这里添加需要监听的字段，及处理函数
 	}
-	config.Bootstrap(
+	pubcfg.Bootstrap(
 		[]string{"public.yaml", "trainer.yaml"}, // 指定要加载的配置文件
 		[]interface{}{&pubCfg, &srvCfg},
 		onChanges,

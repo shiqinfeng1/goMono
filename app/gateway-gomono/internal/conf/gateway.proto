@@ -1,0 +1,9 @@
+syntax = "proto3";
+package kratos.config.gateway;
+
+option go_package = "github.com/shiqinfeng1/goMono/app/gateway-gomono/internal/conf;conf";
+
+message Proxy {
+  bool debug = 1;
+  repeated string addrs = 2;
+}

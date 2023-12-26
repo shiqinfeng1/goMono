@@ -9,7 +9,7 @@ import (
 	"github.com/pkg/errors"
 	trainerApi "github.com/shiqinfeng1/goMono/api/trainer/v1"
 	"github.com/shiqinfeng1/goMono/app/common/client"
-	"github.com/shiqinfeng1/goMono/app/common/config"
+	"github.com/shiqinfeng1/goMono/app/common/conf"
 	"github.com/shiqinfeng1/goMono/app/common/discovery"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -24,7 +24,7 @@ type TrainerGrpc struct {
 	close     func() error
 }
 
-func NewTrainerGrpc(dis *config.Discovery) *TrainerGrpc {
+func NewTrainerGrpc(dis *conf.Discovery) *TrainerGrpc {
 	return &TrainerGrpc{
 		endpoints: dis.Endpoints,
 	}

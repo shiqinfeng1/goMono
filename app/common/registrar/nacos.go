@@ -4,10 +4,10 @@ import (
 	"github.com/go-kratos/kratos/contrib/registry/nacos/v2"
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/shiqinfeng1/goMono/app/common/client"
-	"github.com/shiqinfeng1/goMono/app/common/config"
+	"github.com/shiqinfeng1/goMono/app/common/conf"
 )
 
-func MustNacosRegistrar(dis *config.Discovery) registry.Registrar {
+func MustNacosRegistrar(dis *conf.Discovery) registry.Registrar {
 	if len(dis.Endpoints) == 0 {
 		panic("no such discovery config endpoint")
 	}

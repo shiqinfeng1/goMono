@@ -6,7 +6,7 @@ import (
 
 	userApi "github.com/shiqinfeng1/goMono/api/user/v1"
 	"github.com/shiqinfeng1/goMono/app/common/client"
-	"github.com/shiqinfeng1/goMono/app/common/config"
+	"github.com/shiqinfeng1/goMono/app/common/conf"
 	"github.com/shiqinfeng1/goMono/app/common/discovery"
 )
 
@@ -16,7 +16,7 @@ type UserGrpc struct {
 	close     func() error
 }
 
-func NewUserGrpc(dis *config.Discovery) *UserGrpc {
+func NewUserGrpc(dis *conf.Discovery) *UserGrpc {
 	return &UserGrpc{
 		endpoints: dis.Endpoints,
 	}

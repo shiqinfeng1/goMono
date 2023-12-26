@@ -8,7 +8,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/application/query"
 	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/domain/hour"
-	"github.com/shiqinfeng1/goMono/app/common/config"
+	"github.com/shiqinfeng1/goMono/app/common/conf"
 )
 
 type DateModel struct {
@@ -29,7 +29,7 @@ type DatesMysqlRepo struct {
 	log         *log.Helper
 }
 
-func NewDatesMysqlRepo(pubCfg *config.Adapter, logger log.Logger) query.QueryRepository {
+func NewDatesMysqlRepo(pubCfg *conf.Adapter, logger log.Logger) query.QueryRepository {
 	db, err := sqlx.Connect(pubCfg.Database.Driver, pubCfg.Database.Source)
 	if err != nil {
 		return nil

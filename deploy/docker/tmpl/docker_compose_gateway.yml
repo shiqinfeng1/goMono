@@ -3,16 +3,13 @@ services:
   gateway:
     hostname: gateway
     image: "{{registry_addr}}/{{gateway_image}}"
-    container_name: nacos3
+    container_name: ggateway
     volumes:
       - ./cluster-logs/nacos3:/home/nacos/logs
     ports:
       - "{{nacos3_conn_port1}}:7848"
-      - "{{nacos3_srv_port}}:8848"
-      - "{{nacos3_conn_port2}}:9848"
-      - "{{nacos3_conn_port3}}:9849"
-    env_file:
-      - ./{{config_nacos}}
+    env:
+      - MODE: develop
     restart: always
     healthcheck:
       test: ["CMD-SHELL","curl -sSL 'http://localhost:8848/nacos/actuator/health' || exit 1"]

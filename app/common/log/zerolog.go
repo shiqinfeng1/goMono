@@ -12,7 +12,7 @@ import (
 	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/rs/zerolog"
 	"github.com/shiqinfeng1/goMono/app/common/client"
-	"github.com/shiqinfeng1/goMono/app/common/config"
+	"github.com/shiqinfeng1/goMono/app/common/conf"
 	"github.com/shiqinfeng1/goMono/app/common/types"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
@@ -42,7 +42,7 @@ func newConsoleWriter() io.Writer {
 }
 
 // zerolog的文件输出
-func newFileWriter(logPath string, fcfg *config.File) io.Writer {
+func newFileWriter(logPath string, fcfg *conf.File) io.Writer {
 	return &lumberjack.Logger{
 		Filename:   logPath,
 		MaxSize:    int(fcfg.GetMaxSize()),    // megabytes
@@ -73,7 +73,7 @@ func newMonitorWriter(endpoint string) io.Writer {
 }
 
 // 生成一个zero的日志器，支持输出到屏幕、日志文件、远端日志服务
-func newZeroLogger(fileName string, lvl zerolog.Level, fcfg *config.File, mcfg *config.Monitor) *zerolog.Logger {
+func newZeroLogger(fileName string, lvl zerolog.Level, fcfg *conf.File, mcfg *conf.Monitor) *zerolog.Logger {
 	zerolog.TimeFieldFormat = timeFormat
 	m := types.NewModeFromString(os.Getenv("MODE"))
 	if !m.IsValid() {

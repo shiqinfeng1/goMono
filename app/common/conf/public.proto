@@ -1,7 +1,7 @@
 syntax = "proto3";
 package kratos.config.public;
 
-option go_package = "github.com/shiqinfeng1/goMono/app/common/config;config";
+option go_package = "github.com/shiqinfeng1/goMono/app/common/conf;conf";
 
 import "google/protobuf/duration.proto";
 

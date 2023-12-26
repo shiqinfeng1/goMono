@@ -15,10 +15,10 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/adapters"
 	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/application"
-	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/conf"
+	conf2 "github.com/shiqinfeng1/goMono/app/biz-trainer/internal/conf"
 	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/ports"
 	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/service"
-	"github.com/shiqinfeng1/goMono/app/common/config"
+	"github.com/shiqinfeng1/goMono/app/common/conf"
 	"github.com/shiqinfeng1/goMono/app/common/log"
 	"github.com/shiqinfeng1/goMono/app/common/registrar"
 	"github.com/shiqinfeng1/goMono/app/common/types"
@@ -27,8 +27,8 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(contextContext context.Context, srvInfo *types.SrvInfo, discovery *config.Discovery, configLog *config.Log, adapter *config.Adapter, http *conf.HTTP, grpc *conf.GRPC, auth *conf.Auth) (*kratos.App, func(), error) {
-	logger := log.New(srvInfo, configLog)
+func wireApp(contextContext context.Context, srvInfo *types.SrvInfo, discovery *conf.Discovery, confLog *conf.Log, adapter *conf.Adapter, http *conf2.HTTP, grpc *conf2.GRPC, auth *conf2.Auth) (*kratos.App, func(), error) {
+	logger := log.New(srvInfo, confLog)
 	registryRegistrar := registrar.MustNacosRegistrar(discovery)
 	cmdRepo := adapters.NewHourRepo(adapter, logger)
 	queryRepository := adapters.NewDatesMysqlRepo(adapter, logger)

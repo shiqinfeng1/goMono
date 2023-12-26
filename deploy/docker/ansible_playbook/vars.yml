@@ -5,6 +5,19 @@ docker_registry_compose_file: docker_compose_docker_registry.yml  # docker私有
 registry_srv_port: 8080  # docker私有仓库的服务端口 
 
 #########################################################################
+# 业务应用镜像相关配置
+#########################################################################
+task_migration_image: app/task-migration:latest
+gateway_gomono_image: app/gateway-gomono:latest
+biz_training_image: app/biz-training:latest
+biz_trainer_image: app/biz-trainer:latest
+biz_images_list: 
+ - "{{task_migration_image}}"
+ - "{{gateway_gomono_image}}"
+ - "{{biz_training_image}}"
+ - "{{biz_trainer_image}}"
+
+#########################################################################
 # 基础设施镜像相关配置
 #########################################################################
 prometheus_image: prom/prometheus:latest

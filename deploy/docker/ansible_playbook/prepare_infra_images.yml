@@ -8,6 +8,7 @@
 
 - name: Prepare Infra Images
   hosts: master
+  become: true
   vars_files:
     - vars.yml
   vars:
@@ -31,17 +32,17 @@
       "{{local_infra_images_dockerfile_list}}"
   
   - name: Make Local Images
-    # command: "docker build -f /tmp/{{item.0}} -t {{registry_addr}}/{{item.1}} ."
+    command: "docker build -f /tmp/{{item.0}} -t {{registry_addr}}/{{item.1}} ."
     with_together: 
       - "{{local_infra_images_dockerfile_list}}"
       - "{{local_infra_images_list}}"
-    docker_image:
-      name: "{{registry_addr}}/{{item.1}}"
-      build:
-        path: /tmp
-        dockerfile: "{{item.0}}"
-      source: build
-      state: present
+    # docker_image:
+    #   name: "{{registry_addr}}/{{item.1}}"
+    #   build:
+    #     path: /tmp
+    #     dockerfile: "{{item.0}}"
+    #   source: build
+    #   state: present
 
   - name: Push Images
     command: "docker push {{registry_addr}}/{{item}}"

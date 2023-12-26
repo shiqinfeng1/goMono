@@ -83,6 +83,12 @@ master
 [prometheus]
 master
 
+[mysql]
+master
+
+[redis]
+master
+
 [backend]
 node1
 ```

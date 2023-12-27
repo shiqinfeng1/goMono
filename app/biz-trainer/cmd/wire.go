@@ -19,7 +19,7 @@ import (
 	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/conf"
 	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/ports"
 	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/service"
-	pubcfg "github.com/shiqinfeng1/goMono/app/common/conf"
+	cconf "github.com/shiqinfeng1/goMono/app/common/conf"
 	"github.com/shiqinfeng1/goMono/app/common/log"
 	"github.com/shiqinfeng1/goMono/app/common/registrar"
 	"github.com/shiqinfeng1/goMono/app/common/types"
@@ -44,9 +44,9 @@ func newApp(logger klog.Logger, regstr registry.Registrar, gs *grpc.Server, hs *
 func wireApp(
 	context.Context,
 	*types.SrvInfo,
-	*pubcfg.Discovery,
-	*pubcfg.Log,
-	*pubcfg.Adapter,
+	*cconf.Discovery,
+	*cconf.Log,
+	*cconf.Adapter,
 	*conf.HTTP,
 	*conf.GRPC,
 	*conf.Auth) (*kratos.App, func(), error) {

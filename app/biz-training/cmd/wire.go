@@ -19,7 +19,7 @@ import (
 	"github.com/shiqinfeng1/goMono/app/biz-training/internal/conf"
 	"github.com/shiqinfeng1/goMono/app/biz-training/internal/ports"
 	"github.com/shiqinfeng1/goMono/app/biz-training/internal/service"
-	pubcfg "github.com/shiqinfeng1/goMono/app/common/conf"
+	cconf "github.com/shiqinfeng1/goMono/app/common/conf"
 	"github.com/shiqinfeng1/goMono/app/common/log"
 	"github.com/shiqinfeng1/goMono/app/common/registrar"
 	"github.com/shiqinfeng1/goMono/app/common/types"
@@ -43,9 +43,9 @@ func newApp(logger klog.Logger, regstr registry.Registrar, hs *http.Server) *kra
 func wireApp(
 	context.Context,
 	*types.SrvInfo,
-	*pubcfg.Discovery,
-	*pubcfg.Log,
-	*pubcfg.Adapter,
+	*cconf.Discovery,
+	*cconf.Log,
+	*cconf.Adapter,
 	*conf.HTTP,
 	*conf.Auth) (*kratos.App, func(), error) {
 	panic(wire.Build(

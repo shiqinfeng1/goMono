@@ -5,6 +5,14 @@ docker_registry_compose_file: docker_compose_docker_registry.yml  # docker私有
 registry_srv_port: 8080  # docker私有仓库的服务端口 
 
 #########################################################################
+# 业务网关相关配置
+#########################################################################
+mode: develop  # develop test product
+mode: true 
+proxy_port1: 8080
+proxy_port2: 8081
+proxy_addrs: :{{proxy_port1}},:{{proxy_port2}}  # 网关服务地址，可以由多个，逗号隔开
+#########################################################################
 # 业务应用镜像相关配置
 #########################################################################
 task_migration_image: app/task-migration:latest

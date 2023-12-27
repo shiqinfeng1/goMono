@@ -6,19 +6,19 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/shiqinfeng1/goMono/app/biz-training/internal/application/query"
 	"github.com/shiqinfeng1/goMono/app/biz-training/internal/domain/training"
-	pubcfg "github.com/shiqinfeng1/goMono/app/common/conf"
+	cconf "github.com/shiqinfeng1/goMono/app/common/conf"
 
 	"github.com/go-kratos/kratos/v2/log"
 )
 
 type trainingRepo struct {
-	adpr *pubcfg.Adapter
+	adpr *cconf.Adapter
 	log  *log.Helper
 	db   *sqlx.DB
 }
 
 // NewTrainingRepo .
-func NewTrainingRepo(adpr *pubcfg.Adapter, logger log.Logger) training.Repository {
+func NewTrainingRepo(adpr *cconf.Adapter, logger log.Logger) training.Repository {
 	db, err := sqlx.Connect(adpr.Database.Driver, adpr.Database.Source)
 	if err != nil {
 		return nil

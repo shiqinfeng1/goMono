@@ -11,7 +11,7 @@ import (
 	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/rs/zerolog"
-	pubcfg "github.com/shiqinfeng1/goMono/app/common/conf"
+	cconf "github.com/shiqinfeng1/goMono/app/common/conf"
 	"github.com/shiqinfeng1/goMono/app/common/types"
 )
 
@@ -23,8 +23,8 @@ var (
 type kloggerWrap struct {
 	l       klog.Logger
 	svcInfo *types.SrvInfo
-	f       *pubcfg.File
-	m       *pubcfg.Monitor
+	f       *cconf.File
+	m       *cconf.Monitor
 	lvl     zerolog.Level
 }
 
@@ -37,7 +37,7 @@ var (
 	klogger *kloggerWrap
 )
 
-func newKLogger(srvInfo *types.SrvInfo, lvl zerolog.Level, fcfg *pubcfg.File, mcfg *pubcfg.Monitor) klog.Logger {
+func newKLogger(srvInfo *types.SrvInfo, lvl zerolog.Level, fcfg *cconf.File, mcfg *cconf.Monitor) klog.Logger {
 	fileName := time.Now().Format(fmt.Sprintf("./log/%v-%v-20160102.log", srvInfo.Name, srvInfo.ID))
 	zl := newZeroLogger(fileName, lvl, fcfg, mcfg)
 	zlogger := zlog.NewLogger(zl)
@@ -51,7 +51,7 @@ func newKLogger(srvInfo *types.SrvInfo, lvl zerolog.Level, fcfg *pubcfg.File, mc
 }
 
 // 全局初始化一次
-func New(svcInfo *types.SrvInfo, log *pubcfg.Log) klog.Logger {
+func New(svcInfo *types.SrvInfo, log *cconf.Log) klog.Logger {
 	once.Do(func() {
 		lvl, err := zerolog.ParseLevel(log.Level)
 		if err != nil {

@@ -91,9 +91,10 @@ build-docker-production:
 			--target production \
 			--secret id=git_creds,env=GITHUB_CREDS --build-arg GOPRIVATE=$(GOPRIVATE) \
 			--label "git_commit=$(COMMIT)" --label "git_tag=${IMAGE_TAG}" \
-			-t "$(CONTAINER_REGISTRY)$$x:latest" \
-			-t "$(CONTAINER_REGISTRY)$$x:$(IMAGE_TAG)" . ;\
+			-t "$(CONTAINER_REGISTRY)$$x:latest" . ; \
 	done
+
+# -t "$(CONTAINER_REGISTRY)$$x:$(IMAGE_TAG)" . ;
 
 .PHONY: build-docker-debug
 build-docker-debug:
@@ -106,9 +107,10 @@ build-docker-debug:
 			--target debug \
 			--secret id=git_creds,env=GITHUB_CREDS --build-arg GOPRIVATE=$(GOPRIVATE) \
 			--label "git_commit=$(COMMIT)" --label "git_tag=${IMAGE_TAG}" \
-			-t "$(CONTAINER_REGISTRY)$$x-debug:latest" \
-			-t "$(CONTAINER_REGISTRY)$$x-debug:$(IMAGE_TAG)" . ;\
+			-t "$(CONTAINER_REGISTRY)$$x-debug:latest" . ; \
 	done
+
+# -t "$(CONTAINER_REGISTRY)$$x-debug:$(IMAGE_TAG)" . ;
 
 .PHONY: all
 all: init api wire build build-docker-production

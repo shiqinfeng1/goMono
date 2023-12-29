@@ -2,6 +2,8 @@ version: "3.8"
 services:
   nacos3:
     hostname: nacos3
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     image: "{{registry_addr}}/{{nacos_image}}"
     container_name: nacos3
     volumes:

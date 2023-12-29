@@ -8,7 +8,7 @@ registry_srv_port: 8080  # docker私有仓库的服务端口
 # 业务网关相关配置
 #########################################################################
 mode: develop  # develop test product
-mode: true 
+debug: true
 proxy_port1: 8080
 proxy_port2: 8081
 proxy_addrs: :{{proxy_port1}},:{{proxy_port2}}  # 网关服务地址，可以由多个，逗号隔开
@@ -63,20 +63,20 @@ config_nacos_mysql: config_nacos_mysql.env # nacos使用的数据库的配置
 config_nacos: config_nacos.env # nacos的配置
 
 nacos_mysql_port: 13306 # nacos使用的mysql的服务端口
-nacos_mysql_host: master # nacos使用的mysql的服务地址，该主机的dns需要配置在部署nacos的机子上, 并在ansible主机清单维护
+nacos_mysql_host: node1 # nacos使用的mysql的服务地址，该主机的dns需要配置在部署nacos的机子上, 并在ansible主机清单维护
 
 # 如果nacos运行在统一节点，务必保证个nacos的端口号不重复
-nacos1_host: master # nacos1的服务地址，该主机的dns需要配置在部署nacos/prometheus的机子上, 并在ansible主机清单维护
+nacos1_host: node1 # nacos1的服务地址，该主机的dns需要配置在部署nacos/prometheus的机子上, 并在ansible主机清单维护
 nacos1_conn_port1: 7848
 nacos1_conn_port2: 9848
 nacos1_conn_port3: 9849
 nacos1_srv_port: 8848
-nacos2_host: master # nacos2的服务地址，该主机的dns需要配置在部署nacos/prometheus的机子上, 并在ansible主机清单维护
+nacos2_host: node1 # nacos2的服务地址，该主机的dns需要配置在部署nacos/prometheus的机子上, 并在ansible主机清单维护
 nacos2_conn_port1: 7858
 nacos2_conn_port2: 9858
 nacos2_conn_port3: 9859
 nacos2_srv_port: 8858
-nacos3_host: master # nacos3的服务地址，该主机的dns需要配置在部署nacos/prometheus的机子上, 并在ansible主机清单维护
+nacos3_host: node1 # nacos3的服务地址，该主机的dns需要配置在部署nacos/prometheus的机子上, 并在ansible主机清单维护
 nacos3_conn_port1: 7868
 nacos3_conn_port2: 9868
 nacos3_conn_port3: 9869
@@ -93,7 +93,7 @@ prometheus_compose_file: docker_compose_prometheus_grafana.yml  # prometheus的c
 #########################################################################
 # redis相关配置
 #########################################################################
-redis_host: master
+redis_host: node1
 redis_srv_port: 26379
 redis_slave_srv_port: 26378
 redis_password: 123456
@@ -105,7 +105,7 @@ redis_slave_data_dir: /data/redis-slave
 # 数据库相关的环境变量
 #########################################################################
 mysql_compose_file: docker_compose_mysql.yml 
-mysql_host: master # 待备份的mysql服务地址 192.168.72.36
+mysql_host: node1 # 待备份的mysql服务地址 192.168.72.36
 mysql_port: 23306 # 主mysql服务端口
 mysql_data_dir: /data/mysql/data  # 主mysql数据目录
 mysql_root_user: root  # 待备份的mysql服务登录用户名
@@ -118,7 +118,7 @@ mysql_sql_mode: STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVIS
 allow_empty_password: yes  # 不允许生产环境配置yes
 
 mysql_slave_compose_file: docker_compose_mysql_slave.yml 
-mysql_slave_host: master # 待备份的mysql服务地址 192.168.72.36
+mysql_slave_host: node1 # 待备份的mysql服务地址 192.168.72.36
 mysql_slave_port: 23316 # 从mysql服务端口
 mysql_slave_data_dir: /data/mysql_slave/data # 从mysql数据目录
 mysql_backup_data_dir: /data/mysql_backup # 从mysql数据本地备份目录
@@ -128,7 +128,7 @@ init_backup: 1 # 启动时立即进行全量备份
 cron_time: "0 0 2 * * *" # mysql全量备份 每天凌晨2点执行一次
 cron_time_rsync: "0 0 5 * * *" # mysql全量备份远程同步  每天凌晨5点执行一次
 cron_time_binlog_rsync: "32 * * * * *" # mysql增量备份远程同步 每分钟第32秒执行一次
-remote_backup_ssh_ip: master # 远端backup服务器ip地址
+remote_backup_ssh_ip: node1 # 远端backup服务器ip地址
 remote_backup_ssh_port: 22 # 远端backup服务器端口号
 remote_backup_pass: sqf  # 远端backup服务器用户密码
 remote_backup_user: root  # 远端backup服务器用户

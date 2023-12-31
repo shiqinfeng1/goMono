@@ -9,14 +9,10 @@ services:
       - "{{proxy_port2}}:{{proxy_port2}}"
     environment:
       - MODE={{mode}}
-      - DEBUG={{mode}}
+      - DEBUG={{debug}}
       - PROXYADDRS={{proxy_addrs}}
       - NACOS_HOST={{nacos1_host}}
       - NACOS_PORT={{nacos1_srv_port}}
+    volumes:
+      - "{{gateway_config_dir}}:/bin/app/config"
     restart: always
-    healthcheck:
-      test: ["CMD-SHELL","curl -sSL 'http://localhost:8848/nacos/actuator/health' || exit 1"]
-      timeout: 2s
-      interval: 10s
-      retries: 50
-      start_period: 15s

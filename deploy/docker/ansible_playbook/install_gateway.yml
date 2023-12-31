@@ -22,20 +22,27 @@
       group: "{{ansible_user}}"
       mode: 0777
     loop:
-      - "{{gateway_data_dir}}"
-      - "{{gateway_slave_data_dir}}"
+      - "{{gateway_dir}}"
+      - "{{gateway_config_dir}}"
 
   - name: Copy Gateway Docker-Compose Files
     template: 
       src: ../tmpl/{{ item }}
-      dest: /tmp/{{ item }}
+      dest: "{{gateway_dir}}/{{ item }}"
       force: true
     loop:
       - "{{gateway_compose_file}}"
-  
+  - name: Copy Gateway config Files
+    template: 
+      src: ../../config/{{ item }}
+      dest: "{{gateway_config_dir}}/{{ item }}"
+      force: true
+    loop:
+      - "gateway.yaml"
+
   - name: Start Gateway
     shell:
-      cmd: "docker-compose -p infra -f /tmp/{{gateway_compose_file}} up -d"
+      cmd: "docker-compose -p gatway -f {{gateway_dir}}/{{gateway_compose_file}} up -d"
 
   - name: Check Gateway Status
     docker_container_info:

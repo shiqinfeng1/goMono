@@ -7,7 +7,7 @@
     register: registry_hostname
 
 - name: Prepare Infra Images
-  hosts: master
+  hosts: images
   vars_files:
     - vars.yml
   vars:

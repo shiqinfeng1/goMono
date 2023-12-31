@@ -8,11 +8,11 @@ services:
       - "{{proxy_port1}}:{{proxy_port1}}"
       - "{{proxy_port2}}:{{proxy_port2}}"
     environment:
-      - MODE={{mode}}
-      - DEBUG={{debug}}
-      - PROXYADDRS={{proxy_addrs}}
-      - NACOS_HOST={{nacos1_host}}
-      - NACOS_PORT={{nacos1_srv_port}}
+      - "MODE={{mode}}"
+      - "DEBUG={{debug}}"
+      - "PROXYADDRS={{proxy_addrs}}"
+      - "NACOS_HOST={{nacos1_host}}"
+      - "NACOS_PORT={{nacos1_srv_port}}"
     volumes:
-      - "{{gateway_config_dir}}:/bin/app/config"
+      - "{{gateway_config_dir}}:/bin/config"
     restart: always

@@ -76,7 +76,9 @@ func main() {
 	PROXYADDRS := os.Getenv("PROXYADDRS")
 	withDebug, _ := strconv.ParseBool(DEBUG)
 	proxyAddrs := strings.Split(PROXYADDRS, ",")
-	clientFactory := client.NewFactory(discovery.MustNacosDiscovery(""))
+	nacos_host := os.Getenv("NACOS_HOST")
+	nacos_port := os.Getenv("NACOS_PORT")
+	clientFactory := client.NewFactory(discovery.MustNacosDiscovery(nacos_host + ":" + nacos_port))
 	var err error
 	p, err = proxy.New(clientFactory, middleware.Create)
 	if err != nil {

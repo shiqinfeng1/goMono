@@ -4,17 +4,19 @@
 docker_registry_compose_file: docker_compose_docker_registry.yml  # docker私有仓库的compose文件
 registry_srv_port: 8080  # docker私有仓库的服务端口 
 
+
 #########################################################################
 # 业务网关相关配置
 #########################################################################
 mode: develop  # develop test product
 debug: true
-proxy_port1: 8080
-proxy_port2: 8081
+proxy_port1: 8180
+proxy_port2: 8181
 proxy_addrs: :{{proxy_port1}},:{{proxy_port2}}  # 网关服务地址，可以由多个，逗号隔开
 gateway_data_dir: /data/gateway
 gateway_config_dir: "{{gateway_data_dir}}/config"
 gateway_compose_file: docker_compose_gateway.yml
+
 #########################################################################
 # 业务应用镜像相关配置
 #########################################################################

@@ -30,8 +30,6 @@
       mode: 777
     loop:
       "{{local_infra_images_dockerfile_list}}"
-  - debug:
-      msg: "current dir: {{ lookup('env', 'PWD') }}"
   - name: Make Local Images
     command: "docker build -f /tmp/{{item.0}} -t {{registry_addr}}/{{item.1}} {{ lookup('env', 'PWD') }}"
     with_together: 

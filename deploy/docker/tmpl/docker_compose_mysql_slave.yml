@@ -42,7 +42,7 @@ services:
       - "{{mysql_backup_data_dir}}:/backup" # 数据备份的本地目标目录
       - "{{mysql_slave_data_dir}}:/mysqldata" # mysql数据所在路径， 也就是binlog所在的文件夹
     environment:
-      - MYSQL_HOST={{mysql_slave_host}}
+      - MYSQL_HOST=mysql-slave
       - mysql_port={{mysql_slave_port}}
       - MYSQL_USER={{mysql_root_user}}
       - MYSQL_PASS={{mysql_root_password}}

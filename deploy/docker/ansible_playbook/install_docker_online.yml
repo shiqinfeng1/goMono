@@ -19,8 +19,8 @@
     # - debug:
     #     msg: '{{ docker_check }}'
 
-    - name: download get-docker.sh from http://get.docker.com
-      command: curl -sSL http://get.docker.com -o /tmp/get-docker.sh warn=false
+    - name: download get-docker.sh from https://get.docker.com
+      command: curl -sSL https://get.docker.com -o /tmp/get-docker.sh warn=false
       when: 
         - docker_check.stderr is defined
         - docker_check.stderr != ""

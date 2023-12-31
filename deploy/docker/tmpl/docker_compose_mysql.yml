@@ -3,7 +3,7 @@ version: '3'
 services:
   mysql:
     image: "{{registry_addr}}/{{mysql_image}}"
-    hostname: "{{mysql_host}}"
+    hostname: "mysql"
     container_name: mysql
     restart: always
     ports:

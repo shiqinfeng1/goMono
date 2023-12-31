@@ -27,7 +27,7 @@
   - name: Stop Nacos-MySQL
     shell:
       cmd: "docker-compose -p infra -f /tmp/{{nacos_mysql_compose_file}} down"
-    when: nacos_mysql_host == ansible_hostname
+    when: (nacos_mysql_host == ansible_hostname) or (nacos_mysql_host == ansible_host)
   - name: Start Nacos
     shell:
       cmd: "docker-compose -p infra -f /tmp/{{item.1}} down"

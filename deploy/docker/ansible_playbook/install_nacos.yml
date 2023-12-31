@@ -30,7 +30,7 @@
   - name: Start Nacos-MySQL
     shell:
       cmd: "docker-compose -p infra -f /tmp/{{nacos_mysql_compose_file}} up -d"
-    when: nacos_mysql_host == ansible_hostname
+    when: (nacos_mysql_host == ansible_hostname) or (nacos_mysql_host == ansible_host)
 
   - name: Check Nacos-MySQL Running Status
     docker_container_info:
@@ -39,14 +39,14 @@
     until: result.container['State']['Health']['Status'] == "healthy"
     retries: 10
     delay: 5
-    when: nacos_mysql_host == ansible_hostname
+    when: (nacos_mysql_host == ansible_hostname) or (nacos_mysql_host == ansible_host)
     loop:
       - "nacos-mysql"
 
   - name: Start Nacos ...
     shell:
       cmd: "docker-compose -p infra -f /tmp/{{item.1}} up -d"
-    when: item.0 == ansible_hostname
+    when: (item.0 == ansible_hostname) or (item.0 == ansible_host)
     with_together: 
       - "{{[nacos1_host,nacos2_host,nacos3_host]}}"
       - "{{[nacos1_compose_file,nacos2_compose_file,nacos3_compose_file]}}"
@@ -58,7 +58,7 @@
     until: result.container['State']['Health']['Status'] == "healthy"
     retries: 15
     delay: 5
-    when: item.0 == ansible_hostname
+    when: (item.0 == ansible_hostname) or (item.0 == ansible_host)
     with_together:
       - "{{[nacos1_host,nacos2_host,nacos3_host]}}"
       - ["nacos1","nacos2","nacos3"]

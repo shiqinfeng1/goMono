@@ -2,7 +2,7 @@
 - name: Install Docker Image Registry
   hosts: registry
   become: true
-  gather_facts: false
+  gather_facts: true
   vars_files:
     - vars.yml
   tasks:
@@ -21,7 +21,7 @@
     set_fact:
       imported_var: "{{ imported_var.content|b64decode|from_json | default([]) | combine(item, recursive=True) }}"
     loop:
-      - { 'insecure-registries': ['{{inventory_hostname}}:{{registry_srv_port}}'] }  
+      - { 'insecure-registries': ['{{ansible_hostname}}:{{registry_srv_port}}'] }  
 
   - name: Save /etc/docker/daemon.json
     copy: 

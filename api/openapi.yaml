@@ -6,7 +6,7 @@ info:
     title: ""
     version: 0.0.1
 paths:
-    /bff/v1/getTrainerAvailableHours:
+    /trainer/v1/getTrainerAvailableHours:
         post:
             tags:
                 - BFF
@@ -24,7 +24,7 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/bff.GetTrainerAvailableHoursRespone'
-    /bff/v1/makeHourAvailable:
+    /trainer/v1/makeHourAvailable:
         post:
             tags:
                 - BFF
@@ -39,7 +39,7 @@ paths:
                 "200":
                     description: OK
                     content: {}
-    /bff/v1/makeHourUnavailable:
+    /trainer/v1/makeHourUnavailable:
         post:
             tags:
                 - BFF

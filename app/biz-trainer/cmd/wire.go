@@ -45,8 +45,7 @@ func wireApp(
 	*cconf.Discovery,
 	*cconf.Log,
 	*cconf.Adapter,
-	*conf.GRPC,
-	*conf.Auth) (*kratos.App, func(), error) {
+	*conf.GRPC) (*kratos.App, func(), error) {
 	panic(wire.Build(
 		log.ProviderSet,
 		adapters.ProviderSet,

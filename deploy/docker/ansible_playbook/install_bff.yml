@@ -1,0 +1,66 @@
+---
+- name: Get Docker Image Registry Hostname
+  hosts: registry
+  tasks:
+  - name: get registry hostname
+    command: cat /etc/hostname
+    register: registry_hostname
+
+- name: Install BFF
+  hosts: bff
+  vars_files:
+    - vars.yml
+  vars:
+    - registry_addr: "{{registry_hostname.stdout}}:{{registry_srv_port}}"
+  become: true
+  tasks:
+  - name: Creates BFF Data Directory
+    file:
+      path: "{{item}}"
+      state: directory
+      owner: "{{ansible_user}}"
+      group: "{{ansible_user}}"
+      mode: 0777
+    loop:
+      - "{{bff_data_dir}}"
+      - "{{bff_config_dir}}"
+
+  - name: Copy BFF Docker-Compose Files
+    template: 
+      src: ../tmpl/{{ item }}
+      dest: "{{bff_data_dir}}/{{ item }}"
+      force: true
+    loop:
+      - "{{bff_compose_file}}"
+  - name: Copy BFF config Files
+    template: 
+      src: ../../config/{{ item }}
+      dest: "{{bff_config_dir}}/{{ item }}"
+      force: true
+    loop:
+      - "bff.yaml"
+
+  - name: Stop BFF
+    shell:
+      cmd: "docker-compose -p gatway -f {{bff_data_dir}}/{{bff_compose_file}} down"
+
+  - name: Start BFF
+    shell:
+      cmd: "docker-compose -p gatway -f {{bff_data_dir}}/{{bff_compose_file}} up -d"
+
+  - name: Check BFF Status
+    docker_container_info:
+      name: "{{item}}"
+    register: result
+    until: result.container['State']['Status'] == "running"
+    retries: 10
+    delay: 5
+    loop:
+      - "bff"
+
+  # - name: Delete docker-compose.yml
+  #   file: 
+  #     dest: /tmp/{{ item }}
+  #     state: absent
+  #   loop:
+  #     - "{{prometheus_compose_file}}"

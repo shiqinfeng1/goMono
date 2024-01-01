@@ -47,9 +47,9 @@ type BFFHTTPServer interface {
 
 func RegisterBFFHTTPServer(s *http.Server, srv BFFHTTPServer) {
 	r := s.Route("/")
-	r.POST("/bff/v1/getTrainerAvailableHours", _BFF_GetTrainerAvailableHours0_HTTP_Handler(srv))
-	r.POST("/bff/v1/makeHourAvailable", _BFF_MakeHourAvailable0_HTTP_Handler(srv))
-	r.POST("/bff/v1/makeHourUnavailable", _BFF_MakeHourUnavailable0_HTTP_Handler(srv))
+	r.POST("/trainer/v1/getTrainerAvailableHours", _BFF_GetTrainerAvailableHours0_HTTP_Handler(srv))
+	r.POST("/trainer/v1/makeHourAvailable", _BFF_MakeHourAvailable0_HTTP_Handler(srv))
+	r.POST("/trainer/v1/makeHourUnavailable", _BFF_MakeHourUnavailable0_HTTP_Handler(srv))
 	r.POST("/training/v1/getTraining", _BFF_GetTraining0_HTTP_Handler(srv))
 	r.POST("/training/v1/createTraining", _BFF_CreateTraining0_HTTP_Handler(srv))
 	r.POST("/training/v1/cancelTraining", _BFF_CancelTraining0_HTTP_Handler(srv))
@@ -341,7 +341,7 @@ func (c *BFFHTTPClientImpl) CreateTraining(ctx context.Context, in *v1.CreateTra
 
 func (c *BFFHTTPClientImpl) GetTrainerAvailableHours(ctx context.Context, in *GetTrainerAvailableHoursRequest, opts ...http.CallOption) (*GetTrainerAvailableHoursRespone, error) {
 	var out GetTrainerAvailableHoursRespone
-	pattern := "/bff/v1/getTrainerAvailableHours"
+	pattern := "/trainer/v1/getTrainerAvailableHours"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationBFFGetTrainerAvailableHours))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -367,7 +367,7 @@ func (c *BFFHTTPClientImpl) GetTraining(ctx context.Context, in *emptypb.Empty, 
 
 func (c *BFFHTTPClientImpl) MakeHourAvailable(ctx context.Context, in *MakeHourAvailableRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
-	pattern := "/bff/v1/makeHourAvailable"
+	pattern := "/trainer/v1/makeHourAvailable"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationBFFMakeHourAvailable))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -380,7 +380,7 @@ func (c *BFFHTTPClientImpl) MakeHourAvailable(ctx context.Context, in *MakeHourA
 
 func (c *BFFHTTPClientImpl) MakeHourUnavailable(ctx context.Context, in *MakeHourUnavailableRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
-	pattern := "/bff/v1/makeHourUnavailable"
+	pattern := "/trainer/v1/makeHourUnavailable"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationBFFMakeHourUnavailable))
 	opts = append(opts, http.PathTemplate(pattern))

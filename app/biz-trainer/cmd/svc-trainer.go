@@ -19,7 +19,6 @@ var (
 				pubCfg.Log,
 				pubCfg.Adapter,
 				srvCfg.Grpc,
-				srvCfg.Auth,
 			)
 			if err != nil {
 				panic(err)

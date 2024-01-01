@@ -1,0 +1,16 @@
+version: "3.8"
+services:
+  bff:
+    hostname: bff
+    image: "{{registry_addr}}/{{bff_image}}"
+    container_name: bff
+    ports:
+      - "{{bff_port}}:8200"
+    environment:
+      - "MODE={{mode}}"
+      - "PROXYADDRS={{proxy_addrs}}"
+      - "NACOS_HOST={{nacos1_host}}"
+      - "NACOS_PORT={{nacos1_srv_port}}"
+    volumes:
+      - "{{bff_config_dir}}:/bin/config"
+    restart: always

@@ -18,15 +18,26 @@ gateway_config_dir: "{{gateway_data_dir}}/config"
 gateway_compose_file: docker_compose_gateway.yml
 
 #########################################################################
+# bff相关配置
+#########################################################################
+mode: develop  # develop test product
+debug: true
+bff_port: 8200
+bff_data_dir: /data/bff
+bff_config_dir: "{{bff_data_dir}}/config"
+bff_compose_file: docker_compose_bff.yml
+#########################################################################
 # 业务应用镜像相关配置
 #########################################################################
 task_migration_image: app/task-migration:latest
 gateway_image: app/gateway-gomono:latest
+bff_image: app/bff-gomono:latest
 biz_training_image: app/biz-training:latest
 biz_trainer_image: app/biz-trainer:latest
 biz_images_list: 
  - "{{task_migration_image}}"
  - "{{gateway_image}}"
+ - "{{bff_image}}"
  - "{{biz_training_image}}"
  - "{{biz_trainer_image}}"
 

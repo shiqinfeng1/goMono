@@ -16,63 +16,63 @@ service BFF {
 
   rpc GetTrainerAvailableHours(GetTrainerAvailableHoursRequest) returns (GetTrainerAvailableHoursRespone) {
      option (google.api.http) = {
-      post: "/bff/v1/getTrainerAvailableHours"
+      post: "/demo/v1/trainer/getTrainerAvailableHours"
       body: "*"
     };
   }
 
   rpc MakeHourAvailable(MakeHourAvailableRequest) returns (google.protobuf.Empty) {
      option (google.api.http) = {
-      post: "/bff/v1/makeHourAvailable"
+      post: "/demo/v1/trainer/makeHourAvailable"
       body: "*"
     };
   }
 
   rpc MakeHourUnavailable(MakeHourUnavailableRequest) returns (google.protobuf.Empty) {
      option (google.api.http) = {
-      post: "/bff/v1/makeHourUnavailable"
+      post: "/trainer/v1/makeHourUnavailable"
       body: "*"
     };
   }
   rpc GetTraining(google.protobuf.Empty) returns (training.GetTrainingResponse) {
     option (google.api.http) = {
-      post: "/training/v1/getTraining"
+      post: "/demo/v1/training/getTraining"
       body: "*"
     };
   }
   rpc CreateTraining(training.CreateTrainingRequest) returns (training.CreateTrainingResponse) {
     option (google.api.http) = {
-      post: "/training/v1/createTraining"
+      post: "/demo/v1/training/createTraining"
       body: "*"
     };
   }
   rpc CancelTraining(training.CancelTrainingRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      post: "/training/v1/cancelTraining"
+      post: "/demo/v1/training/cancelTraining"
       body: "*"
     };
   }
   rpc RescheduleTraining(training.RescheduleTrainingRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      post: "/training/v1/rescheduleTraining"
+      post: "/demo/v1/training/rescheduleTraining"
       body: "*"
     };
   }
   rpc ApproveRescheduleTraining(training.ApproveRescheduleTrainingRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      post: "/training/v1/approveRescheduleTraining"
+      post: "/demo/v1/training/approveRescheduleTraining"
       body: "*"
     };
   }
   rpc RequestRescheduleTraining(training.RequestRescheduleTrainingRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      post: "/training/v1/requestRescheduleTraining"
+      post: "/demo/v1/training/requestRescheduleTraining"
       body: "*"
     };
   }
   rpc RejectRescheduleTraining(training.RejectRescheduleTrainingRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      post: "/training/v1/rejectRescheduleTraining"
+      post: "/demo/v1/training/rejectRescheduleTraining"
       body: "*"
     };
   }

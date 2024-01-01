@@ -6,14 +6,9 @@ import "google/protobuf/duration.proto";
 
 message Server {
   GRPC grpc = 2;
-  Auth auth = 3;
 }
 message GRPC {
   string network = 1;
   string addr = 2;
   google.protobuf.Duration timeout = 3;
-}
-message Auth {
-  string service_key = 1;
-  string api_key = 2;
 }

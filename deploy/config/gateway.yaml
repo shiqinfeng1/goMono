@@ -26,7 +26,7 @@ middlewares:
         - POST
         - OPTIONS
 endpoints:
-  - path: /helloworld/*
+  - path: /demo/v1/*
     timeout: 1s
     # 业务服务使用的通信协议
     protocol: HTTP  
@@ -46,14 +46,6 @@ endpoints:
       - name: rewrite
         options:
           '@type': type.googleapis.com/gateway.middleware.rewrite.v1.Rewrite
-#          stripPrefix: /bbs
-  - path: /helloworld.Greeter/*
-    method: POST
-    timeout: 1s
-    # 业务服务使用的通信协议
-    protocol: GRPC
-    backends:
-      - target: '127.0.0.1:9000'
     retry:
       attempts: 3
       perTryTimeout: 0.1s

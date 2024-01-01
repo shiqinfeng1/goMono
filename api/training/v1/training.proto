@@ -1,56 +1,20 @@
 syntax = "proto3";
 
-package trainer;
+package training;
 
-option go_package = "github.com/shiqinfeng1/goMono/api/trainer/v1;v1";
+option go_package = "github.com/shiqinfeng1/goMono/api/training/v1;v1";
 
-import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
 service TrainingService {
-  rpc GetTraining(google.protobuf.Empty) returns (GetTrainingResponse) {
-    option (google.api.http) = {
-      post: "/training/v1/getTraining"
-      body: "*"
-    };
-  }
-  rpc CreateTraining(CreateTrainingRequest) returns (CreateTrainingResponse) {
-    option (google.api.http) = {
-      post: "/training/v1/createTraining"
-      body: "*"
-    };
-  }
-  rpc CancelTraining(CancelTrainingRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      post: "/training/v1/cancelTraining"
-      body: "*"
-    };
-  }
-  rpc RescheduleTraining(RescheduleTrainingRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      post: "/training/v1/rescheduleTraining"
-      body: "*"
-    };
-  }
-  rpc ApproveRescheduleTraining(ApproveRescheduleTrainingRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      post: "/training/v1/approveRescheduleTraining"
-      body: "*"
-    };
-  }
-  rpc RequestRescheduleTraining(RequestRescheduleTrainingRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      post: "/training/v1/requestRescheduleTraining"
-      body: "*"
-    };
-  }
-  rpc RejectRescheduleTraining(RejectRescheduleTrainingRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      post: "/training/v1/rejectRescheduleTraining"
-      body: "*"
-    };
-  }
+  rpc GetTraining(google.protobuf.Empty) returns (GetTrainingResponse) {}
+  rpc CreateTraining(CreateTrainingRequest) returns (CreateTrainingResponse) {}
+  rpc CancelTraining(CancelTrainingRequest) returns (google.protobuf.Empty) {}
+  rpc RescheduleTraining(RescheduleTrainingRequest) returns (google.protobuf.Empty) {}
+  rpc ApproveRescheduleTraining(ApproveRescheduleTrainingRequest) returns (google.protobuf.Empty) {}
+  rpc RequestRescheduleTraining(RequestRescheduleTrainingRequest) returns (google.protobuf.Empty) {}
+  rpc RejectRescheduleTraining(RejectRescheduleTrainingRequest) returns (google.protobuf.Empty) {}
 }
 
 message GetTrainingResponse {

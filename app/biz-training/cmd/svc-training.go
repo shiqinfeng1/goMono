@@ -18,7 +18,7 @@ var (
 				pubCfg.Discovery,
 				pubCfg.Log,
 				pubCfg.Adapter,
-				srvCfg.Http,
+				srvCfg.Grpc,
 				srvCfg.Auth,
 			)
 			if err != nil {

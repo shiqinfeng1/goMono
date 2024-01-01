@@ -16,15 +16,15 @@ import (
 	"github.com/shiqinfeng1/goMono/app/common/auth"
 )
 
-type HttpService struct {
+type GrpcService struct {
+	v1.UnimplementedTrainingServiceServer
 	app application.Application
 }
 
-func NewHttpService(app application.Application) *HttpService {
-	return &HttpService{app}
+func NewGrpcService(application application.Application) GrpcService {
+	return GrpcService{app: application}
 }
-
-func (h HttpService) GetTraining(ctx context.Context, req *emptypb.Empty) (*v1.GetTrainingResponse, error) {
+func (h GrpcService) GetTraining(ctx context.Context, req *emptypb.Empty) (*v1.GetTrainingResponse, error) {
 	user, err := auth.UserFromCtx(ctx)
 	if err != nil {
 		return nil, err
@@ -48,7 +48,7 @@ func (h HttpService) GetTraining(ctx context.Context, req *emptypb.Empty) (*v1.G
 	}, nil
 }
 
-func (h HttpService) CreateTraining(ctx context.Context, req *v1.CreateTrainingRequest) (*v1.CreateTrainingResponse, error) {
+func (h GrpcService) CreateTraining(ctx context.Context, req *v1.CreateTrainingRequest) (*v1.CreateTrainingResponse, error) {
 
 	user, err := auth.UserFromCtx(ctx)
 	if err != nil {
@@ -76,7 +76,7 @@ func (h HttpService) CreateTraining(ctx context.Context, req *v1.CreateTrainingR
 	}, nil
 }
 
-func (h HttpService) CancelTraining(ctx context.Context, req *v1.CancelTrainingRequest) (*emptypb.Empty, error) {
+func (h GrpcService) CancelTraining(ctx context.Context, req *v1.CancelTrainingRequest) (*emptypb.Empty, error) {
 	user, err := newDomainUserFromAuthUser(ctx)
 	if err != nil {
 		return nil, nil
@@ -92,7 +92,7 @@ func (h HttpService) CancelTraining(ctx context.Context, req *v1.CancelTrainingR
 	return &emptypb.Empty{}, nil
 }
 
-func (h HttpService) RescheduleTraining(ctx context.Context, req *v1.RescheduleTrainingRequest) (*emptypb.Empty, error) {
+func (h GrpcService) RescheduleTraining(ctx context.Context, req *v1.RescheduleTrainingRequest) (*emptypb.Empty, error) {
 
 	user, err := newDomainUserFromAuthUser(ctx)
 	if err != nil {
@@ -111,7 +111,7 @@ func (h HttpService) RescheduleTraining(ctx context.Context, req *v1.RescheduleT
 	return &emptypb.Empty{}, nil
 }
 
-func (h HttpService) RequestRescheduleTraining(ctx context.Context, req *v1.RequestRescheduleTrainingRequest) (*emptypb.Empty, error) {
+func (h GrpcService) RequestRescheduleTraining(ctx context.Context, req *v1.RequestRescheduleTrainingRequest) (*emptypb.Empty, error) {
 
 	user, err := newDomainUserFromAuthUser(ctx)
 	if err != nil {
@@ -130,7 +130,7 @@ func (h HttpService) RequestRescheduleTraining(ctx context.Context, req *v1.Requ
 	return &emptypb.Empty{}, nil
 }
 
-func (h HttpService) ApproveRescheduleTraining(ctx context.Context, req *v1.ApproveRescheduleTrainingRequest) (*emptypb.Empty, error) {
+func (h GrpcService) ApproveRescheduleTraining(ctx context.Context, req *v1.ApproveRescheduleTrainingRequest) (*emptypb.Empty, error) {
 	user, err := newDomainUserFromAuthUser(ctx)
 	if err != nil {
 		return nil, err
@@ -145,7 +145,7 @@ func (h HttpService) ApproveRescheduleTraining(ctx context.Context, req *v1.Appr
 	return &emptypb.Empty{}, nil
 }
 
-func (h HttpService) RejectRescheduleTraining(ctx context.Context, req *v1.RejectRescheduleTrainingRequest) (*emptypb.Empty, error) {
+func (h GrpcService) RejectRescheduleTraining(ctx context.Context, req *v1.RejectRescheduleTrainingRequest) (*emptypb.Empty, error) {
 	user, err := newDomainUserFromAuthUser(ctx)
 	if err != nil {
 		return nil, err

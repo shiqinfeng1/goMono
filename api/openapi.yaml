@@ -6,16 +6,16 @@ info:
     title: ""
     version: 0.0.1
 paths:
-    /trainer/v1/getTrainerAvailableHours:
+    /bff/v1/getTrainerAvailableHours:
         post:
             tags:
-                - TrainerService
-            operationId: TrainerService_GetTrainerAvailableHours
+                - BFF
+            operationId: BFF_GetTrainerAvailableHours
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/trainer.GetTrainerAvailableHoursRequest'
+                            $ref: '#/components/schemas/bff.GetTrainerAvailableHoursRequest'
                 required: true
             responses:
                 "200":
@@ -23,32 +23,32 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/trainer.GetTrainerAvailableHoursRespone'
-    /trainer/v1/makeHourAvailable:
+                                $ref: '#/components/schemas/bff.GetTrainerAvailableHoursRespone'
+    /bff/v1/makeHourAvailable:
         post:
             tags:
-                - TrainerService
-            operationId: TrainerService_MakeHourAvailable
+                - BFF
+            operationId: BFF_MakeHourAvailable
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/trainer.MakeHourAvailableRequest'
+                            $ref: '#/components/schemas/bff.MakeHourAvailableRequest'
                 required: true
             responses:
                 "200":
                     description: OK
                     content: {}
-    /trainer/v1/makeHourUnavailable:
+    /bff/v1/makeHourUnavailable:
         post:
             tags:
-                - TrainerService
-            operationId: TrainerService_MakeHourUnavailable
+                - BFF
+            operationId: BFF_MakeHourUnavailable
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/trainer.MakeHourUnavailableRequest'
+                            $ref: '#/components/schemas/bff.MakeHourUnavailableRequest'
                 required: true
             responses:
                 "200":
@@ -57,13 +57,13 @@ paths:
     /training/v1/approveRescheduleTraining:
         post:
             tags:
-                - TrainingService
-            operationId: TrainingService_ApproveRescheduleTraining
+                - BFF
+            operationId: BFF_ApproveRescheduleTraining
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/trainer.ApproveRescheduleTrainingRequest'
+                            $ref: '#/components/schemas/training.ApproveRescheduleTrainingRequest'
                 required: true
             responses:
                 "200":
@@ -72,13 +72,13 @@ paths:
     /training/v1/cancelTraining:
         post:
             tags:
-                - TrainingService
-            operationId: TrainingService_CancelTraining
+                - BFF
+            operationId: BFF_CancelTraining
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/trainer.CancelTrainingRequest'
+                            $ref: '#/components/schemas/training.CancelTrainingRequest'
                 required: true
             responses:
                 "200":
@@ -87,13 +87,13 @@ paths:
     /training/v1/createTraining:
         post:
             tags:
-                - TrainingService
-            operationId: TrainingService_CreateTraining
+                - BFF
+            operationId: BFF_CreateTraining
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/trainer.CreateTrainingRequest'
+                            $ref: '#/components/schemas/training.CreateTrainingRequest'
                 required: true
             responses:
                 "200":
@@ -101,12 +101,12 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/trainer.CreateTrainingResponse'
+                                $ref: '#/components/schemas/training.CreateTrainingResponse'
     /training/v1/getTraining:
         post:
             tags:
-                - TrainingService
-            operationId: TrainingService_GetTraining
+                - BFF
+            operationId: BFF_GetTraining
             requestBody:
                 content:
                     application/json: {}
@@ -117,17 +117,17 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/trainer.GetTrainingResponse'
+                                $ref: '#/components/schemas/training.GetTrainingResponse'
     /training/v1/rejectRescheduleTraining:
         post:
             tags:
-                - TrainingService
-            operationId: TrainingService_RejectRescheduleTraining
+                - BFF
+            operationId: BFF_RejectRescheduleTraining
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/trainer.RejectRescheduleTrainingRequest'
+                            $ref: '#/components/schemas/training.RejectRescheduleTrainingRequest'
                 required: true
             responses:
                 "200":
@@ -136,13 +136,13 @@ paths:
     /training/v1/requestRescheduleTraining:
         post:
             tags:
-                - TrainingService
-            operationId: TrainingService_RequestRescheduleTraining
+                - BFF
+            operationId: BFF_RequestRescheduleTraining
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/trainer.RequestRescheduleTrainingRequest'
+                            $ref: '#/components/schemas/training.RequestRescheduleTrainingRequest'
                 required: true
             responses:
                 "200":
@@ -151,13 +151,13 @@ paths:
     /training/v1/rescheduleTraining:
         post:
             tags:
-                - TrainingService
-            operationId: TrainingService_RescheduleTraining
+                - BFF
+            operationId: BFF_RescheduleTraining
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/trainer.RescheduleTrainingRequest'
+                            $ref: '#/components/schemas/training.RescheduleTrainingRequest'
                 required: true
             responses:
                 "200":
@@ -183,30 +183,7 @@ paths:
                                 $ref: '#/components/schemas/user.GetTrainingBalanceResponse'
 components:
     schemas:
-        trainer.ApproveRescheduleTrainingRequest:
-            type: object
-            properties:
-                trainingUuid:
-                    type: string
-        trainer.CancelTrainingRequest:
-            type: object
-            properties:
-                trainingUuid:
-                    type: string
-        trainer.CreateTrainingRequest:
-            type: object
-            properties:
-                notes:
-                    type: string
-                time:
-                    type: string
-                    format: date-time
-        trainer.CreateTrainingResponse:
-            type: object
-            properties:
-                trainingUuid:
-                    type: string
-        trainer.GetTrainerAvailableHoursRequest:
+        bff.GetTrainerAvailableHoursRequest:
             type: object
             properties:
                 dateFrom:
@@ -215,14 +192,14 @@ components:
                 dateTo:
                     type: string
                     format: date-time
-        trainer.GetTrainerAvailableHoursRespone:
+        bff.GetTrainerAvailableHoursRespone:
             type: object
             properties:
                 dates:
                     type: array
                     items:
-                        $ref: '#/components/schemas/trainer.GetTrainerAvailableHoursRespone_Date'
-        trainer.GetTrainerAvailableHoursRespone_Date:
+                        $ref: '#/components/schemas/bff.GetTrainerAvailableHoursRespone_Date'
+        bff.GetTrainerAvailableHoursRespone_Date:
             type: object
             properties:
                 date:
@@ -233,8 +210,8 @@ components:
                 hours:
                     type: array
                     items:
-                        $ref: '#/components/schemas/trainer.GetTrainerAvailableHoursRespone_Hour'
-        trainer.GetTrainerAvailableHoursRespone_Hour:
+                        $ref: '#/components/schemas/bff.GetTrainerAvailableHoursRespone_Hour'
+        bff.GetTrainerAvailableHoursRespone_Hour:
             type: object
             properties:
                 available:
@@ -244,14 +221,53 @@ components:
                 hour:
                     type: string
                     format: date-time
-        trainer.GetTrainingResponse:
+        bff.MakeHourAvailableRequest:
+            type: object
+            properties:
+                time:
+                    type: array
+                    items:
+                        type: string
+                        format: date-time
+        bff.MakeHourUnavailableRequest:
+            type: object
+            properties:
+                time:
+                    type: array
+                    items:
+                        type: string
+                        format: date-time
+        training.ApproveRescheduleTrainingRequest:
+            type: object
+            properties:
+                trainingUuid:
+                    type: string
+        training.CancelTrainingRequest:
+            type: object
+            properties:
+                trainingUuid:
+                    type: string
+        training.CreateTrainingRequest:
+            type: object
+            properties:
+                notes:
+                    type: string
+                time:
+                    type: string
+                    format: date-time
+        training.CreateTrainingResponse:
+            type: object
+            properties:
+                trainingUuid:
+                    type: string
+        training.GetTrainingResponse:
             type: object
             properties:
                 training:
                     type: array
                     items:
-                        $ref: '#/components/schemas/trainer.GetTrainingResponse_Training'
-        trainer.GetTrainingResponse_Training:
+                        $ref: '#/components/schemas/training.GetTrainingResponse_Training'
+        training.GetTrainingResponse_Training:
             type: object
             properties:
                 canBeCancelled:
@@ -274,28 +290,12 @@ components:
                     type: string
                 uuid:
                     type: string
-        trainer.MakeHourAvailableRequest:
-            type: object
-            properties:
-                time:
-                    type: array
-                    items:
-                        type: string
-                        format: date-time
-        trainer.MakeHourUnavailableRequest:
-            type: object
-            properties:
-                time:
-                    type: array
-                    items:
-                        type: string
-                        format: date-time
-        trainer.RejectRescheduleTrainingRequest:
+        training.RejectRescheduleTrainingRequest:
             type: object
             properties:
                 trainingUuid:
                     type: string
-        trainer.RequestRescheduleTrainingRequest:
+        training.RequestRescheduleTrainingRequest:
             type: object
             properties:
                 trainingUuid:
@@ -305,7 +305,7 @@ components:
                 time:
                     type: string
                     format: date-time
-        trainer.RescheduleTrainingRequest:
+        training.RescheduleTrainingRequest:
             type: object
             properties:
                 trainingUuid:
@@ -326,6 +326,5 @@ components:
                 amount:
                     type: string
 tags:
-    - name: TrainerService
-    - name: TrainingService
+    - name: BFF
     - name: UserService

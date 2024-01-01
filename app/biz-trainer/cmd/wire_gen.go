@@ -12,7 +12,6 @@ import (
 	log2 "github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
-	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/adapters"
 	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/application"
 	conf2 "github.com/shiqinfeng1/goMono/app/biz-trainer/internal/conf"
@@ -27,7 +26,7 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(contextContext context.Context, srvInfo *types.SrvInfo, discovery *conf.Discovery, confLog *conf.Log, adapter *conf.Adapter, http *conf2.HTTP, grpc *conf2.GRPC, auth *conf2.Auth) (*kratos.App, func(), error) {
+func wireApp(contextContext context.Context, srvInfo *types.SrvInfo, discovery *conf.Discovery, confLog *conf.Log, adapter *conf.Adapter, grpc *conf2.GRPC, auth *conf2.Auth) (*kratos.App, func(), error) {
 	logger := log.New(srvInfo, confLog)
 	registryRegistrar := registrar.MustNacosRegistrar(discovery)
 	cmdRepo := adapters.NewHourRepo(adapter, logger)
@@ -35,19 +34,16 @@ func wireApp(contextContext context.Context, srvInfo *types.SrvInfo, discovery *
 	applicationApplication := application.NewApplication(logger, cmdRepo, queryRepository)
 	grpcService := service.NewGrpcService(applicationApplication)
 	server := ports.NewGRPCServer(grpc, grpcService)
-	httpService := service.NewHttpService(applicationApplication)
-	httpServer := ports.NewHTTPServer(http, auth, logger, httpService)
-	app := newApp(logger, registryRegistrar, server, httpServer)
+	app := newApp(logger, registryRegistrar, server)
 	return app, func() {
 	}, nil
 }
 
 // wire.go:
 
-func newApp(logger log2.Logger, regstr registry.Registrar, gs *grpc.Server, hs *http.Server) *kratos.App {
+func newApp(logger log2.Logger, regstr registry.Registrar, gs *grpc.Server) *kratos.App {
 	return kratos.New(kratos.ID(ID), kratos.Name(Name), kratos.Version(Version), kratos.Metadata(map[string]string{}), kratos.Logger(logger), kratos.Server(
 		gs,
-		hs,
 	), kratos.Registrar(regstr),
 	)
 }

@@ -20,13 +20,13 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	TrainingService_GetTraining_FullMethodName               = "/trainer.TrainingService/GetTraining"
-	TrainingService_CreateTraining_FullMethodName            = "/trainer.TrainingService/CreateTraining"
-	TrainingService_CancelTraining_FullMethodName            = "/trainer.TrainingService/CancelTraining"
-	TrainingService_RescheduleTraining_FullMethodName        = "/trainer.TrainingService/RescheduleTraining"
-	TrainingService_ApproveRescheduleTraining_FullMethodName = "/trainer.TrainingService/ApproveRescheduleTraining"
-	TrainingService_RequestRescheduleTraining_FullMethodName = "/trainer.TrainingService/RequestRescheduleTraining"
-	TrainingService_RejectRescheduleTraining_FullMethodName  = "/trainer.TrainingService/RejectRescheduleTraining"
+	TrainingService_GetTraining_FullMethodName               = "/training.TrainingService/GetTraining"
+	TrainingService_CreateTraining_FullMethodName            = "/training.TrainingService/CreateTraining"
+	TrainingService_CancelTraining_FullMethodName            = "/training.TrainingService/CancelTraining"
+	TrainingService_RescheduleTraining_FullMethodName        = "/training.TrainingService/RescheduleTraining"
+	TrainingService_ApproveRescheduleTraining_FullMethodName = "/training.TrainingService/ApproveRescheduleTraining"
+	TrainingService_RequestRescheduleTraining_FullMethodName = "/training.TrainingService/RequestRescheduleTraining"
+	TrainingService_RejectRescheduleTraining_FullMethodName  = "/training.TrainingService/RejectRescheduleTraining"
 )
 
 // TrainingServiceClient is the client API for TrainingService service.
@@ -295,7 +295,7 @@ func _TrainingService_RejectRescheduleTraining_Handler(srv interface{}, ctx cont
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var TrainingService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "trainer.TrainingService",
+	ServiceName: "training.TrainingService",
 	HandlerType: (*TrainingServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

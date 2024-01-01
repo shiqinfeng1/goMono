@@ -12,7 +12,6 @@ import (
 	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
-	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/google/wire"
 	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/adapters"
 	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/application"
@@ -25,7 +24,7 @@ import (
 	"github.com/shiqinfeng1/goMono/app/common/types"
 )
 
-func newApp(logger klog.Logger, regstr registry.Registrar, gs *grpc.Server, hs *http.Server) *kratos.App {
+func newApp(logger klog.Logger, regstr registry.Registrar, gs *grpc.Server) *kratos.App {
 	return kratos.New(
 		kratos.ID(ID),
 		kratos.Name(Name),
@@ -34,7 +33,6 @@ func newApp(logger klog.Logger, regstr registry.Registrar, gs *grpc.Server, hs *
 		kratos.Logger(logger),
 		kratos.Server(
 			gs,
-			hs,
 		),
 		kratos.Registrar(regstr),
 	)
@@ -47,7 +45,6 @@ func wireApp(
 	*cconf.Discovery,
 	*cconf.Log,
 	*cconf.Adapter,
-	*conf.HTTP,
 	*conf.GRPC,
 	*conf.Auth) (*kratos.App, func(), error) {
 	panic(wire.Build(

@@ -8,24 +8,23 @@ package cmd
 import (
 	"context"
 
+	"github.com/go-kratos/kratos/v2"
 	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/registry"
-	"github.com/go-kratos/kratos/v2/transport/grpc"
-
-	"github.com/go-kratos/kratos/v2"
+	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/google/wire"
-	"github.com/shiqinfeng1/goMono/app/biz-training/internal/adapters"
-	"github.com/shiqinfeng1/goMono/app/biz-training/internal/application"
-	"github.com/shiqinfeng1/goMono/app/biz-training/internal/conf"
-	"github.com/shiqinfeng1/goMono/app/biz-training/internal/ports"
-	"github.com/shiqinfeng1/goMono/app/biz-training/internal/service"
+	"github.com/shiqinfeng1/goMono/app/bff-gomono/internal/adapters"
+	"github.com/shiqinfeng1/goMono/app/bff-gomono/internal/application"
+	"github.com/shiqinfeng1/goMono/app/bff-gomono/internal/conf"
+	"github.com/shiqinfeng1/goMono/app/bff-gomono/internal/ports"
+	"github.com/shiqinfeng1/goMono/app/bff-gomono/internal/service"
 	cconf "github.com/shiqinfeng1/goMono/app/common/conf"
 	"github.com/shiqinfeng1/goMono/app/common/log"
 	"github.com/shiqinfeng1/goMono/app/common/registrar"
 	"github.com/shiqinfeng1/goMono/app/common/types"
 )
 
-func newApp(logger klog.Logger, regstr registry.Registrar, gs *grpc.Server) *kratos.App {
+func newApp(logger klog.Logger, regstr registry.Registrar, hs *http.Server) *kratos.App {
 	return kratos.New(
 		kratos.ID(ID),
 		kratos.Name(Name),
@@ -33,7 +32,7 @@ func newApp(logger klog.Logger, regstr registry.Registrar, gs *grpc.Server) *kra
 		kratos.Metadata(map[string]string{}),
 		kratos.Logger(logger),
 		kratos.Server(
-			gs,
+			hs,
 		),
 		kratos.Registrar(regstr),
 	)
@@ -46,7 +45,7 @@ func wireApp(
 	*cconf.Discovery,
 	*cconf.Log,
 	*cconf.Adapter,
-	*conf.GRPC,
+	*conf.HTTP,
 	*conf.Auth) (*kratos.App, func(), error) {
 	panic(wire.Build(
 		log.ProviderSet,

@@ -1,18 +1,19 @@
 syntax = "proto3";
-package kratos.config.trainer;
+package kratos.config.bff;
 
-option go_package = "github.com/shiqinfeng1/goMono/app/biz-trainer/internal/conf;conf";
+option go_package = "github.com/shiqinfeng1/goMono/app/bff-gomono/internal/conf;conf";
 import "google/protobuf/duration.proto";
 
 message Server {
-  GRPC grpc = 2;
+  HTTP http = 1;
   Auth auth = 3;
 }
-message GRPC {
+message HTTP {
   string network = 1;
   string addr = 2;
   google.protobuf.Duration timeout = 3;
 }
+
 message Auth {
   string service_key = 1;
   string api_key = 2;

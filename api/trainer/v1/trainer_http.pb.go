@@ -32,12 +32,12 @@ type TrainerServiceHTTPServer interface {
 
 func RegisterTrainerServiceHTTPServer(s *http.Server, srv TrainerServiceHTTPServer) {
 	r := s.Route("/")
-	r.POST("/trainer/v1/getTrainerAvailableHours", _TrainerService_GetTrainerAvailableHours0_HTTP_Handler(srv))
-	r.POST("/trainer/v1/makeHourAvailable", _TrainerService_MakeHourAvailable0_HTTP_Handler(srv))
-	r.POST("/trainer/v1/makeHourUnavailable", _TrainerService_MakeHourUnavailable0_HTTP_Handler(srv))
+	r.POST("/trainer/v1/getTrainerAvailableHours", _TrainerService_GetTrainerAvailableHours1_HTTP_Handler(srv))
+	r.POST("/trainer/v1/makeHourAvailable", _TrainerService_MakeHourAvailable1_HTTP_Handler(srv))
+	r.POST("/trainer/v1/makeHourUnavailable", _TrainerService_MakeHourUnavailable1_HTTP_Handler(srv))
 }
 
-func _TrainerService_GetTrainerAvailableHours0_HTTP_Handler(srv TrainerServiceHTTPServer) func(ctx http.Context) error {
+func _TrainerService_GetTrainerAvailableHours1_HTTP_Handler(srv TrainerServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in GetTrainerAvailableHoursRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -59,7 +59,7 @@ func _TrainerService_GetTrainerAvailableHours0_HTTP_Handler(srv TrainerServiceHT
 	}
 }
 
-func _TrainerService_MakeHourAvailable0_HTTP_Handler(srv TrainerServiceHTTPServer) func(ctx http.Context) error {
+func _TrainerService_MakeHourAvailable1_HTTP_Handler(srv TrainerServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in MakeHourAvailableRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -81,7 +81,7 @@ func _TrainerService_MakeHourAvailable0_HTTP_Handler(srv TrainerServiceHTTPServe
 	}
 }
 
-func _TrainerService_MakeHourUnavailable0_HTTP_Handler(srv TrainerServiceHTTPServer) func(ctx http.Context) error {
+func _TrainerService_MakeHourUnavailable1_HTTP_Handler(srv TrainerServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in MakeHourUnavailableRequest
 		if err := ctx.Bind(&in); err != nil {

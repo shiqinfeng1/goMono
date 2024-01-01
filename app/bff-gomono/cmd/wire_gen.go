@@ -11,12 +11,12 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	log2 "github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/registry"
-	"github.com/go-kratos/kratos/v2/transport/grpc"
-	"github.com/shiqinfeng1/goMono/app/biz-training/internal/adapters"
-	"github.com/shiqinfeng1/goMono/app/biz-training/internal/application"
-	conf2 "github.com/shiqinfeng1/goMono/app/biz-training/internal/conf"
-	"github.com/shiqinfeng1/goMono/app/biz-training/internal/ports"
-	"github.com/shiqinfeng1/goMono/app/biz-training/internal/service"
+	"github.com/go-kratos/kratos/v2/transport/http"
+	"github.com/shiqinfeng1/goMono/app/bff-gomono/internal/adapters"
+	"github.com/shiqinfeng1/goMono/app/bff-gomono/internal/application"
+	conf2 "github.com/shiqinfeng1/goMono/app/bff-gomono/internal/conf"
+	"github.com/shiqinfeng1/goMono/app/bff-gomono/internal/ports"
+	"github.com/shiqinfeng1/goMono/app/bff-gomono/internal/service"
 	"github.com/shiqinfeng1/goMono/app/common/conf"
 	"github.com/shiqinfeng1/goMono/app/common/log"
 	"github.com/shiqinfeng1/goMono/app/common/registrar"
@@ -26,15 +26,14 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(contextContext context.Context, srvInfo *types.SrvInfo, discovery *conf.Discovery, confLog *conf.Log, adapter *conf.Adapter, grpc *conf2.GRPC, auth *conf2.Auth) (*kratos.App, func(), error) {
+func wireApp(contextContext context.Context, srvInfo *types.SrvInfo, discovery *conf.Discovery, confLog *conf.Log, adapter *conf.Adapter, http *conf2.HTTP, auth *conf2.Auth) (*kratos.App, func(), error) {
 	logger := log.New(srvInfo, confLog)
 	registryRegistrar := registrar.MustNacosRegistrar(discovery)
-	repository := adapters.NewTrainingRepo(adapter, logger)
 	trainerGrpc := adapters.NewTrainerGrpc(discovery)
 	userGrpc := adapters.NewUserGrpc(discovery)
-	applicationApplication := application.NewApplication(logger, repository, trainerGrpc, userGrpc)
-	grpcService := service.NewGrpcService(applicationApplication)
-	server := ports.NewGRPCServer(grpc, grpcService)
+	applicationApplication := application.NewApplication(logger, trainerGrpc, userGrpc)
+	httpService := service.NewHttpService(applicationApplication)
+	server := ports.NewHTTPServer(http, auth, logger, httpService)
 	app := newApp(logger, registryRegistrar, server)
 	return app, func() {
 	}, nil
@@ -42,9 +41,9 @@ func wireApp(contextContext context.Context, srvInfo *types.SrvInfo, discovery *
 
 // wire.go:
 
-func newApp(logger log2.Logger, regstr registry.Registrar, gs *grpc.Server) *kratos.App {
+func newApp(logger log2.Logger, regstr registry.Registrar, hs *http.Server) *kratos.App {
 	return kratos.New(kratos.ID(ID), kratos.Name(Name), kratos.Version(Version), kratos.Metadata(map[string]string{}), kratos.Logger(logger), kratos.Server(
-		gs,
+		hs,
 	), kratos.Registrar(regstr),
 	)
 }

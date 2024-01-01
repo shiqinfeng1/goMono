@@ -83,6 +83,7 @@ names=$(shell find app -name main.go|xargs -I X dirname X)
 .PHONY: build-docker-production
 build-docker-production:
 	for x in $(names); do \
+		echo "\n\nmake docker $$x ..."; \
 		docker build -f Dockerfile  \
 			--build-arg TARGET=./$$x \
 			--build-arg COMMIT=$(COMMIT)  \

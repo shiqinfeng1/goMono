@@ -13,6 +13,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type GrpcService struct {
@@ -37,6 +38,26 @@ func (g GrpcService) GetTrainerAvailableHours(ctx context.Context, req *v1.GetTr
 	return &v1.GetTrainerAvailableHoursRespone{
 		Dates: dates,
 	}, nil
+}
+func dateModelsToResponse(model query.Date) []*v1.GetTrainerAvailableHoursRespone_Date {
+	var dates []*v1.GetTrainerAvailableHoursRespone_Date
+
+	var hours []*v1.GetTrainerAvailableHoursRespone_Hour
+	for _, h := range model.Hours {
+		hours = append(hours, &v1.GetTrainerAvailableHoursRespone_Hour{
+			Available:            h.Available,
+			HasTrainingScheduled: h.HasTrainingScheduled,
+			Hour:                 timestamppb.New(h.Hour),
+		})
+	}
+
+	dates = append(dates, &v1.GetTrainerAvailableHoursRespone_Date{
+		Date:         timestamppb.New(model.Date),
+		HasFreeHours: model.HasFreeHours,
+		Hours:        hours,
+	})
+
+	return dates
 }
 
 func (h GrpcService) MakeHourUnavailable(ctx context.Context, req *v1.MakeHourUnavailableRequest) (*emptypb.Empty, error) {

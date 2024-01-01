@@ -13,9 +13,9 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/gorilla/handlers"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	v1 "github.com/shiqinfeng1/goMono/api/trainer/v1"
-	conf "github.com/shiqinfeng1/goMono/app/biz-trainer/internal/conf"
-	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/service"
+	v1 "github.com/shiqinfeng1/goMono/api/bff/v1"
+	conf "github.com/shiqinfeng1/goMono/app/bff-gomono/internal/conf"
+	"github.com/shiqinfeng1/goMono/app/bff-gomono/internal/service"
 	"github.com/shiqinfeng1/goMono/app/common/client"
 )
 
@@ -59,6 +59,6 @@ func NewHTTPServer(c *conf.HTTP, ac *conf.Auth, logger log.Logger, s *service.Ht
 	srv.Handle("/metrics", promhttp.Handler())
 	h := openapiv2.NewHandler()
 	srv.HandlePrefix("/openapi/", h)
-	v1.RegisterTrainerServiceHTTPServer(srv, s)
+	v1.RegisterBFFHTTPServer(srv, s)
 	return srv
 }

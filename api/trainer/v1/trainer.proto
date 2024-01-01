@@ -4,7 +4,6 @@ package trainer;
 
 option go_package = "github.com/shiqinfeng1/goMono/api/trainer/v1;v1";
 
-import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
@@ -14,24 +13,12 @@ service TrainerService {
   rpc CancelTraining(UpdateHourRequest) returns (google.protobuf.Empty) {}
 
   rpc GetTrainerAvailableHours(GetTrainerAvailableHoursRequest) returns (GetTrainerAvailableHoursRespone) {
-     option (google.api.http) = {
-      post: "/trainer/v1/getTrainerAvailableHours"
-      body: "*"
-    };
   }
 
   rpc MakeHourAvailable(MakeHourAvailableRequest) returns (google.protobuf.Empty) {
-     option (google.api.http) = {
-      post: "/trainer/v1/makeHourAvailable"
-      body: "*"
-    };
   }
 
   rpc MakeHourUnavailable(MakeHourUnavailableRequest) returns (google.protobuf.Empty) {
-     option (google.api.http) = {
-      post: "/trainer/v1/makeHourUnavailable"
-      body: "*"
-    };
   }
 }
 

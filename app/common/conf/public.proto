@@ -41,15 +41,10 @@ message Adapter {
     string source = 2;
   }
   message Redis {
-    string network = 1;
-    string addr = 2;
-    google.protobuf.Duration read_timeout = 3;
-    google.protobuf.Duration write_timeout = 4;
-  }
-  message Registry {
-    repeated string addrs = 1;
+    string addr = 1;
+    google.protobuf.Duration read_timeout = 2;
+    google.protobuf.Duration write_timeout = 3;
   }
   Database database = 1;
   Redis redis = 2;
-  Registry registry = 3;
 }

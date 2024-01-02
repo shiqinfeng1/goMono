@@ -63,11 +63,14 @@ func init() {
 			}
 		},
 	}
-	cconf.Bootstrap(
-		[]string{"gateway.yaml"}, // 指定要加载的配置文件
-		[]interface{}{&gatewayCfg},
-		onChanges,
-	)
+	scan := []cconf.ScanTarget{
+		{
+			File:   "gateway.yaml",
+			Field:  "",
+			Target: &gatewayCfg,
+		},
+	}
+	cconf.Bootstrap(scan, onChanges)
 }
 
 func main() {

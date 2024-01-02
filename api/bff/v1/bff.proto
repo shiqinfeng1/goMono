@@ -30,7 +30,7 @@ service BFF {
 
   rpc MakeHourUnavailable(MakeHourUnavailableRequest) returns (google.protobuf.Empty) {
      option (google.api.http) = {
-      post: "/trainer/v1/makeHourUnavailable"
+      post: "/demo/v1/trainer/makeHourUnavailable"
       body: "*"
     };
   }

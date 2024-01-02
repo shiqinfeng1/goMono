@@ -39,6 +39,7 @@
       force: true
     loop:
       - "bff.yaml"
+      - "public.yaml"
 
   - name: Stop BFF
     shell:

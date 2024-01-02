@@ -25,25 +25,33 @@ var svcInfo = &types.SrvInfo{
 	Version: Version,
 }
 var (
-	bffCfg conf.Server  // 应用配置参数
-	pubCfg cconf.Public // 应用配置参数
+	bffCfg conf.Server // 应用配置参数
+	pubCfg cconf.Public
 )
 
 func init() {
-	// 动态更新配置。key：需要监听的字段；value：配置变化后的处理函数
-	onChanges := map[string]func(key string, value kcfg.Value){
-		"log.level": func(key string, value kcfg.Value) {
+	// 动态更新配置
+	onChanges := cconf.CfgOnChanges{
+		"public.log.level": func(key string, value kcfg.Value) {
 			_ = key
 			lvl, _ := value.String()
 			log.SetLevel(lvl) // 动态更新level等级
 		},
 		// todo： 这里添加需要监听的字段，及处理函数
 	}
-	cconf.Bootstrap(
-		[]string{"bff.yaml", "public.yaml"}, // 指定要加载的配置文件
-		[]interface{}{&bffCfg, &pubCfg},
-		onChanges,
-	)
+	scan := []cconf.ScanTarget{
+		{
+			File:   "public.yaml",
+			Field:  "public",
+			Target: &pubCfg,
+		},
+		{
+			File:   "bff.yaml",
+			Field:  "server",
+			Target: &bffCfg,
+		},
+	}
+	cconf.Bootstrap(scan, onChanges)
 }
 
 var (

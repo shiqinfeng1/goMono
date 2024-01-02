@@ -27,18 +27,26 @@ var svcInfo = &types.SrvInfo{
 }
 
 func init() {
-	onChanges := map[string]func(key string, value kcfg.Value){
-		"log.level": func(key string, value kcfg.Value) {
+	onChanges := cconf.CfgOnChanges{
+		"public.log.level": func(key string, value kcfg.Value) {
 			_ = key
 			lvl, _ := value.String()
 			log.SetLevel(lvl) // 动态更新level等级
 		},
 	}
-	cconf.Bootstrap(
-		[]string{"public.yaml", "training.yaml"},
-		[]interface{}{&pubCfg, &srvCfg},
-		onChanges,
-	)
+	scan := []cconf.ScanTarget{
+		{
+			File:   "public.yaml",
+			Field:  "public",
+			Target: &pubCfg,
+		},
+		{
+			File:   "training.yaml",
+			Field:  "server",
+			Target: &srvCfg,
+		},
+	}
+	cconf.Bootstrap(scan, onChanges)
 }
 
 var (

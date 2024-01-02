@@ -83,7 +83,7 @@ names=$(shell find app -name main.go|xargs -I X dirname X)
 .PHONY: build-docker-production
 build-docker-production:
 	for x in $(names); do \
-		echo "\n\nmake docker $$x ..."; \
+		echo -e "\n\nmake docker $$x ..."; \
 		docker build -f Dockerfile  \
 			--build-arg TARGET=./$$x \
 			--build-arg COMMIT=$(COMMIT)  \
@@ -114,7 +114,7 @@ build-docker-debug:
 # -t "$(CONTAINER_REGISTRY)$$x-debug:$(IMAGE_TAG)" . ;
 
 .PHONY: all
-all: init api wire build build-docker-production
+all: init config api wire build build-docker-production
 
 # show help
 help:

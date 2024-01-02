@@ -30,19 +30,27 @@ var (
 
 func init() {
 	// 动态更新配置。key：需要监听的字段；value：配置变化后的处理函数
-	onChanges := map[string]func(key string, value kcfg.Value){
-		"log.level": func(key string, value kcfg.Value) {
+	onChanges := cconf.CfgOnChanges{
+		"public.log.level": func(key string, value kcfg.Value) {
 			_ = key
 			lvl, _ := value.String()
 			log.SetLevel(lvl) // 动态更新level等级
 		},
 		// todo： 这里添加需要监听的字段，及处理函数
 	}
-	cconf.Bootstrap(
-		[]string{"public.yaml", "trainer.yaml"}, // 指定要加载的配置文件
-		[]interface{}{&pubCfg, &srvCfg},
-		onChanges,
-	)
+	scan := []cconf.ScanTarget{
+		{
+			File:   "public.yaml",
+			Field:  "public",
+			Target: &pubCfg,
+		},
+		{
+			File:   "trainer.yaml",
+			Field:  "server",
+			Target: &srvCfg,
+		},
+	}
+	cconf.Bootstrap(scan, onChanges)
 }
 
 var (

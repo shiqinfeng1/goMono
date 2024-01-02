@@ -6,7 +6,7 @@ info:
     title: ""
     version: 0.0.1
 paths:
-    /trainer/v1/getTrainerAvailableHours:
+    /demo/v1/trainer/getTrainerAvailableHours:
         post:
             tags:
                 - BFF
@@ -24,7 +24,7 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/bff.GetTrainerAvailableHoursRespone'
-    /trainer/v1/makeHourAvailable:
+    /demo/v1/trainer/makeHourAvailable:
         post:
             tags:
                 - BFF
@@ -39,7 +39,7 @@ paths:
                 "200":
                     description: OK
                     content: {}
-    /trainer/v1/makeHourUnavailable:
+    /demo/v1/trainer/makeHourUnavailable:
         post:
             tags:
                 - BFF
@@ -54,7 +54,7 @@ paths:
                 "200":
                     description: OK
                     content: {}
-    /training/v1/approveRescheduleTraining:
+    /demo/v1/training/approveRescheduleTraining:
         post:
             tags:
                 - BFF
@@ -69,7 +69,7 @@ paths:
                 "200":
                     description: OK
                     content: {}
-    /training/v1/cancelTraining:
+    /demo/v1/training/cancelTraining:
         post:
             tags:
                 - BFF
@@ -84,7 +84,7 @@ paths:
                 "200":
                     description: OK
                     content: {}
-    /training/v1/createTraining:
+    /demo/v1/training/createTraining:
         post:
             tags:
                 - BFF
@@ -102,7 +102,7 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/training.CreateTrainingResponse'
-    /training/v1/getTraining:
+    /demo/v1/training/getTraining:
         post:
             tags:
                 - BFF
@@ -118,7 +118,7 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/training.GetTrainingResponse'
-    /training/v1/rejectRescheduleTraining:
+    /demo/v1/training/rejectRescheduleTraining:
         post:
             tags:
                 - BFF
@@ -133,7 +133,7 @@ paths:
                 "200":
                     description: OK
                     content: {}
-    /training/v1/requestRescheduleTraining:
+    /demo/v1/training/requestRescheduleTraining:
         post:
             tags:
                 - BFF
@@ -148,7 +148,7 @@ paths:
                 "200":
                     description: OK
                     content: {}
-    /training/v1/rescheduleTraining:
+    /demo/v1/training/rescheduleTraining:
         post:
             tags:
                 - BFF

@@ -20,7 +20,7 @@ import (
 )
 
 // NewHTTPServer new an HTTP server.
-func NewHTTPServer(c *conf.HTTP, ac *conf.Auth, logger log.Logger, s *service.HttpService) *http.Server {
+func NewHTTPServer(httpAddr *conf.HTTP, ac *conf.Auth, logger log.Logger, s *service.HttpService) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
@@ -46,14 +46,14 @@ func NewHTTPServer(c *conf.HTTP, ac *conf.Auth, logger log.Logger, s *service.Ht
 			handlers.AllowedOrigins([]string{"*"}),
 		)),
 	}
-	if c.Network != "" {
-		opts = append(opts, http.Network(c.Network))
+	if httpAddr.Network != "" {
+		opts = append(opts, http.Network(httpAddr.Network))
 	}
-	if c.Addr != "" {
-		opts = append(opts, http.Address(c.Addr))
+	if httpAddr.Addr != "" {
+		opts = append(opts, http.Address(httpAddr.Addr))
 	}
-	if c.Timeout != nil {
-		opts = append(opts, http.Timeout(c.Timeout.AsDuration()))
+	if httpAddr.Timeout != nil {
+		opts = append(opts, http.Timeout(httpAddr.Timeout.AsDuration()))
 	}
 	srv := http.NewServer(opts...)
 	srv.Handle("/metrics", promhttp.Handler())

@@ -47,16 +47,16 @@ type BFFHTTPServer interface {
 
 func RegisterBFFHTTPServer(s *http.Server, srv BFFHTTPServer) {
 	r := s.Route("/")
-	r.POST("/trainer/v1/getTrainerAvailableHours", _BFF_GetTrainerAvailableHours0_HTTP_Handler(srv))
-	r.POST("/trainer/v1/makeHourAvailable", _BFF_MakeHourAvailable0_HTTP_Handler(srv))
-	r.POST("/trainer/v1/makeHourUnavailable", _BFF_MakeHourUnavailable0_HTTP_Handler(srv))
-	r.POST("/training/v1/getTraining", _BFF_GetTraining0_HTTP_Handler(srv))
-	r.POST("/training/v1/createTraining", _BFF_CreateTraining0_HTTP_Handler(srv))
-	r.POST("/training/v1/cancelTraining", _BFF_CancelTraining0_HTTP_Handler(srv))
-	r.POST("/training/v1/rescheduleTraining", _BFF_RescheduleTraining0_HTTP_Handler(srv))
-	r.POST("/training/v1/approveRescheduleTraining", _BFF_ApproveRescheduleTraining0_HTTP_Handler(srv))
-	r.POST("/training/v1/requestRescheduleTraining", _BFF_RequestRescheduleTraining0_HTTP_Handler(srv))
-	r.POST("/training/v1/rejectRescheduleTraining", _BFF_RejectRescheduleTraining0_HTTP_Handler(srv))
+	r.POST("/demo/v1/trainer/getTrainerAvailableHours", _BFF_GetTrainerAvailableHours0_HTTP_Handler(srv))
+	r.POST("/demo/v1/trainer/makeHourAvailable", _BFF_MakeHourAvailable0_HTTP_Handler(srv))
+	r.POST("/demo/v1/trainer/makeHourUnavailable", _BFF_MakeHourUnavailable0_HTTP_Handler(srv))
+	r.POST("/demo/v1/training/getTraining", _BFF_GetTraining0_HTTP_Handler(srv))
+	r.POST("/demo/v1/training/createTraining", _BFF_CreateTraining0_HTTP_Handler(srv))
+	r.POST("/demo/v1/training/cancelTraining", _BFF_CancelTraining0_HTTP_Handler(srv))
+	r.POST("/demo/v1/training/rescheduleTraining", _BFF_RescheduleTraining0_HTTP_Handler(srv))
+	r.POST("/demo/v1/training/approveRescheduleTraining", _BFF_ApproveRescheduleTraining0_HTTP_Handler(srv))
+	r.POST("/demo/v1/training/requestRescheduleTraining", _BFF_RequestRescheduleTraining0_HTTP_Handler(srv))
+	r.POST("/demo/v1/training/rejectRescheduleTraining", _BFF_RejectRescheduleTraining0_HTTP_Handler(srv))
 }
 
 func _BFF_GetTrainerAvailableHours0_HTTP_Handler(srv BFFHTTPServer) func(ctx http.Context) error {
@@ -302,7 +302,7 @@ func NewBFFHTTPClient(client *http.Client) BFFHTTPClient {
 
 func (c *BFFHTTPClientImpl) ApproveRescheduleTraining(ctx context.Context, in *v1.ApproveRescheduleTrainingRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
-	pattern := "/training/v1/approveRescheduleTraining"
+	pattern := "/demo/v1/training/approveRescheduleTraining"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationBFFApproveRescheduleTraining))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -315,7 +315,7 @@ func (c *BFFHTTPClientImpl) ApproveRescheduleTraining(ctx context.Context, in *v
 
 func (c *BFFHTTPClientImpl) CancelTraining(ctx context.Context, in *v1.CancelTrainingRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
-	pattern := "/training/v1/cancelTraining"
+	pattern := "/demo/v1/training/cancelTraining"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationBFFCancelTraining))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -328,7 +328,7 @@ func (c *BFFHTTPClientImpl) CancelTraining(ctx context.Context, in *v1.CancelTra
 
 func (c *BFFHTTPClientImpl) CreateTraining(ctx context.Context, in *v1.CreateTrainingRequest, opts ...http.CallOption) (*v1.CreateTrainingResponse, error) {
 	var out v1.CreateTrainingResponse
-	pattern := "/training/v1/createTraining"
+	pattern := "/demo/v1/training/createTraining"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationBFFCreateTraining))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -341,7 +341,7 @@ func (c *BFFHTTPClientImpl) CreateTraining(ctx context.Context, in *v1.CreateTra
 
 func (c *BFFHTTPClientImpl) GetTrainerAvailableHours(ctx context.Context, in *GetTrainerAvailableHoursRequest, opts ...http.CallOption) (*GetTrainerAvailableHoursRespone, error) {
 	var out GetTrainerAvailableHoursRespone
-	pattern := "/trainer/v1/getTrainerAvailableHours"
+	pattern := "/demo/v1/trainer/getTrainerAvailableHours"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationBFFGetTrainerAvailableHours))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -354,7 +354,7 @@ func (c *BFFHTTPClientImpl) GetTrainerAvailableHours(ctx context.Context, in *Ge
 
 func (c *BFFHTTPClientImpl) GetTraining(ctx context.Context, in *emptypb.Empty, opts ...http.CallOption) (*v1.GetTrainingResponse, error) {
 	var out v1.GetTrainingResponse
-	pattern := "/training/v1/getTraining"
+	pattern := "/demo/v1/training/getTraining"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationBFFGetTraining))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -367,7 +367,7 @@ func (c *BFFHTTPClientImpl) GetTraining(ctx context.Context, in *emptypb.Empty, 
 
 func (c *BFFHTTPClientImpl) MakeHourAvailable(ctx context.Context, in *MakeHourAvailableRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
-	pattern := "/trainer/v1/makeHourAvailable"
+	pattern := "/demo/v1/trainer/makeHourAvailable"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationBFFMakeHourAvailable))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -380,7 +380,7 @@ func (c *BFFHTTPClientImpl) MakeHourAvailable(ctx context.Context, in *MakeHourA
 
 func (c *BFFHTTPClientImpl) MakeHourUnavailable(ctx context.Context, in *MakeHourUnavailableRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
-	pattern := "/trainer/v1/makeHourUnavailable"
+	pattern := "/demo/v1/trainer/makeHourUnavailable"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationBFFMakeHourUnavailable))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -393,7 +393,7 @@ func (c *BFFHTTPClientImpl) MakeHourUnavailable(ctx context.Context, in *MakeHou
 
 func (c *BFFHTTPClientImpl) RejectRescheduleTraining(ctx context.Context, in *v1.RejectRescheduleTrainingRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
-	pattern := "/training/v1/rejectRescheduleTraining"
+	pattern := "/demo/v1/training/rejectRescheduleTraining"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationBFFRejectRescheduleTraining))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -406,7 +406,7 @@ func (c *BFFHTTPClientImpl) RejectRescheduleTraining(ctx context.Context, in *v1
 
 func (c *BFFHTTPClientImpl) RequestRescheduleTraining(ctx context.Context, in *v1.RequestRescheduleTrainingRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
-	pattern := "/training/v1/requestRescheduleTraining"
+	pattern := "/demo/v1/training/requestRescheduleTraining"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationBFFRequestRescheduleTraining))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -419,7 +419,7 @@ func (c *BFFHTTPClientImpl) RequestRescheduleTraining(ctx context.Context, in *v
 
 func (c *BFFHTTPClientImpl) RescheduleTraining(ctx context.Context, in *v1.RescheduleTrainingRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
-	pattern := "/training/v1/rescheduleTraining"
+	pattern := "/demo/v1/training/rescheduleTraining"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationBFFRescheduleTraining))
 	opts = append(opts, http.PathTemplate(pattern))

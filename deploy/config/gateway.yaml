@@ -1,11 +1,11 @@
 
 proxy:
-  debug: false
+  debug: true
   addrs:
     - ":8080"
 
 # This is a gateway config.
-name: helloworld
+name: gateway-gomono
 version: v1
 # 全局中间件
 middlewares:

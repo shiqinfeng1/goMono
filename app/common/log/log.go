@@ -38,7 +38,7 @@ var (
 )
 
 func newKLogger(srvInfo *types.SrvInfo, lvl zerolog.Level, fcfg *cconf.File, mcfg *cconf.Monitor) klog.Logger {
-	fileName := time.Now().Format(fmt.Sprintf("./log/%v-%v-20160102.log", srvInfo.Name, srvInfo.ID))
+	fileName := time.Now().Format(fmt.Sprintf("./log/%v-%v-20060102.log", srvInfo.Name, srvInfo.ID))
 	zl := newZeroLogger(fileName, lvl, fcfg, mcfg)
 	zlogger := zlog.NewLogger(zl)
 	return klog.With(zlogger,
@@ -68,14 +68,15 @@ func New(svcInfo *types.SrvInfo, log *cconf.Log) klog.Logger {
 	return klogger
 }
 
-func SetLevel(lvlStr string) error {
+func SetLevel(lvlStr string) {
 	if klogger == nil {
-		return ErrNotInitedLogger
+		klogger.l.Log(klog.LevelError, "SetLevel", ErrNotInitedLogger)
+		return
 	}
 	lvl, err := zerolog.ParseLevel(lvlStr)
 	if err != nil {
 		klogger.l.Log(klog.LevelError, "SetLevel", ErrInvalidLogLevel(err))
-		return ErrInvalidLogLevel(err)
+		return
 	}
 	// 因为zerolog设置level后会返回一个新的logger，导致无法修改原logger的level，因此对于新的level直接new一个新的
 	oldlvl := klogger.lvl
@@ -83,5 +84,4 @@ func SetLevel(lvlStr string) error {
 		klogger.l = newKLogger(klogger.svcInfo, lvl, klogger.f, klogger.m)
 	}
 	klogger.l.Log(klog.LevelWarn, "SetLevel", fmt.Sprintf("change log level '%v' to '%v'", oldlvl, lvl))
-	return nil
 }

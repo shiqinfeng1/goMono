@@ -3,9 +3,8 @@ public:
   adapter:
     database:
       driver: mysql
-      source: root:root@tcp(127.0.0.1:23306)/test
+      source: "root:root@tcp({{mysql_host}}:23306)/test"
     redis:
-      network: 
       addr: 127.0.0.1:26379
       read_timeout: 0.2s
       write_timeout: 0.2s
@@ -21,10 +20,10 @@ public:
 
   registry: 
     addrs:
-      - registry:8000
+      - "{{nacos1_host}}:{{nacos1_srv_port}}"
   trace:
     endpoint: 127.0.0.1:2379
 
   discovery:
     endpoints:
-      - discovery:2379
+      - "{{nacos1_host}}:{{nacos1_srv_port}}"

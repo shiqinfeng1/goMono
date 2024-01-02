@@ -2,8 +2,6 @@ version: "3.8"
 services:
   nacos1:
     hostname: nacos1
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     container_name: nacos1
     image: "{{registry_addr}}/{{nacos_image}}"
     volumes:
@@ -22,3 +20,5 @@ services:
       interval: 10s
       retries: 50
       start_period: 15s
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'

@@ -29,6 +29,8 @@ services:
       driver: 'json-file'
       options:
         max-size: '5m'
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
   mysql_backup:
     image: "{{registry_addr}}/{{mysql_backup_image}}"
     hostname: mysql-backup
@@ -64,3 +66,5 @@ services:
       interval: 5s
       timeout: 2s
       retries: 10
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'

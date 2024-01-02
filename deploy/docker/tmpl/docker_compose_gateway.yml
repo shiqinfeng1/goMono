@@ -16,3 +16,5 @@ services:
     volumes:
       - "{{gateway_config_dir}}:/bin/config"
     restart: always
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'

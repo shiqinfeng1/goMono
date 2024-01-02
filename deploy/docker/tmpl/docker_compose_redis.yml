@@ -16,6 +16,8 @@ services:
       retries: 6
     volumes:
       - "{{redis_data_dir}}:/data"
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
 
   redis-slave:
     image: "{{registry_addr}}/{{redis_image}}"
@@ -36,4 +38,6 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
       - "/etc/timezone:/etc/timezone:ro"
       - "{{redis_slave_data_dir}}:/data"
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
 

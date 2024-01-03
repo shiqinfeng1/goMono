@@ -27,6 +27,10 @@
       - "{{config_nacos_mysql}}"
       - "{{config_nacos}}"
   
+  - name: Stop Nacos-MySQL
+    shell:
+      cmd: "docker-compose -p infra -f /tmp/{{nacos_mysql_compose_file}} down"
+    when: (nacos_mysql_host == ansible_hostname) or (nacos_mysql_host == ansible_host)
   - name: Start Nacos-MySQL
     shell:
       cmd: "docker-compose -p infra -f /tmp/{{nacos_mysql_compose_file}} up -d"
@@ -43,6 +47,13 @@
     loop:
       - "nacos-mysql"
 
+  - name: Stop Nacos ...
+    shell:
+      cmd: "docker-compose -p infra -f /tmp/{{item.1}} down"
+    when: (item.0 == ansible_hostname) or (item.0 == ansible_host)
+    with_together: 
+      - "{{[nacos1_host,nacos2_host,nacos3_host]}}"
+      - "{{[nacos1_compose_file,nacos2_compose_file,nacos3_compose_file]}}"
   - name: Start Nacos ...
     shell:
       cmd: "docker-compose -p infra -f /tmp/{{item.1}} up -d"

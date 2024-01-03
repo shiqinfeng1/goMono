@@ -8,10 +8,6 @@ package cmd
 import (
 	"context"
 
-	klog "github.com/go-kratos/kratos/v2/log"
-	"github.com/go-kratos/kratos/v2/registry"
-	"github.com/go-kratos/kratos/v2/transport/grpc"
-
 	"github.com/go-kratos/kratos/v2"
 	"github.com/google/wire"
 	"github.com/shiqinfeng1/goMono/app/biz-training/internal/adapters"
@@ -25,20 +21,6 @@ import (
 	"github.com/shiqinfeng1/goMono/app/common/types"
 )
 
-func newApp(logger klog.Logger, regstr registry.Registrar, gs *grpc.Server) *kratos.App {
-	return kratos.New(
-		kratos.ID(ID),
-		kratos.Name(Name),
-		kratos.Version(Version),
-		kratos.Metadata(map[string]string{}),
-		kratos.Logger(logger),
-		kratos.Server(
-			gs,
-		),
-		kratos.Registrar(regstr),
-	)
-}
-
 // wireApp init kratos application.
 func wireApp(
 	context.Context,
@@ -46,7 +28,8 @@ func wireApp(
 	*cconf.Discovery,
 	*cconf.Log,
 	*cconf.Adapter,
-	*conf.GRPC) (*kratos.App, func(), error) {
+	*conf.GRPC,
+	*conf.Register) (*kratos.App, func(), error) {
 	panic(wire.Build(
 		log.ProviderSet,
 		adapters.ProviderSet,

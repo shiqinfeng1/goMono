@@ -6,7 +6,8 @@ import "google/protobuf/duration.proto";
 
 message Server {
   HTTP http = 1;
-  Auth auth = 3;
+  Auth auth = 2;
+  Register register = 3;
 }
 message HTTP {
   string network = 1;
@@ -17,4 +18,7 @@ message HTTP {
 message Auth {
   string service_key = 1;
   string api_key = 2;
+}
+message Register {
+  repeated  string endpoints = 1;
 }

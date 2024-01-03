@@ -2,9 +2,14 @@ package cmd
 
 import (
 	"context"
+	"net/url"
 	"os"
 
+	"github.com/go-kratos/kratos/v2"
 	kcfg "github.com/go-kratos/kratos/v2/config"
+	klog "github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/registry"
+	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/gogf/gf/v2/os/gcmd"
 	"github.com/shiqinfeng1/goMono/app/bff-gomono/internal/conf"
 	cconf "github.com/shiqinfeng1/goMono/app/common/conf"
@@ -54,6 +59,24 @@ func init() {
 	cconf.Bootstrap(scan, onChanges)
 }
 
+func newApp(register *conf.Register, logger klog.Logger, regstr registry.Registrar, hs *http.Server) *kratos.App {
+	if len(register.Endpoints) == 0 {
+		panic("bff register.Endpoints is nil")
+	}
+	return kratos.New(
+		kratos.ID(ID),
+		kratos.Name(Name),
+		kratos.Version(Version),
+		kratos.Metadata(map[string]string{}),
+		kratos.Logger(logger),
+		kratos.Server(
+			hs,
+		),
+		kratos.Registrar(regstr),
+		kratos.Endpoint(&url.URL{Scheme: "http", Host: register.Endpoints[0]}),
+	)
+}
+
 var (
 	Main = gcmd.Command{
 		Name:  "main",
@@ -68,6 +91,7 @@ var (
 				pubCfg.Adapter,
 				bffCfg.Http,
 				bffCfg.Auth,
+				bffCfg.Register,
 			)
 			if err != nil {
 				panic(err)

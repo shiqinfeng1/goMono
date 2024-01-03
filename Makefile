@@ -68,11 +68,11 @@ api:
 #     		--openapiv2_opt logtostderr=true 
 
 .PHONY: build
-# build
+# build execute 
 build:
 	mkdir -p deploy/bin/ && go build -ldflags "-X cmd.Version=$(VERSION)" -o ./deploy/bin/ ./...
 
-.PHONY: generate
+.PHONY: wire
 # generate wire_gen.go
 wire:
 	find app  -mindepth 2 -maxdepth 2 | grep cmd | $(wireCmd)
@@ -81,6 +81,7 @@ export DOCKER_BUILDKIT := 1
 
 names=$(shell find app -name main.go|xargs -I X dirname X)
 .PHONY: build-docker-production
+# build docker images
 build-docker-production:
 	for x in $(names); do \
 		echo -e "\n\nmake docker $$x ..."; \
@@ -98,6 +99,7 @@ build-docker-production:
 # -t "$(CONTAINER_REGISTRY)$$x:$(IMAGE_TAG)" . ;
 
 .PHONY: build-docker-debug
+# build docker images with debug
 build-docker-debug:
 	for x in $(names); do \
 		docker build -f Dockerfile  \
@@ -114,6 +116,7 @@ build-docker-debug:
 # -t "$(CONTAINER_REGISTRY)$$x-debug:$(IMAGE_TAG)" . ;
 
 .PHONY: all
+# make all
 all: init config api wire build build-docker-production
 
 # show help
@@ -128,7 +131,7 @@ help:
 		if (helpMessage) { \
 			helpCommand = substr($$1, 0, index($$1, ":")); \
 			helpMessage = substr(lastLine, RSTART + 2, RLENGTH); \
-			printf "\033[36m%-22s\033[0m %s\n", helpCommand,helpMessage; \
+			printf "\033[36m%-28s\033[0m %s\n", helpCommand,helpMessage; \
 		} \
 	} \
 	{ lastLine = $$0 }' $(MAKEFILE_LIST)

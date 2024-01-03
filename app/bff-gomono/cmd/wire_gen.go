@@ -9,9 +9,6 @@ package cmd
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2"
-	log2 "github.com/go-kratos/kratos/v2/log"
-	"github.com/go-kratos/kratos/v2/registry"
-	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/shiqinfeng1/goMono/app/bff-gomono/internal/adapters"
 	"github.com/shiqinfeng1/goMono/app/bff-gomono/internal/application"
 	conf2 "github.com/shiqinfeng1/goMono/app/bff-gomono/internal/conf"
@@ -26,7 +23,7 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(contextContext context.Context, srvInfo *types.SrvInfo, discovery *conf.Discovery, confLog *conf.Log, adapter *conf.Adapter, http *conf2.HTTP, auth *conf2.Auth) (*kratos.App, func(), error) {
+func wireApp(contextContext context.Context, srvInfo *types.SrvInfo, discovery *conf.Discovery, confLog *conf.Log, adapter *conf.Adapter, http *conf2.HTTP, auth *conf2.Auth, register *conf2.Register) (*kratos.App, func(), error) {
 	logger := log.New(srvInfo, confLog)
 	registryRegistrar := registrar.MustNacosRegistrar(discovery)
 	trainerGrpc := adapters.NewTrainerGrpc(discovery)
@@ -34,16 +31,7 @@ func wireApp(contextContext context.Context, srvInfo *types.SrvInfo, discovery *
 	applicationApplication := application.NewApplication(logger, trainerGrpc, userGrpc)
 	httpService := service.NewHttpService(applicationApplication)
 	server := ports.NewHTTPServer(http, auth, logger, httpService)
-	app := newApp(logger, registryRegistrar, server)
+	app := newApp(register, logger, registryRegistrar, server)
 	return app, func() {
 	}, nil
-}
-
-// wire.go:
-
-func newApp(logger log2.Logger, regstr registry.Registrar, hs *http.Server) *kratos.App {
-	return kratos.New(kratos.ID(ID), kratos.Name(Name), kratos.Version(Version), kratos.Metadata(map[string]string{}), kratos.Logger(logger), kratos.Server(
-		hs,
-	), kratos.Registrar(regstr),
-	)
 }

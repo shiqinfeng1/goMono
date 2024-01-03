@@ -1,4 +1,8 @@
 server:
   http:
-    addr: 0.0.0.0:8200
+    addr: ":{{bff_port}}"
     timeout: 1s
+  # 本服务的服务注册地址
+  register:
+    endpoints:
+      - "{{bff_host}}:{{bff_port}}"

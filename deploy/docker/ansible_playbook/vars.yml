@@ -76,10 +76,7 @@ delete_download_images: true  # 是否删除本地已上传到私有仓库的基
 #########################################################################
 # nacos相关配置
 #########################################################################
-nacos1_compose_file: docker_compose_nacos1.yml  # nacos1的compose文件
-nacos2_compose_file: docker_compose_nacos2.yml  # nacos2的compose文件
-nacos3_compose_file: docker_compose_nacos3.yml  # nacos3的compose文件
-nacos_mysql_compose_file: docker_compose_nacos_mysql.yml  #nacos的mysql的compose文件
+nacos_compose_file: docker_compose_nacos.yml  # nacos1的compose文件
 
 config_nacos_mysql: config_nacos_mysql.env # nacos使用的数据库的配置
 config_nacos: config_nacos.env # nacos的配置
@@ -89,17 +86,15 @@ nacos_mysql_port: 13306 # nacos使用的mysql的服务端口
 nacos_mysql_host: 192.168.72.84 # 部分情况如果配置为mysql服务主机名，docker内置dns服务会解析失败，此时可以配置为ip地址； nacos使用的mysql的服务地址，该主机的dns需要配置在部署nacos的机子上, 并在ansible主机清单维护
 
 # 如果nacos运行在统一节点，务必保证个nacos的端口号不重复
-nacos1_host: 192.168.72.84 # nacos1的服务地址，该主机的dns需要配置在部署nacos/prometheus的机子上, 并在ansible主机清单维护
+nacos_host: 192.168.72.84 # nacos1的服务地址，该主机的dns需要配置在部署nacos/prometheus的机子上, 并在ansible主机清单维护
 nacos1_conn_port1: 7848
 nacos1_conn_port2: 9848
 nacos1_conn_port3: 9849
 nacos1_srv_port: 8848
-nacos2_host: 192.168.72.84 # nacos2的服务地址，该主机的dns需要配置在部署nacos/prometheus的机子上, 并在ansible主机清单维护
 nacos2_conn_port1: 7858
 nacos2_conn_port2: 9858
 nacos2_conn_port3: 9859
 nacos2_srv_port: 8858
-nacos3_host: 192.168.72.84 # nacos3的服务地址，该主机的dns需要配置在部署nacos/prometheus的机子上, 并在ansible主机清单维护
 nacos3_conn_port1: 7868
 nacos3_conn_port2: 9868
 nacos3_conn_port3: 9869

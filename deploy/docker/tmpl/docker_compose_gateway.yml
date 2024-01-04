@@ -11,7 +11,7 @@ services:
       - "MODE={{mode}}"
       - "DEBUG={{debug}}"
       - "PROXYADDRS={{proxy_addrs}}"
-      - "NACOS_HOST={{nacos1_host}}"
+      - "NACOS_HOST={{nacos_host}}"
       - "NACOS_PORT={{nacos1_srv_port}}"
     volumes:
       - "{{gateway_config_dir}}:/bin/config"

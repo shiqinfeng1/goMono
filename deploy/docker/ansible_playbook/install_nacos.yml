@@ -20,49 +20,25 @@
       dest: /tmp/{{ item }}
       force: true
     loop:
-      - "{{nacos1_compose_file}}"
-      - "{{nacos2_compose_file}}"
-      - "{{nacos3_compose_file}}"
-      - "{{nacos_mysql_compose_file}}"
+      - "{{nacos_compose_file}}"
       - "{{config_nacos_mysql}}"
       - "{{config_nacos}}"
   
-  - name: Stop Nacos-MySQL
-    shell:
-      cmd: "docker-compose -p infra -f /tmp/{{nacos_mysql_compose_file}} down"
-    when: (nacos_mysql_host == ansible_hostname) or (nacos_mysql_host == ansible_host)
   - name: Stop Nacos ...
     shell:
       cmd: "docker-compose -p infra -f /tmp/{{item.1}} down"
     when: (item.0 == ansible_hostname) or (item.0 == ansible_host)
     with_together: 
-      - "{{[nacos1_host,nacos2_host,nacos3_host]}}"
-      - "{{[nacos1_compose_file,nacos2_compose_file,nacos3_compose_file]}}"
-
-  - name: Start Nacos-MySQL
-    shell:
-      cmd: "docker-compose -p infra -f /tmp/{{nacos_mysql_compose_file}} up -d"
-    when: (nacos_mysql_host == ansible_hostname) or (nacos_mysql_host == ansible_host)
-
-  - name: Check Nacos-MySQL Running Status
-    docker_container_info:
-      name: "{{item}}"
-    register: result
-    until: result.container['State']['Health']['Status'] == "healthy"
-    retries: 10
-    delay: 5
-    when: (nacos_mysql_host == ansible_hostname) or (nacos_mysql_host == ansible_host)
-    loop:
-      - "nacos-mysql"
-
+      - "{{[nacos_host]}}"
+      - "{{[nacos_compose_file]}}"
 
   - name: Start Nacos ...
     shell:
       cmd: "docker-compose -p infra -f /tmp/{{item.1}} up -d"
     when: (item.0 == ansible_hostname) or (item.0 == ansible_host)
     with_together: 
-      - "{{[nacos1_host,nacos2_host,nacos3_host]}}"
-      - "{{[nacos1_compose_file,nacos2_compose_file,nacos3_compose_file]}}"
+      - "{{[nacos_host]}}"
+      - "{{[nacos_compose_file]}}"
 
   - name: Check Nacos Running Status
     docker_container_info:
@@ -73,15 +49,12 @@
     delay: 5
     when: (item.0 == ansible_hostname) or (item.0 == ansible_host)
     with_together:
-      - "{{[nacos1_host,nacos2_host,nacos3_host]}}"
-      - ["nacos1","nacos2","nacos3"]
+      - "{{[nacos_host,nacos_host,nacos_host]}}"
+      - ["nacos-mysql","nacos1","nacos2","nacos3"]
 
   # - name: Delete docker-compose.yml
   #   file: 
   #     dest: /tmp/{{ item }}
   #     state: absent
   #   loop:
-  #     - "{{nacos1_compose_file}}"
-  #     - "{{nacos2_compose_file}}"
-  #     - "{{nacos3_compose_file}}"
-  #     - "{{nacos_mysql_compose_file}}"
+  #     - "{{nacos_compose_file}}"

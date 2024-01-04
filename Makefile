@@ -33,6 +33,9 @@ else
 	wireCmd=xargs -i sh -c 'cd {} && echo && wire'
 endif
 
+MODULE=github.com/shiqinfeng1/goMono
+
+
 .PHONY: init
 # init env
 init:
@@ -71,7 +74,12 @@ api:
 .PHONY: build
 # build execute 
 build:
-	mkdir -p deploy/bin/ && go build -ldflags "-X cmd.Version=$(VERSION)" -o ./deploy/bin/ ./...
+# go build -ldflags "app/bff-gomono/cmd/cmd.Version=$(VERSION)" -o ./deploy/bin/ ./...
+	for x in $(names); do \
+		echo -e "\nbuild $$x ... $(MODULE)/$$x/cmd.Version=$(VERSION)"; \
+		go build -ldflags "-X $(MODULE)/$$x/cmd.Version=$(VERSION)" -o ./deploy/bin/ ./$$x; \
+		echo  "ok"; \
+	done
 
 .PHONY: wire
 # generate wire_gen.go
@@ -89,7 +97,7 @@ build-docker-production:
 		docker build -f Dockerfile  \
 			--build-arg TARGET=./$$x \
 			--build-arg COMMIT=$(COMMIT)  \
-			--build-arg VERSION=$(IMAGE_TAG) \
+			--build-arg VERSION=$(MODULE)/$$x/cmd.Version=$(VERSION) \
 			--build-arg GOARCH=$(GOARCH) \
 			--target production \
 			--secret id=git_creds,env=GITHUB_CREDS --build-arg GOPRIVATE=$(GOPRIVATE) \

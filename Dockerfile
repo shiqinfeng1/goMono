@@ -32,11 +32,12 @@ ARG GOARCH=amd64
 # Keep Go's build cache between builds.
 # https://github.com/golang/go/issues/27719#issuecomment-514747274
 # --tags "${TAGS}"
+RUN echo "${VERSION}"
 RUN --mount=type=cache,sharing=locked,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=secret,id=git_creds,dst=/root/.netrc \
     CGO_ENABLED=1 GOOS=linux go build -ldflags "-extldflags -static \
-    -X  'cmd.Version=${VERSION}'" \
+    -X  '${VERSION}'" \
     -o ./bin/app ${TARGET} 
 
 RUN chmod a+x /app/bin/app
@@ -58,7 +59,7 @@ RUN --mount=type=ssh \
     --mount=type=cache,sharing=locked,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
     CGO_ENABLED=1 GOOS=linux go build -ldflags "-extldflags -static \
-    -X  'cmd.Version=${VERSION}'" \
+    -X '${VERSION}'" \
     -gcflags="all=-N -l" -o ./bin/app ${TARGET}
 
 RUN chmod a+x /app/bin/app

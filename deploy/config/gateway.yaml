@@ -6,7 +6,7 @@ proxy:
 
 # This is a gateway config.
 name: gateway-gomono
-version: v1
+version: v1.0.0
 # 全局中间件
 middlewares:
   - name: tracing

@@ -8,6 +8,7 @@ import (
 	kmetrics "github.com/go-kratos/kratos/v2/middleware/metrics"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/middleware/selector"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/go-kratos/swagger-api/openapiv2"
 	"github.com/golang-jwt/jwt/v4"
@@ -24,7 +25,9 @@ func NewHTTPServer(httpAddr *conf.HTTP, ac *conf.Auth, logger log.Logger, s *ser
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
-			logging.Server(logger),
+			logging.Server(log.With(logger,
+				"layer", "ports",
+			)),
 			selector.Server(
 				kjwt.Server(
 					func(token *jwt.Token) (interface{}, error) {
@@ -39,6 +42,7 @@ func NewHTTPServer(httpAddr *conf.HTTP, ac *conf.Auth, logger log.Logger, s *ser
 				kmetrics.WithSeconds(prom.NewHistogram(client.MetricsSeconds)),
 				kmetrics.WithRequests(prom.NewCounter(client.MetricsRequests)),
 			),
+			tracing.Server(),
 		),
 		http.Filter(handlers.CORS(
 			handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}),

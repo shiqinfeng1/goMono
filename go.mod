@@ -28,6 +28,9 @@ require (
 	github.com/rs/zerolog v1.31.0
 	github.com/stretchr/testify v1.8.4
 	go.etcd.io/etcd/client/v3 v3.5.10
+	go.opentelemetry.io/otel v1.17.0
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.4.1
+	go.opentelemetry.io/otel/sdk v1.17.0
 	go.uber.org/automaxprocs v1.5.1
 	go.uber.org/multierr v1.11.0
 	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1
@@ -98,13 +101,10 @@ require (
 	github.com/yusufpapurcu/wmi v1.2.3 // indirect
 	go.etcd.io/etcd/api/v3 v3.5.10 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.5.10 // indirect
-	go.opentelemetry.io/otel v1.16.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/internal/retry v1.4.1 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.4.1 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.4.1 // indirect
-	go.opentelemetry.io/otel/metric v1.16.0 // indirect
-	go.opentelemetry.io/otel/sdk v1.16.0 // indirect
-	go.opentelemetry.io/otel/trace v1.16.0 // indirect
+	go.opentelemetry.io/otel/metric v1.17.0 // indirect
+	go.opentelemetry.io/otel/trace v1.17.0 // indirect
 	go.opentelemetry.io/proto/otlp v0.12.0 // indirect
 	go.uber.org/zap v1.26.0 // indirect
 	golang.org/x/net v0.18.0 // indirect

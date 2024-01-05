@@ -16,14 +16,11 @@ var (
 	Name    = "trainer"     // Name is the name of the compiled software.
 	Version string          // Version is the version of the compiled software.
 	ID, _   = os.Hostname() // 主机信息
-)
-
-var svcInfo = &types.SrvInfo{
-	ID:      ID,
-	Name:    Name,
-	Version: Version,
-}
-var (
+	svcInfo = &types.SrvInfo{
+		ID:      ID,
+		Name:    Name,
+		Version: Version,
+	}
 	srvCfg conf.Server // 应用配置参数
 	pubCfg cconf.Public
 )

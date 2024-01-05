@@ -26,8 +26,8 @@ import (
 func wireApp(contextContext context.Context, srvInfo *types.SrvInfo, discovery *conf.Discovery, confLog *conf.Log, adapter *conf.Adapter, http *conf2.HTTP, auth *conf2.Auth, register *conf2.Register) (*kratos.App, func(), error) {
 	logger := log.New(srvInfo, confLog)
 	registryRegistrar := registrar.MustNacosRegistrar(discovery)
-	trainerGrpc := adapters.NewTrainerGrpc(discovery)
-	userGrpc := adapters.NewUserGrpc(discovery)
+	trainerGrpc := adapters.NewTrainerGrpc(discovery, logger)
+	userGrpc := adapters.NewUserGrpc(discovery, logger)
 	applicationApplication := application.NewApplication(logger, trainerGrpc, userGrpc)
 	httpService := service.NewHttpService(applicationApplication)
 	server := ports.NewHTTPServer(http, auth, logger, httpService)

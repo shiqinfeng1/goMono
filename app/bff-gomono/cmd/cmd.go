@@ -14,6 +14,7 @@ import (
 	"github.com/shiqinfeng1/goMono/app/bff-gomono/internal/conf"
 	cconf "github.com/shiqinfeng1/goMono/app/common/conf"
 	"github.com/shiqinfeng1/goMono/app/common/log"
+	"github.com/shiqinfeng1/goMono/app/common/trace"
 	"github.com/shiqinfeng1/goMono/app/common/types"
 )
 
@@ -22,14 +23,11 @@ var (
 	Name    = "bff"         // Name is the name of the compiled software.
 	Version string          // Version is the version of the compiled software.
 	ID, _   = os.Hostname() // 主机信息
-)
-
-var svcInfo = &types.SrvInfo{
-	ID:      ID,
-	Name:    Name,
-	Version: Version,
-}
-var (
+	svcInfo = &types.SrvInfo{
+		ID:      ID,
+		Name:    Name,
+		Version: Version,
+	}
 	bffCfg conf.Server // 应用配置参数
 	pubCfg cconf.Public
 )
@@ -68,7 +66,9 @@ func newApp(register *conf.Register, logger klog.Logger, regstr registry.Registr
 		kratos.Name(Name),
 		kratos.Version(Version),
 		kratos.Metadata(map[string]string{}),
-		kratos.Logger(logger),
+		kratos.Logger(klog.With(logger,
+			"layer", "kratos",
+		)),
 		kratos.Server(
 			hs,
 		),
@@ -83,6 +83,7 @@ var (
 		Usage: "main <sub-command>",
 		Brief: "this is main command, please specify a sub command",
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
+			trace.NewTrace(ctx, pubCfg.Trace)
 			app, cleanup, err := wireApp(
 				ctx,
 				svcInfo,

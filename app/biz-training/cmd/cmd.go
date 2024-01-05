@@ -18,13 +18,12 @@ var (
 	ID, _   = os.Hostname() // 主机信息
 	srvCfg  conf.Server     // 应用配置参数
 	pubCfg  cconf.Public
+	svcInfo = &types.SrvInfo{
+		ID:      ID,
+		Name:    Name,
+		Version: Version,
+	}
 )
-
-var svcInfo = &types.SrvInfo{
-	ID:      ID,
-	Name:    Name,
-	Version: Version,
-}
 
 func init() {
 	onChanges := cconf.CfgOnChanges{

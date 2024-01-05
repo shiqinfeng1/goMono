@@ -39,7 +39,9 @@ func NewComponentTestApplication(logger log.Logger, repo training.Repository) Ap
 	return newApplication(logger, repo, TrainerServiceMock{}, UserServiceMock{})
 }
 func newApplication(logger log.Logger, repo training.Repository, trainerService command.TrainerService, userService command.UserService) Application {
-
+	logger = log.With(logger,
+		"layer", "app",
+	)
 	return Application{
 		Commands: Commands{
 			ApproveTrainingReschedule: command.NewApproveTrainingRescheduleHandler(repo, userService, trainerService, logger),

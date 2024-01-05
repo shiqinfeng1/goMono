@@ -10,6 +10,7 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/gogf/gf/v2/os/gcmd"
 	"github.com/shiqinfeng1/goMono/app/biz-training/internal/conf"
+	"github.com/shiqinfeng1/goMono/app/common/trace"
 )
 
 func newApp(register *conf.Register, logger klog.Logger, regstr registry.Registrar, gs *grpc.Server) *kratos.App {
@@ -18,7 +19,9 @@ func newApp(register *conf.Register, logger klog.Logger, regstr registry.Registr
 		kratos.Name(Name),
 		kratos.Version(Version),
 		kratos.Metadata(map[string]string{}),
-		kratos.Logger(logger),
+		kratos.Logger(klog.With(logger,
+			"layer", "kratos",
+		)),
 		kratos.Server(
 			gs,
 		),
@@ -33,6 +36,7 @@ var (
 		Brief:       "start training grpc service",
 		Description: "entry to start a training grpc service",
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
+			trace.NewTrace(ctx, pubCfg.Trace)
 			app, cleanup, err := wireApp(
 				ctx,
 				svcInfo,

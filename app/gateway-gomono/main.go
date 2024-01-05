@@ -17,6 +17,7 @@ import (
 	kcfg "github.com/go-kratos/kratos/v2/config"
 	cconf "github.com/shiqinfeng1/goMono/app/common/conf"
 	"github.com/shiqinfeng1/goMono/app/common/discovery"
+	"github.com/shiqinfeng1/goMono/app/common/types"
 
 	_ "net/http/pprof"
 
@@ -30,13 +31,20 @@ import (
 	_ "go.uber.org/automaxprocs"
 
 	"github.com/go-kratos/kratos/v2"
-	"github.com/go-kratos/kratos/v2/log"
+	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport"
+	"github.com/shiqinfeng1/goMono/app/common/log"
 	"golang.org/x/exp/rand"
 )
 
 var (
+	ID, _ = os.Hostname() // 主机信息
+
+)
+
+var (
 	gatewayCfg gcfg.Gateway
+	pubCfg     cconf.Public
 	p          *proxy.Proxy
 )
 
@@ -50,7 +58,7 @@ func init() {
 			value.Scan(&middl)
 			gatewayCfg.Middlewares = middl
 			if err := p.Update(&gatewayCfg); err != nil {
-				log.Fatalf("failed to update middleware config: %v", err)
+				klog.Fatalf("failed to update middleware config: %v", err)
 			}
 		},
 		"endpoints": func(key string, value kcfg.Value) {
@@ -59,7 +67,7 @@ func init() {
 			value.Scan(&edps)
 			gatewayCfg.Endpoints = edps
 			if err := p.Update(&gatewayCfg); err != nil {
-				log.Fatalf("failed to update middleware config: %v", err)
+				klog.Fatalf("failed to update middleware config: %v", err)
 			}
 		},
 	}
@@ -68,6 +76,11 @@ func init() {
 			File:   "gateway.yaml",
 			Field:  "",
 			Target: &gatewayCfg,
+		},
+		{
+			File:   "public.yaml",
+			Field:  "public",
+			Target: &pubCfg,
 		},
 	}
 	cconf.Bootstrap(scan, onChanges)
@@ -81,16 +94,23 @@ func main() {
 	proxyAddrs := strings.Split(PROXYADDRS, ",")
 	nacos_host := os.Getenv("NACOS_HOST")
 	nacos_port := os.Getenv("NACOS_PORT")
+
+	logger := log.New(&types.SrvInfo{
+		ID:      ID,
+		Name:    gatewayCfg.Name,
+		Version: gatewayCfg.Version,
+	}, pubCfg.Log)
+	l := klog.NewHelper(klog.With(logger, "scope", "main"))
 	clientFactory := client.NewFactory(discovery.MustNacosDiscovery(nacos_host + ":" + nacos_port))
 	var err error
 	p, err = proxy.New(clientFactory, middleware.Create)
 	if err != nil {
-		log.Fatalf("failed to new proxy: %v", err)
+		l.Fatalf("failed to new proxy: %v", err)
 	}
 	circuitbreaker.Init(clientFactory)
 
 	if err := p.Update(&gatewayCfg); err != nil {
-		log.Fatalf("failed to update service config: %v", err)
+		l.Fatalf("failed to update service config: %v", err)
 	}
 	var serverHandler http.Handler = p
 	if withDebug {
@@ -103,12 +123,15 @@ func main() {
 	}
 	app := kratos.New(
 		kratos.Name(gatewayCfg.Name),
+		kratos.Version(gatewayCfg.Version),
 		kratos.Context(ctx),
 		kratos.Server(
 			servers...,
 		),
+		kratos.Metadata(map[string]string{}),
+		kratos.Logger(logger),
 	)
 	if err := app.Run(); err != nil {
-		log.Errorf("failed to run servers: %v", err)
+		l.Errorf("failed to run servers: %v", err)
 	}
 }

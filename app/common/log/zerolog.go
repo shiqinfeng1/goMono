@@ -60,7 +60,7 @@ func newMonitorWriter(endpoint string) io.Writer {
 }
 
 // 生成一个zero的日志器，支持输出到屏幕、日志文件、远端日志服务
-func newZeroLogger(fileName string, lvl zerolog.Level, fcfg *conf.File, mcfg *conf.Monitor) *zerolog.Logger {
+func newZeroLogger(fileName string, fcfg *conf.File, mcfg *conf.Monitor) *zerolog.Logger {
 	zerolog.TimeFieldFormat = timeFormat
 	m := types.NewModeFromString(os.Getenv("MODE"))
 	if !m.IsValid() {
@@ -69,15 +69,15 @@ func newZeroLogger(fileName string, lvl zerolog.Level, fcfg *conf.File, mcfg *co
 	var l zerolog.Logger
 	if m.Is(types.ModeDevelop) {
 		multi := zerolog.MultiLevelWriter(newConsoleWriter(), newFileWriter(fileName, fcfg))
-		l = zerolog.New(multi).With().Timestamp().Stack().Logger().Level(lvl)
+		l = zerolog.New(multi).With().Timestamp().Stack().Logger()
 	}
 	if m.Is(types.ModeTest) {
 		multi := zerolog.MultiLevelWriter(newFileWriter(fileName, fcfg), newMonitorWriter(mcfg.GetEndpoint()))
-		l = zerolog.New(multi).With().Timestamp().Stack().Logger().Level(lvl)
+		l = zerolog.New(multi).With().Timestamp().Stack().Logger()
 	}
 	if m.Is(types.ModeProduct) {
 		multi := zerolog.MultiLevelWriter(mustNewMonitorWriter(mcfg.GetEndpoint()))
-		l = zerolog.New(multi).With().Timestamp().Logger().Level(lvl)
+		l = zerolog.New(multi).With().Timestamp().Logger()
 	}
 	return &l
 }

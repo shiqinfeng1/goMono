@@ -39,6 +39,7 @@
       force: true
     loop:
       - "gateway.yaml"
+      - "public.yaml"
 
   - name: Stop Gateway
     shell:

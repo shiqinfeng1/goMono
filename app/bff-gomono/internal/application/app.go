@@ -13,7 +13,9 @@ type Application struct {
 
 func NewApplication(logger log.Logger, trainerGrpc *adapters.TrainerGrpc, userGrpc *adapters.UserGrpc) Application {
 	return Application{
-		logger:      logger,
+		logger: log.With(logger,
+			"layer", "app",
+		),
 		trainerGrpc: trainerGrpc,
 		userGrpc:    userGrpc,
 	}

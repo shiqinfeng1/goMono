@@ -7,13 +7,16 @@ import (
 	"github.com/shiqinfeng1/goMono/app/common/client"
 
 	prom "github.com/go-kratos/kratos/contrib/metrics/prometheus/v2"
+	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/middleware/logging"
 	kmetrics "github.com/go-kratos/kratos/v2/middleware/metrics"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 )
 
 // NewGRPCServer new a gRPC server.
-func NewGRPCServer(c *conf.GRPC, training service.GrpcService) *grpc.Server {
+func NewGRPCServer(c *conf.GRPC, logger log.Logger, training service.GrpcService) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),
@@ -21,6 +24,10 @@ func NewGRPCServer(c *conf.GRPC, training service.GrpcService) *grpc.Server {
 				kmetrics.WithSeconds(prom.NewHistogram(client.MetricsSeconds)),
 				kmetrics.WithRequests(prom.NewCounter(client.MetricsRequests)),
 			),
+			logging.Server(log.With(logger,
+				"layer", "ports",
+			)),
+			tracing.Server(),
 		),
 	}
 	if c.Network != "" {

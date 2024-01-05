@@ -6,6 +6,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/pkg/errors"
 	trainerApi "github.com/shiqinfeng1/goMono/api/trainer/v1"
 	"github.com/shiqinfeng1/goMono/app/common/client"
@@ -19,14 +21,19 @@ var (
 )
 
 type TrainerGrpc struct {
+	logger    log.Logger
 	endpoints []string
 	client    trainerApi.TrainerServiceClient
 	close     func() error
 }
 
-func NewTrainerGrpc(dis *conf.Discovery) *TrainerGrpc {
+func NewTrainerGrpc(dis *conf.Discovery, logger log.Logger) *TrainerGrpc {
 	return &TrainerGrpc{
 		endpoints: dis.Endpoints,
+		logger: log.With(logger,
+			"trace.id", tracing.TraceID(),
+			"span.id", tracing.SpanID(),
+		),
 	}
 }
 func (s TrainerGrpc) Close() {
@@ -40,7 +47,7 @@ func (s *TrainerGrpc) getClient() trainerApi.TrainerServiceClient {
 		if err != nil {
 			panic(fmt.Errorf("invalid discovery %v: %w", s.endpoints, err))
 		}
-		conn, err := client.NewGrpcConn(dis, "trainer")
+		conn, err := client.NewGrpcConn(dis, s.logger, "trainer")
 		if err != nil {
 			panic(fmt.Errorf("invalid trainer client from %v: %w", s.endpoints, err))
 		}

@@ -29,7 +29,9 @@ func NewApplication(logger log.Logger, hourCmdRepo hour.CmdRepo, hourQueryRepo q
 }
 
 func newApplication(logger log.Logger, hourCmdRepo hour.CmdRepo, hourQueryRepo query.QueryRepository) Application {
-
+	logger = log.With(logger,
+		"layer", "app",
+	)
 	return Application{
 		Commands: Commands{
 			CancelTraining:       command.NewCancelTrainingHandler(hourCmdRepo, logger),

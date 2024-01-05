@@ -46,7 +46,7 @@ RUN chmod a+x /app/bin/app
 FROM gcr.dockerproxy.com/distroless/base-debian11 as production
 
 COPY --from=build-production /app/bin/app /bin/app
-
+WORKDIR /bin
 ENTRYPOINT ["/bin/app"]
 
 ####################################

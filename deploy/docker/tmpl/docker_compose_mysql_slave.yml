@@ -10,6 +10,7 @@ services:
       - "{{mysql_slave_port}}:3306"
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
       - "{{mysql_slave_data_dir}}:/bitnami/mysql/data"
     environment:
       # allow_empty_password is recommended only for development.
@@ -40,7 +41,8 @@ services:
       mysql_slave:
         condition: service_healthy
     volumes:
-      - /etc/localtime:/etc/localtime:ro
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
       - "{{mysql_backup_data_dir}}:/backup" # 数据备份的本地目标目录
       - "{{mysql_slave_data_dir}}:/mysqldata" # mysql数据所在路径， 也就是binlog所在的文件夹
     environment:

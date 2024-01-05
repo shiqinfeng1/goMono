@@ -6,6 +6,8 @@ services:
     hostname: prometheus
     image: "{{registry_addr}}/{{prometheus_image}}"
     volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
       - /tmp/{{config_prometheus}}:/etc/prometheus/prometheus.yml
     ports:
       - "{{prometheus_srv_port}}:9090"
@@ -20,5 +22,8 @@ services:
     ports:
       - "{{grafana_srv_port}}:3000"
     restart: always
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
     extra_hosts:
       - 'host.docker.internal:host-gateway'

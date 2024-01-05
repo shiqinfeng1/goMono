@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/pkg/errors"
@@ -26,18 +25,6 @@ var (
 // zerolog的屏幕输出
 func newConsoleWriter() io.Writer {
 	consoleWriter := zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: timeFormat}
-	consoleWriter.FormatLevel = func(i interface{}) string {
-		return strings.ToUpper(fmt.Sprintf("| %-6s|", i))
-	}
-	consoleWriter.FormatMessage = func(i interface{}) string {
-		return fmt.Sprintf("%s", i)
-	}
-	consoleWriter.FormatFieldName = func(i interface{}) string {
-		return fmt.Sprintf("%s:", i)
-	}
-	consoleWriter.FormatFieldValue = func(i interface{}) string {
-		return fmt.Sprintf("%s;", i)
-	}
 	return consoleWriter
 }
 
@@ -82,11 +69,11 @@ func newZeroLogger(fileName string, lvl zerolog.Level, fcfg *conf.File, mcfg *co
 	var l zerolog.Logger
 	if m.Is(types.ModeDevelop) {
 		multi := zerolog.MultiLevelWriter(newConsoleWriter(), newFileWriter(fileName, fcfg))
-		l = zerolog.New(multi).With().Timestamp().Caller().Stack().Logger().Level(lvl)
+		l = zerolog.New(multi).With().Timestamp().Stack().Logger().Level(lvl)
 	}
 	if m.Is(types.ModeTest) {
 		multi := zerolog.MultiLevelWriter(newFileWriter(fileName, fcfg), newMonitorWriter(mcfg.GetEndpoint()))
-		l = zerolog.New(multi).With().Timestamp().Caller().Stack().Logger().Level(lvl)
+		l = zerolog.New(multi).With().Timestamp().Stack().Logger().Level(lvl)
 	}
 	if m.Is(types.ModeProduct) {
 		multi := zerolog.MultiLevelWriter(mustNewMonitorWriter(mcfg.GetEndpoint()))

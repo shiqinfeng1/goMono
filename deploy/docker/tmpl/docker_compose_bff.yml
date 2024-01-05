@@ -9,7 +9,10 @@ services:
     environment:
       - "MODE={{mode}}"
     volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
       - "{{bff_config_dir}}:/bin/config"
+      - "{{bff_log_dir}}:/bin/log"
     restart: always
     extra_hosts:
       - 'host.docker.internal:host-gateway'

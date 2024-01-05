@@ -14,7 +14,10 @@ services:
       - "NACOS_HOST={{nacos_host}}"
       - "NACOS_PORT={{nacos1_srv_port}}"
     volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
       - "{{gateway_config_dir}}:/bin/config"
+      - "{{gateway_log_dir}}:/bin/log"
     restart: always
     extra_hosts:
       - 'host.docker.internal:host-gateway'

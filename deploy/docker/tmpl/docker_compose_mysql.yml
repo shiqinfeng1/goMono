@@ -10,6 +10,8 @@ services:
       - "{{mysql_port}}:3306"
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
       - "{{mysql_data_dir}}:/bitnami/mysql/data"
     environment:
       # allow_empty_password is recommended only for development.

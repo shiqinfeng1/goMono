@@ -59,13 +59,13 @@ func SetLevel(lvlStr string) {
 	}
 	lvl, err := zerolog.ParseLevel(lvlStr)
 	if err != nil {
-		klogger.klogger.Log(klog.LevelError, "SetLevel", ErrInvalidLogLevel(err))
+		klogger.klogger.Log(klog.LevelError, "err", ErrInvalidLogLevel(err))
 		return
 	}
 	// 因为zerolog设置level后会返回一个新的logger，导致无法修改原logger的level，因此对于新的level直接new一个新的
 	if klogger.oldLvl != lvl {
 		klogger.zlogger.Level(lvl)
 	}
-	klogger.klogger.Log(klog.LevelWarn, "SetLevel", fmt.Sprintf("change log level '%v' to '%v'", klogger.oldLvl, lvl))
+	klogger.klogger.Log(klog.LevelWarn, "msg", fmt.Sprintf("change log level '%v' to '%v'", klogger.oldLvl, lvl))
 	klogger.oldLvl = lvl
 }

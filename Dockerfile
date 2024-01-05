@@ -49,10 +49,16 @@ COPY --from=build-production /app/bin/app /bin/app
 WORKDIR /bin
 ENTRYPOINT ["/bin/app"]
 
+FROM gcr.dockerproxy.com/distroless/base-debian11:debug as debug
+
+COPY --from=build-production /app/bin/app /bin/app
+WORKDIR /bin
+ENTRYPOINT ["/bin/app"]
+
 ####################################
 ## (3) Build the debug app binary
 # --tags "relic,netgo"
-FROM build-env as build-debug
+FROM build-env as build-debug-dlv
 WORKDIR /app
 ARG GOARCH=amd64
 RUN --mount=type=ssh \
@@ -65,10 +71,10 @@ RUN --mount=type=ssh \
 RUN chmod a+x /app/bin/app
 
 ## (4) Add the statically linked debug binary to a distroless image configured for debugging
-FROM dockerproxy.com/library/golang:1.21-bullseye as debug
+FROM dockerproxy.com/library/golang:1.21-bullseye as debug-dlv
 RUN go env -w GOPROXY=https://goproxy.cn,direct
 RUN go install github.com/go-delve/delve/cmd/dlv@latest
 
-COPY --from=build-debug /app/bin/app /bin/app
+COPY --from=build-debug-dlv /app/bin/app /bin/app
 
 ENTRYPOINT ["dlv", "--listen=:2345", "--headless=true", "--api-version=2", "--accept-multiclient", "exec", "/bin/app", "--"]

@@ -105,18 +105,33 @@ build-docker-production:
 			-t "$(CONTAINER_REGISTRY)$$x:latest" . ; \
 	done
 
+.PHONY: build-docker-debug
+# build docker images
+build-docker-debug:
+	for x in $(names); do \
+		echo -e "\n\nmake docker $$x ..."; \
+		docker build -f Dockerfile  \
+			--build-arg TARGET=./$$x \
+			--build-arg COMMIT=$(COMMIT)  \
+			--build-arg VERSION=$(MODULE)/$$x/cmd.Version=$(VERSION) \
+			--build-arg GOARCH=$(GOARCH) \
+			--target debug \
+			--secret id=git_creds,env=GITHUB_CREDS --build-arg GOPRIVATE=$(GOPRIVATE) \
+			--label "git_commit=$(COMMIT)" --label "git_tag=${IMAGE_TAG}" \
+			-t "$(CONTAINER_REGISTRY)$$x:latest" . ; \
+	done
 # -t "$(CONTAINER_REGISTRY)$$x:$(IMAGE_TAG)" . ;
 
-.PHONY: build-docker-debug
+.PHONY: build-docker-debug-dlv
 # build docker images with debug
-build-docker-debug:
+build-docker-debug-dlv:
 	for x in $(names); do \
 		docker build -f Dockerfile  \
 			--build-arg TARGET=./app/$$x \
 			--build-arg COMMIT=$(COMMIT)  \
 			--build-arg VERSION=$(IMAGE_TAG) \
 			--build-arg GOARCH=$(GOARCH) \
-			--target debug \
+			--target debug-dlv \
 			--secret id=git_creds,env=GITHUB_CREDS --build-arg GOPRIVATE=$(GOPRIVATE) \
 			--label "git_commit=$(COMMIT)" --label "git_tag=${IMAGE_TAG}" \
 			-t "$(CONTAINER_REGISTRY)$$x-debug:latest" . ; \
@@ -126,7 +141,7 @@ build-docker-debug:
 
 .PHONY: all
 # make all
-all: init config api wire build build-docker-production
+all: init config api wire build build-docker-debug
 
 # show help
 help:

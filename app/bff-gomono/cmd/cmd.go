@@ -67,7 +67,7 @@ func newApp(register *conf.Register, logger klog.Logger, regstr registry.Registr
 		kratos.Version(Version),
 		kratos.Metadata(map[string]string{}),
 		kratos.Logger(klog.With(logger,
-			"layer", "kratos",
+			"layer", "service",
 			"trace.id", tracing.TraceID(),
 			"span.id", tracing.SpanID(),
 		)),

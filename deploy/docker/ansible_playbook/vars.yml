@@ -1,7 +1,7 @@
 #########################################################################
 # dockler私有仓库配置
 #########################################################################
-docker_registry_compose_file: docker_compose_docker_registry.yml  # docker私有仓库的compose文件
+docker_registry_compose_file: docker_compose_docker_registry.yml  # 搭建docker私有仓库的compose文件
 registry_srv_port: 8080  # docker私有仓库的服务端口 
 
 
@@ -53,6 +53,7 @@ biz_training_port: 8400
 # 基础设施镜像相关配置
 #########################################################################
 prometheus_image: prom/prometheus:latest
+jaeger_image: dockerproxy.com/jaegertracing/all-in-one:1.52
 grafana_image: grafana/grafana:latest
 nacos_image: nacos/nacos-server:latest
 nacos_mysql_image: nacos/mysql:8.0.31
@@ -62,6 +63,7 @@ mysql_backup_image: registry.cn-shanghai.aliyuncs.com/shiqinfeng/mysql-cron-back
 
 infra_images_list:   # 在线下载的基础设施的镜像列表
   - "{{prometheus_image}}"
+  - "{{jaeger_image}}"
   - "{{grafana_image}}"
   - "{{nacos_image}}"
   - "{{redis_image}}"
@@ -105,11 +107,27 @@ nacos3_srv_port: 8868
 #########################################################################
 # prometheus相关配置
 #########################################################################
+prometheus_compose_file: docker_compose_prometheus_grafana.yml  # prometheus的compose文件
 prometheus_srv_host: 192.168.72.84  # prometheus的服务地址
 prometheus_srv_port: 9090  # prometheus的服务端口
 grafana_srv_port: 3000 # grafana的服务端口
 config_prometheus: prometheus.yml  # prometheus的配置文件名称
-prometheus_compose_file: docker_compose_prometheus_grafana.yml  # prometheus的compose文件
+
+#########################################################################
+# 链路跟踪服务端jaeger相关配置
+#########################################################################
+jaeger_compose_file: docker_compose_jaeger.yml
+jaeger_host: 192.168.72.84
+jaeger_thrift_compact_port: 6831  # UDP agent accept jaeger.thrift over Thrift-compact protocol (used by most SDKs)
+jaeger_thrift_binary_port: 6832	 # UDP agent accept jaeger.thrift over Thrift-binary protocol (used by Node.js SDK)
+jaeger_agent_zipkin_port: 5775	 # UDP agent (deprecated) accept zipkin.thrift over compact Thrift protocol (used by legacy clients only)
+jaeger_agent_configs_port: 5778	 # HTTP agent serve configs (sampling, etc.)
+jaeger_query_port: 16686	 # HTTP query serve frontend
+jaeger_collector_otlp_grpc_port: 4317	 # HTTP collector accept OpenTelemetry Protocol (OTLP) over gRPC
+jaeger_collector_otlp_http_port: 4318	 # HTTP collector accept OpenTelemetry Protocol (OTLP) over HTTP
+jaeger_collector_direct_port: 14268	 # HTTP collector accept jaeger.thrift directly from clients
+jaeger_collector_model_port: 14250	 # HTTP collector accept model.proto
+jaeger_collector_zipkin_port: 9411	 # HTTP collector Zipkin compatible endpoint (optional)
 
 #########################################################################
 # redis相关配置

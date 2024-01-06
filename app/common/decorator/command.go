@@ -6,13 +6,17 @@ import (
 	"strings"
 
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
 )
 
 // 命令的装饰器。最外层是日志，其次是测量，最后才是业务命令
 func ApplyCommandDecorators[H any](handler CommandHandler[H], logger log.Logger) CommandHandler[H] {
 	return commandLoggingDecorator[H]{
-		base:   handler,
-		logger: logger,
+		base: handler,
+		logger: log.With(logger,
+			"trace.id", tracing.TraceID(),
+			"span.id", tracing.SpanID(),
+		),
 	}
 }
 

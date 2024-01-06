@@ -25,7 +25,6 @@ services:
     image: "{{registry_addr}}/{{nacos_image}}"
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
-      - "/etc/timezone:/etc/timezone:ro"
       - ./cluster-logs/nacos1:/home/nacos/logs
     ports:
       - "{{nacos1_conn_port1}}:7848"
@@ -48,6 +47,7 @@ services:
     image: "{{registry_addr}}/{{nacos_image}}"
     container_name: nacos2
     volumes:
+      - "/etc/localtime:/etc/localtime:ro"
       - ./cluster-logs/nacos2:/home/nacos/logs
     ports:
       - "{{nacos2_conn_port1}}:7848"
@@ -70,6 +70,7 @@ services:
     image: "{{registry_addr}}/{{nacos_image}}"
     container_name: nacos3
     volumes:
+      - "/etc/localtime:/etc/localtime:ro"
       - ./cluster-logs/nacos3:/home/nacos/logs
     ports:
       - "{{nacos3_conn_port1}}:7848"

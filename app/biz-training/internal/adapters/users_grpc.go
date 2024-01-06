@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	userApi "github.com/shiqinfeng1/goMono/api/user/v1"
 	"github.com/shiqinfeng1/goMono/app/common/client"
 	"github.com/shiqinfeng1/goMono/app/common/conf"
@@ -21,7 +22,10 @@ type UserGrpc struct {
 func NewUserGrpc(dis *conf.Discovery, logger log.Logger) *UserGrpc {
 	return &UserGrpc{
 		endpoints: dis.Endpoints,
-		logger:    logger,
+		logger: log.With(logger,
+			"trace.id", tracing.TraceID(),
+			"span.id", tracing.SpanID(),
+		),
 	}
 }
 func (s UserGrpc) Close() {

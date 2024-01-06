@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/pkg/errors"
 	trainerApi "github.com/shiqinfeng1/goMono/api/trainer/v1"
 	"github.com/shiqinfeng1/goMono/app/common/client"
@@ -29,7 +30,10 @@ type TrainerGrpc struct {
 func NewTrainerGrpc(dis *conf.Discovery, logger log.Logger) *TrainerGrpc {
 	return &TrainerGrpc{
 		endpoints: dis.Endpoints,
-		logger:    logger,
+		logger: log.With(logger,
+			"trace.id", tracing.TraceID(),
+			"span.id", tracing.SpanID(),
+		),
 	}
 }
 func (s TrainerGrpc) Close() {

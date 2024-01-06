@@ -28,6 +28,7 @@ func wireApp(
 	*cconf.Discovery,
 	*cconf.Log,
 	*cconf.Adapter,
+	*cconf.Trace,
 	*conf.HTTP,
 	*conf.Auth,
 	*conf.Register) (*kratos.App, func(), error) {

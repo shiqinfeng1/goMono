@@ -8,13 +8,13 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	kcfg "github.com/go-kratos/kratos/v2/config"
 	klog "github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/gogf/gf/v2/os/gcmd"
 	"github.com/shiqinfeng1/goMono/app/bff-gomono/internal/conf"
 	cconf "github.com/shiqinfeng1/goMono/app/common/conf"
 	"github.com/shiqinfeng1/goMono/app/common/log"
-	"github.com/shiqinfeng1/goMono/app/common/trace"
 	"github.com/shiqinfeng1/goMono/app/common/types"
 )
 
@@ -68,6 +68,8 @@ func newApp(register *conf.Register, logger klog.Logger, regstr registry.Registr
 		kratos.Metadata(map[string]string{}),
 		kratos.Logger(klog.With(logger,
 			"layer", "kratos",
+			"trace.id", tracing.TraceID(),
+			"span.id", tracing.SpanID(),
 		)),
 		kratos.Server(
 			hs,
@@ -83,13 +85,13 @@ var (
 		Usage: "main <sub-command>",
 		Brief: "this is main command, please specify a sub command",
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
-			trace.NewTrace(ctx, pubCfg.Trace)
 			app, cleanup, err := wireApp(
 				ctx,
 				svcInfo,
 				pubCfg.Discovery,
 				pubCfg.Log,
 				pubCfg.Adapter,
+				pubCfg.Trace,
 				bffCfg.Http,
 				bffCfg.Auth,
 				bffCfg.Register,

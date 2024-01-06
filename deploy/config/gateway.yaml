@@ -1,9 +1,3 @@
-
-proxy:
-  debug: true
-  addrs:
-    - ":8080"
-
 # This is a gateway config.
 name: gateway-gomono
 version: v1.0.0
@@ -12,7 +6,8 @@ middlewares:
   - name: tracing
     options:
       '@type': type.googleapis.com/gateway.middleware.tracing.v1.Tracing
-      httpEndpoint: 'localhost:4318' # default opentelemetry collector port
+      httpEndpoint: '{{jaeger_host}}:{{jaeger_collector_otlp_http_port}}' # default opentelemetry collector port
+      insecure: true
   - name: logging
   - name: transcoder
   - name: cors
@@ -30,9 +25,10 @@ endpoints:
     timeout: 1s
     # 业务服务使用的通信协议
     protocol: HTTP  
-    host: localhost
+    # 请求域名
+    # host: localhost   
     backends:
-      - target: '127.0.0.1:8000'
+      - target: '{{bff_host}}:{{bff_port}}'
 #      - target: 'discovery:///bbs'
     # 各个endpoint的中间件
     middlewares:

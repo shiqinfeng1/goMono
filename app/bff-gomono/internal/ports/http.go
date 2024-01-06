@@ -1,6 +1,8 @@
 package ports
 
 import (
+	"context"
+
 	prom "github.com/go-kratos/kratos/contrib/metrics/prometheus/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	kjwt "github.com/go-kratos/kratos/v2/middleware/auth/jwt"
@@ -18,15 +20,21 @@ import (
 	conf "github.com/shiqinfeng1/goMono/app/bff-gomono/internal/conf"
 	"github.com/shiqinfeng1/goMono/app/bff-gomono/internal/service"
 	"github.com/shiqinfeng1/goMono/app/common/client"
+	cconf "github.com/shiqinfeng1/goMono/app/common/conf"
+	"github.com/shiqinfeng1/goMono/app/common/trace"
 )
 
 // NewHTTPServer new an HTTP server.
-func NewHTTPServer(httpAddr *conf.HTTP, ac *conf.Auth, logger log.Logger, s *service.HttpService) *http.Server {
+func NewHTTPServer(ctx context.Context, httpAddr *conf.HTTP, ac *conf.Auth, tr *cconf.Trace, logger log.Logger, s *service.HttpService) *http.Server {
+	trace.NewTrace(ctx, tr)
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
+			tracing.Server(),
 			logging.Server(log.With(logger,
 				"layer", "ports",
+				"trace.id", tracing.TraceID(),
+				"span.id", tracing.SpanID(),
 			)),
 			selector.Server(
 				kjwt.Server(
@@ -42,7 +50,6 @@ func NewHTTPServer(httpAddr *conf.HTTP, ac *conf.Auth, logger log.Logger, s *ser
 				kmetrics.WithSeconds(prom.NewHistogram(client.MetricsSeconds)),
 				kmetrics.WithRequests(prom.NewCounter(client.MetricsRequests)),
 			),
-			tracing.Server(),
 		),
 		http.Filter(handlers.CORS(
 			handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}),

@@ -15,7 +15,7 @@ import (
 func NewTrace(ctx context.Context, url *conf.Trace) error {
 	// 创建 Jaeger exporter
 	// exp, err := otlptracehttp.New(ctx, otlptracehttp.WithEndpoint(url.Endpoint))
-	exp, err := otlptracehttp.New(ctx, otlptracehttp.WithEndpoint(url.Endpoint))
+	exp, err := otlptracehttp.New(ctx, otlptracehttp.WithEndpoint(url.Endpoint), otlptracehttp.WithInsecure())
 	// exp, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(url.Endpoint)))
 	if err != nil {
 		return err

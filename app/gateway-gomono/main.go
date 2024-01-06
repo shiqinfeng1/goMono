@@ -38,11 +38,7 @@ import (
 )
 
 var (
-	ID, _ = os.Hostname() // 主机信息
-
-)
-
-var (
+	ID, _      = os.Hostname() // 主机信息
 	gatewayCfg gcfg.Gateway
 	pubCfg     cconf.Public
 	p          *proxy.Proxy
@@ -88,20 +84,22 @@ func init() {
 
 func main() {
 	ctx := context.Background()
+	// 获取环境变量配置
 	DEBUG := os.Getenv("DEBUG")
 	PROXYADDRS := os.Getenv("PROXYADDRS")
 	withDebug, _ := strconv.ParseBool(DEBUG)
 	proxyAddrs := strings.Split(PROXYADDRS, ",")
-	nacos_host := os.Getenv("NACOS_HOST")
-	nacos_port := os.Getenv("NACOS_PORT")
-
+	// 日志接口
 	logger := log.New(&types.SrvInfo{
 		ID:      ID,
 		Name:    gatewayCfg.Name,
 		Version: gatewayCfg.Version,
 	}, pubCfg.Log)
+
+	// 实例化一个main函数使用的log
 	l := klog.NewHelper(klog.With(logger, "scope", "main"))
-	clientFactory := client.NewFactory(discovery.MustNacosDiscovery(nacos_host + ":" + nacos_port))
+
+	clientFactory := client.NewFactory(discovery.MustNacosDiscovery(pubCfg.Discovery.Endpoints[0]))
 	var err error
 	p, err = proxy.New(clientFactory, middleware.Create)
 	if err != nil {

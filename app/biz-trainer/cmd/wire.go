@@ -28,6 +28,7 @@ func wireApp(
 	*cconf.Discovery,
 	*cconf.Log,
 	*cconf.Adapter,
+	*cconf.Trace,
 	*conf.GRPC,
 	*conf.Register) (*kratos.App, func(), error) {
 	panic(wire.Build(

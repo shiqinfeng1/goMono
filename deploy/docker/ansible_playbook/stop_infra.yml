@@ -82,6 +82,7 @@
       force: true
     loop:
       - "{{mysql_compose_file}}"
+      - "{{mysql_slave_compose_file}}"
   - name: Stop Mysql
     shell:
-      cmd: "docker-compose -p infra -f /tmp/{{mysql_compose_file}} down"
+      cmd: "docker-compose -p infra -f /tmp/{{mysql_compose_file}} -f /tmp/{{mysql_slave_compose_file}} down"

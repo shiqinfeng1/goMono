@@ -1,10 +1,13 @@
 package ports
 
 import (
+	"context"
+
 	v1 "github.com/shiqinfeng1/goMono/api/trainer/v1"
 	conf "github.com/shiqinfeng1/goMono/app/biz-trainer/internal/conf"
 	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/service"
 	"github.com/shiqinfeng1/goMono/app/common/client"
+	"github.com/shiqinfeng1/goMono/app/common/trace"
 
 	prom "github.com/go-kratos/kratos/contrib/metrics/prometheus/v2"
 	"github.com/go-kratos/kratos/v2/log"
@@ -13,21 +16,25 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
+	cconf "github.com/shiqinfeng1/goMono/app/common/conf"
 )
 
 // NewGRPCServer new a gRPC server.
-func NewGRPCServer(c *conf.GRPC, logger log.Logger, trainer service.GrpcService) *grpc.Server {
+func NewGRPCServer(ctx context.Context, c *conf.GRPC, logger log.Logger, tr *cconf.Trace, trainer service.GrpcService) *grpc.Server {
+	trace.NewTrace(ctx, tr)
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),
+			tracing.Server(),
 			kmetrics.Server(
 				kmetrics.WithSeconds(prom.NewHistogram(client.MetricsSeconds)),
 				kmetrics.WithRequests(prom.NewCounter(client.MetricsRequests)),
 			),
 			logging.Server(log.With(logger,
 				"layer", "ports",
+				"trace.id", tracing.TraceID(),
+				"span.id", tracing.SpanID(),
 			)),
-			tracing.Server(),
 		),
 	}
 	if c.Network != "" {

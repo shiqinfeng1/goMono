@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-kratos/kratos/v2"
 	klog "github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/gogf/gf/v2/os/gcmd"
@@ -21,6 +22,8 @@ func newApp(register *conf.Register, logger klog.Logger, regstr registry.Registr
 		kratos.Metadata(map[string]string{}),
 		kratos.Logger(klog.With(logger,
 			"layer", "kratos",
+			"trace.id", tracing.TraceID(),
+			"span.id", tracing.SpanID(),
 		)),
 		kratos.Server(
 			gs,
@@ -43,6 +46,7 @@ var (
 				pubCfg.Discovery,
 				pubCfg.Log,
 				pubCfg.Adapter,
+				pubCfg.Trace,
 				srvCfg.Grpc,
 				srvCfg.Register,
 			)

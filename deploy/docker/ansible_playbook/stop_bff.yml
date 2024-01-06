@@ -1,0 +1,26 @@
+---
+- name: Get Docker Image Registry Hostname
+  hosts: registry
+  tasks:
+  - name: get registry hostname
+    command: cat /etc/hostname
+    register: registry_hostname
+    
+- name: Stop Bff
+  hosts: bff
+  vars_files:
+    - vars.yml
+  vars:
+    - registry_addr: "{{registry_hostname.stdout}}:{{registry_srv_port}}"
+  become: true
+  tasks:
+  - name: Copy Bff Docker-Compose Files
+    template: 
+      src: ../tmpl/{{ item }}
+      dest: /tmp/{{ item }}
+      force: true
+    loop:
+      - "{{bff_compose_file}}"
+  - name: Stop Bff
+    shell:
+      cmd: "docker-compose -p infra -f /tmp/{{bff_compose_file}} down"

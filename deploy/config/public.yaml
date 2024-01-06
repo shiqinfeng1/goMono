@@ -24,7 +24,7 @@ public:
       - "{{nacos_host}}:{{nacos2_srv_port}}"
       - "{{nacos_host}}:{{nacos3_srv_port}}"
   trace:
-    endpoint: 127.0.0.1:2379
+    endpoint: "{{jaeger_host}}:{{jaeger_collector_otlp_http_port}}"
 
   discovery:
     endpoints:

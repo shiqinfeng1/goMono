@@ -2,6 +2,7 @@ package application
 
 import (
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/application/command"
 	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/application/query"
 	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/domain/hour"
@@ -31,6 +32,8 @@ func NewApplication(logger log.Logger, hourCmdRepo hour.CmdRepo, hourQueryRepo q
 func newApplication(logger log.Logger, hourCmdRepo hour.CmdRepo, hourQueryRepo query.QueryRepository) Application {
 	logger = log.With(logger,
 		"layer", "app",
+		"trace.id", tracing.TraceID(),
+		"span.id", tracing.SpanID(),
 	)
 	return Application{
 		Commands: Commands{

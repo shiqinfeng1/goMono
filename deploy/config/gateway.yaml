@@ -28,8 +28,8 @@ endpoints:
     # 请求域名
     # host: localhost   
     backends:
-      - target: '{{bff_host}}:{{bff_port}}'
-#      - target: 'discovery:///bbs'
+      # - target: '{{bff_host}}:{{bff_port}}'
+      - target: 'discovery:///bff.http'
     # 各个endpoint的中间件
     middlewares:
       - name: circuitbreaker

@@ -32,7 +32,6 @@ ARG GOARCH=amd64
 # Keep Go's build cache between builds.
 # https://github.com/golang/go/issues/27719#issuecomment-514747274
 # --tags "${TAGS}"
-RUN echo "${VERSION}"
 RUN --mount=type=cache,sharing=locked,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=secret,id=git_creds,dst=/root/.netrc \

@@ -134,7 +134,6 @@ func main() {
 		),
 		kratos.Metadata(map[string]string{}),
 		kratos.Logger(logger),
-		// kratos.Endpoint(&url.URL{Scheme: "http", Host: pubCfg.GatewayRegister.Endpoints[0]}), //  指定服务地址，该地址会提交给注册中心，如果不指定，那么将注册容器内部地址，导致外部无法访问
 	)
 	if err := app.Run(); err != nil {
 		l.Errorf("failed to run servers: %v", err)

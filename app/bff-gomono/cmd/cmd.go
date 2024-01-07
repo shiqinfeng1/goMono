@@ -75,7 +75,7 @@ func newApp(register *conf.Register, logger klog.Logger, regstr registry.Registr
 			hs,
 		),
 		kratos.Registrar(regstr),
-		kratos.Endpoint(&url.URL{Scheme: "http", Host: register.Endpoints[0]}),  //  指定服务地址，该地址会提交给注册中心，如果不指定，那么将注册容器内部地址，导致外部无法访问
+		kratos.Endpoint(&url.URL{Scheme: "http", Host: register.Endpoints[0]}), //  指定服务地址，该地址会提交给注册中心，如果不指定，那么将注册容器内部地址，导致外部无法访问本服务
 	)
 }
 

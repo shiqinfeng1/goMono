@@ -26,7 +26,7 @@ scrape_configs:
     # scheme defaults to 'http'.
 
     static_configs:
-      - targets: ['localhost:{{prometheus_srv_port}}']
+      - targets: ['{{bff_host}}:{{bff_port}}']
 
   - job_name: 'nacos'
     metrics_path: '/nacos/actuator/prometheus'

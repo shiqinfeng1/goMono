@@ -23,4 +23,5 @@
       - "{{gateway_compose_file}}"
   - name: Stop Gateway
     shell:
-      cmd: "docker-compose -p infra -f /tmp/{{gateway_compose_file}} down"
+      cmd: "docker service rm {{biz_stack}}_gateway"
+    ignore_errors: yes

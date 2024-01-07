@@ -14,6 +14,11 @@
     - registry_addr: "{{registry_hostname.stdout}}:{{registry_srv_port}}"
   become: true
   tasks:
+  - name: Ensure docker is running
+    become: yes
+    service:
+      name: docker
+      state: started
   - name: Creates BFF Data Directory
     file:
       path: "{{item}}"
@@ -51,23 +56,20 @@
       - "public.yaml"
       - "bff.yaml"
 
-  - name: Stop BFF
-    shell:
-      cmd: "docker-compose -p gatway -f {{bff_data_dir}}/{{bff_compose_file}} down"
-
   - name: Start BFF
     shell:
-      cmd: "docker-compose -p gatway -f {{bff_data_dir}}/{{bff_compose_file}} up -d"
+      # cmd: "docker-compose -p biz -f {{bff_data_dir}}/{{bff_compose_file}} up -d"
+      cmd: "docker stack deploy --compose-file {{bff_data_dir}}/{{bff_compose_file}}  {{biz_stack}}"
 
   - name: Check BFF Status
-    docker_container_info:
+    docker_swarm_service_info:
       name: "{{item}}"
     register: result
-    until: result.container['State']['Status'] == "running"
+    until: (result.exists == true) and (result.failed == false)
     retries: 10
     delay: 5
     loop:
-      - "bff"
+      - "{{biz_stack}}_bff"
 
   # - name: Delete docker-compose.yml
   #   file: 

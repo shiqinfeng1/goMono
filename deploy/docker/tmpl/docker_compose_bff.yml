@@ -3,7 +3,6 @@ services:
   bff:
     hostname: bff
     image: "{{registry_addr}}/{{bff_image}}"
-    container_name: bff
     ports:
       - "{{bff_port}}:8200"
     environment:
@@ -13,6 +12,13 @@ services:
       - "/etc/timezone:/etc/timezone:ro"
       - "{{bff_config_dir}}:/bin/config"
       - "{{bff_log_dir}}:/bin/log"
-    restart: always
     extra_hosts:
       - 'host.docker.internal:host-gateway'
+    deploy:
+      mode: replicated
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s

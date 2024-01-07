@@ -14,6 +14,11 @@
     - registry_addr: "{{registry_hostname.stdout}}:{{registry_srv_port}}"
   become: true
   tasks:
+  - name: Ensure docker is running
+    become: yes
+    service:
+      name: docker
+      state: started
   - name: Creates Mysql Data Directory
     file:
       path: "{{item}}"

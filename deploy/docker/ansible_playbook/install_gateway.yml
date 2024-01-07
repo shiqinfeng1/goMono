@@ -14,6 +14,11 @@
     - registry_addr: "{{registry_hostname.stdout}}:{{registry_srv_port}}"
   become: true
   tasks:
+  - name: Ensure docker is running
+    become: yes
+    service:
+      name: docker
+      state: started
   - name: Creates Gateway Data Directory
     file:
       path: "{{item}}"
@@ -51,23 +56,20 @@
       - "gateway.yaml"
       - "public.yaml"
 
-  - name: Stop Gateway
-    shell:
-      cmd: "docker-compose -p gatway -f {{gateway_data_dir}}/{{gateway_compose_file}} down"
-
   - name: Start Gateway
     shell:
-      cmd: "docker-compose -p gatway -f {{gateway_data_dir}}/{{gateway_compose_file}} up -d"
+      # cmd: "docker-compose -p biz -f {{gateway_data_dir}}/{{gateway_compose_file}} up -d"
+      cmd: "docker stack deploy --compose-file  {{gateway_data_dir}}/{{gateway_compose_file}}  {{biz_stack}}"
 
   - name: Check Gateway Status
-    docker_container_info:
+    docker_swarm_service_info:
       name: "{{item}}"
     register: result
-    until: result.container['State']['Status'] == "running"
+    until: (result.exists == true) and (result.failed == false)
     retries: 10
     delay: 5
     loop:
-      - "gateway"
+      - "{{biz_stack}}_gateway"
 
   # - name: Delete docker-compose.yml
   #   file: 

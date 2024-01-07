@@ -6,6 +6,11 @@
   vars_files:
     - vars.yml
   tasks:
+  - name: Ensure docker is running
+    become: yes
+    service:
+      name: docker
+      state: started
   - name: Ensure /etc/docker/daemon.json file exists
     copy:
       content: "{}"

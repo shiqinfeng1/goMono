@@ -13,6 +13,11 @@
   vars:
     - registry_addr: "{{registry_hostname.stdout}}:{{registry_srv_port}}"
   tasks:
+  - name: Ensure docker is running
+    become: yes
+    service:
+      name: docker
+      state: started
   - name: Tag Images
     command: "docker tag {{item}} {{registry_addr}}/{{item}}"
     loop: 

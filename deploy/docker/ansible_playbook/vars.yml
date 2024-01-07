@@ -6,6 +6,11 @@ registry_srv_port: 8080  # docker私有仓库的服务端口
 
 
 #########################################################################
+# 业务和docker相关的配置
+#########################################################################
+biz_stack: bizstack
+
+#########################################################################
 # 业务网关gateway相关配置
 #########################################################################
 mode: develop  # develop test product
@@ -109,7 +114,6 @@ nacos3_srv_port: 8868
 # prometheus相关配置
 #########################################################################
 prometheus_compose_file: docker_compose_prometheus_grafana.yml  # prometheus的compose文件
-prometheus_srv_host: 192.168.72.84  # prometheus的服务地址
 prometheus_srv_port: 9090  # prometheus的服务端口
 grafana_srv_port: 3000 # grafana的服务端口
 config_prometheus: prometheus.yml  # prometheus的配置文件名称

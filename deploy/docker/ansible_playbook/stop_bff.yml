@@ -23,4 +23,5 @@
       - "{{bff_compose_file}}"
   - name: Stop Bff
     shell:
-      cmd: "docker-compose -p infra -f /tmp/{{bff_compose_file}} down"
+      cmd: "docker service rm {{biz_stack}}_bff"
+    ignore_errors: yes

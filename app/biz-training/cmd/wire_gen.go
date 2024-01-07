@@ -31,7 +31,7 @@ func wireApp(contextContext context.Context, srvInfo *types.SrvInfo, discovery *
 	userGrpc := adapters.NewUserGrpc(discovery, logger)
 	applicationApplication := application.NewApplication(logger, repository, trainerGrpc, userGrpc)
 	grpcService := service.NewGrpcService(applicationApplication)
-	server := ports.NewGRPCServer(contextContext, grpc, logger, trace, grpcService)
+	server := ports.NewGRPCServer(contextContext, srvInfo, grpc, logger, trace, grpcService)
 	app := newApp(register, logger, registryRegistrar, server)
 	return app, func() {
 	}, nil

@@ -22,11 +22,12 @@ import (
 	"github.com/shiqinfeng1/goMono/app/common/client"
 	cconf "github.com/shiqinfeng1/goMono/app/common/conf"
 	"github.com/shiqinfeng1/goMono/app/common/trace"
+	"github.com/shiqinfeng1/goMono/app/common/types"
 )
 
 // NewHTTPServer new an HTTP server.
-func NewHTTPServer(ctx context.Context, httpAddr *conf.HTTP, ac *conf.Auth, tr *cconf.Trace, logger log.Logger, s *service.HttpService) *http.Server {
-	trace.NewTrace(ctx, tr)
+func NewHTTPServer(ctx context.Context, srvInfo *types.SrvInfo, httpAddr *conf.HTTP, ac *conf.Auth, tr *cconf.Trace, logger log.Logger, s *service.HttpService) *http.Server {
+	trace.New(ctx, srvInfo, tr)
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),

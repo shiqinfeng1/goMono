@@ -30,7 +30,7 @@ func wireApp(contextContext context.Context, srvInfo *types.SrvInfo, discovery *
 	userGrpc := adapters.NewUserGrpc(discovery, logger)
 	applicationApplication := application.NewApplication(logger, trainerGrpc, userGrpc)
 	httpService := service.NewHttpService(applicationApplication)
-	server := ports.NewHTTPServer(contextContext, http, auth, trace, logger, httpService)
+	server := ports.NewHTTPServer(contextContext, srvInfo, http, auth, trace, logger, httpService)
 	app := newApp(register, logger, registryRegistrar, server)
 	return app, func() {
 	}, nil

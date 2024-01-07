@@ -8,6 +8,7 @@ import (
 	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/service"
 	"github.com/shiqinfeng1/goMono/app/common/client"
 	"github.com/shiqinfeng1/goMono/app/common/trace"
+	"github.com/shiqinfeng1/goMono/app/common/types"
 
 	prom "github.com/go-kratos/kratos/contrib/metrics/prometheus/v2"
 	"github.com/go-kratos/kratos/v2/log"
@@ -20,8 +21,8 @@ import (
 )
 
 // NewGRPCServer new a gRPC server.
-func NewGRPCServer(ctx context.Context, c *conf.GRPC, logger log.Logger, tr *cconf.Trace, trainer service.GrpcService) *grpc.Server {
-	trace.NewTrace(ctx, tr)
+func NewGRPCServer(ctx context.Context, srvInfo *types.SrvInfo, c *conf.GRPC, logger log.Logger, tr *cconf.Trace, trainer service.GrpcService) *grpc.Server {
+	trace.New(ctx, srvInfo, tr)
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),

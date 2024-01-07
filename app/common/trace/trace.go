@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/shiqinfeng1/goMono/app/common/conf"
+	"github.com/shiqinfeng1/goMono/app/common/types"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
@@ -12,11 +13,9 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 )
 
-func NewTrace(ctx context.Context, url *conf.Trace) error {
+func New(ctx context.Context, srvInfo *types.SrvInfo, url *conf.Trace) error {
 	// 创建 Jaeger exporter
-	// exp, err := otlptracehttp.New(ctx, otlptracehttp.WithEndpoint(url.Endpoint))
 	exp, err := otlptracehttp.New(ctx, otlptracehttp.WithEndpoint(url.Endpoint), otlptracehttp.WithInsecure())
-	// exp, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(url.Endpoint)))
 	if err != nil {
 		return err
 	}
@@ -27,9 +26,10 @@ func NewTrace(ctx context.Context, url *conf.Trace) error {
 		tracesdk.WithBatcher(exp),
 		// 在资源中记录有关此应用程序的信息
 		tracesdk.WithResource(resource.NewSchemaless(
-			semconv.ServiceNameKey.String("kratos-trace"),
-			attribute.String("exporter", "jaeger"),
-			attribute.Float64("float", 312.23),
+			semconv.ServiceNameKey.String(srvInfo.Name),
+			semconv.ServiceVersionKey.String(srvInfo.Version),
+			attribute.String("exporter", "otlptrace-http"),
+			attribute.String("service.id(hostname)", srvInfo.ID),
 		)),
 	)
 	otel.SetTracerProvider(tp)

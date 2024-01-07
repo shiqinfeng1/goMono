@@ -11,7 +11,6 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/gogf/gf/v2/os/gcmd"
 	"github.com/shiqinfeng1/goMono/app/biz-trainer/internal/conf"
-	"github.com/shiqinfeng1/goMono/app/common/trace"
 )
 
 func newApp(register *conf.Register, logger klog.Logger, regstr registry.Registrar, gs *grpc.Server) *kratos.App {
@@ -39,7 +38,6 @@ var (
 		Brief:       "start trainer grpc service",
 		Description: "entry to start a trainer grpc service",
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
-			trace.NewTrace(ctx, pubCfg.Trace)
 			app, cleanup, err := wireApp(
 				ctx,
 				svcInfo,

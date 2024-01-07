@@ -18,7 +18,7 @@ import (
 
 var cc = constant.ClientConfig{
 	TimeoutMs:            5000,
-	NotLoadCacheAtStart:  false,
+	NotLoadCacheAtStart:  false, // 该配置不能设置是为true，会导致阻塞在nacos》cli的Subscribe
 	UpdateCacheWhenEmpty: true,
 	LogDir:               "/tmp/nacos/log",
 	CacheDir:             "/tmp/nacos/cache",

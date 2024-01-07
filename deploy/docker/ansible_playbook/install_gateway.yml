@@ -34,8 +34,17 @@
       - "{{gateway_compose_file}}"
   - name: Copy Gateway config Files
     template: 
-      src: ../../config/{{ item }}
+      src: ../tmpl/{{ item }}
       dest: "{{gateway_config_dir}}/{{ item }}"
+      force: true
+    loop:
+      - "gateway.yaml"
+      - "public.yaml"
+  - name: Backup Gateway config Files
+    delegate_to: localhost
+    template: 
+      src: ../tmpl/{{ item }}
+      dest: ../../standalone/config/{{ item }}
       force: true
     loop:
       - "gateway.yaml"

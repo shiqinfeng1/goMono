@@ -1,0 +1,9 @@
+
+server:
+  grpc:
+    addr: "0.0.0.0:{{biz_training_port}}"
+    timeout: 1s
+  # 本服务的服务注册地址
+  register:
+    endpoints:
+      - "{{biz_training_host}}:{{biz_training_port}}"

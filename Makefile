@@ -74,10 +74,10 @@ api:
 .PHONY: build
 # build execute 
 build:
-# go build -ldflags "app/bff-gomono/cmd/cmd.Version=$(VERSION)" -o ./deploy/bin/ ./...
+# go build -ldflags "app/bff-gomono/cmd/cmd.Version=$(VERSION)" -o ./deploy/standalone/bin/ ./...
 	for x in $(names); do \
 		echo -e "\nbuild $$x ... $(MODULE)/$$x/cmd.Version=$(VERSION)"; \
-		go build -ldflags "-X $(MODULE)/$$x/cmd.Version=$(VERSION)" -o ./deploy/bin/ ./$$x; \
+		go build -ldflags "-X $(MODULE)/$$x/cmd.Version=$(VERSION)" -o ./deploy/standalone/bin/ ./$$x; \
 		echo  "ok"; \
 	done
 

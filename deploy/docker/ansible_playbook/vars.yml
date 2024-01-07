@@ -10,6 +10,7 @@ registry_srv_port: 8080  # docker私有仓库的服务端口
 #########################################################################
 mode: develop  # develop test product
 debug: true
+proxy_host: 192.168.72.84
 proxy_port1: 8180
 proxy_port2: 8181
 proxy_addrs: :{{proxy_port1}},:{{proxy_port2}}  # 网关服务地址，可以由多个，逗号隔开

@@ -1,0 +1,35 @@
+
+public:
+  adapter:
+    database:
+      driver: mysql
+      source: "root:root@tcp({{mysql_host}}:23306)/test"
+    redis:
+      addr: 127.0.0.1:26379
+      read_timeout: 0.2s
+      write_timeout: 0.2s
+  log:
+    level: debug
+    monitor:
+      endpoint: tcp://127.0.0.1:23224
+    file:
+      max_size:    100  # megabytes
+      max_backups: 7    # file numbers
+      max_age:     28   # days
+      compress:    true
+
+  registry: 
+    addrs:
+      - "{{nacos_host}}:{{nacos1_srv_port}}"
+      - "{{nacos_host}}:{{nacos2_srv_port}}"
+      - "{{nacos_host}}:{{nacos3_srv_port}}"
+  trace:
+    endpoint: "{{jaeger_host}}:{{jaeger_collector_otlp_http_port}}"
+
+  discovery:
+    endpoints:
+      - "{{nacos_host}}:{{nacos1_srv_port}}"
+
+  gateway_register:
+    endpoints:
+      - "{{proxy_host}}:{{proxy_port1}}"

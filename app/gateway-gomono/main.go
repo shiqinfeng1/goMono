@@ -48,6 +48,11 @@ func init() {
 	rand.Seed(uint64(time.Now().Nanosecond()))
 	// 动态更新配置。key：需要监听的字段；value：配置变化后的处理函数
 	onChanges := map[string]func(key string, value kcfg.Value){
+		"public.log.level": func(key string, value kcfg.Value) {
+			_ = key
+			lvl, _ := value.String()
+			log.SetLevel(lvl) // 动态更新level等级
+		},
 		"middlewares": func(key string, value kcfg.Value) {
 			_ = key
 			var middl []*gcfg.Middleware
@@ -96,10 +101,11 @@ func main() {
 		Version: gatewayCfg.Version,
 	}, pubCfg.Log)
 
+	klog.SetLogger(logger)
 	// 实例化一个main函数使用的log
 	l := klog.NewHelper(klog.With(logger, "scope", "main"))
-
-	clientFactory := client.NewFactory(discovery.MustNacosDiscovery(pubCfg.Discovery.Endpoints[0]))
+	// util.SetFilterNetNumberAndMask("192.168.68.0/24")
+	clientFactory := client.NewFactory(discovery.MustNacosDiscovery(pubCfg.Discovery.Endpoints[0], "http"))
 	var err error
 	p, err = proxy.New(clientFactory, middleware.Create)
 	if err != nil {
@@ -128,6 +134,7 @@ func main() {
 		),
 		kratos.Metadata(map[string]string{}),
 		kratos.Logger(logger),
+		// kratos.Endpoint(&url.URL{Scheme: "http", Host: pubCfg.GatewayRegister.Endpoints[0]}), //  指定服务地址，该地址会提交给注册中心，如果不指定，那么将注册容器内部地址，导致外部无法访问
 	)
 	if err := app.Run(); err != nil {
 		l.Errorf("failed to run servers: %v", err)

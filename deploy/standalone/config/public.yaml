@@ -3,7 +3,7 @@ public:
   adapter:
     database:
       driver: mysql
-      source: "root:root@tcp({{mysql_host}}:23306)/test"
+      source: "root:root@tcp(192.168.72.84:23306)/test"
     redis:
       addr: 127.0.0.1:26379
       read_timeout: 0.2s
@@ -20,12 +20,16 @@ public:
 
   registry: 
     addrs:
-      - "{{nacos_host}}:{{nacos1_srv_port}}"
-      - "{{nacos_host}}:{{nacos2_srv_port}}"
-      - "{{nacos_host}}:{{nacos3_srv_port}}"
+      - "192.168.72.84:8848"
+      - "192.168.72.84:8858"
+      - "192.168.72.84:8868"
   trace:
-    endpoint: "{{jaeger_host}}:{{jaeger_collector_otlp_http_port}}"
+    endpoint: "192.168.72.84:4318"
 
   discovery:
     endpoints:
-      - "{{nacos_host}}:{{nacos1_srv_port}}"
+      - "192.168.72.84:8848"
+
+  gateway_register:
+    endpoints:
+      - "192.168.72.84:8180"

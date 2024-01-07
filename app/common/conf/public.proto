@@ -11,6 +11,7 @@ message Public{
   Registry registry = 3;
   Discovery discovery = 4;
   Adapter adapter = 5;
+  GatewayRegister gateway_register = 6;
 }
 message Log {
   string level = 1;
@@ -47,4 +48,8 @@ message Adapter {
   }
   Database database = 1;
   Redis redis = 2;
+}
+
+message GatewayRegister {
+  repeated string endpoints = 1;
 }

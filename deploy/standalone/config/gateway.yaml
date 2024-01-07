@@ -6,7 +6,7 @@ middlewares:
   - name: tracing
     options:
       '@type': type.googleapis.com/gateway.middleware.tracing.v1.Tracing
-      httpEndpoint: '{{jaeger_host}}:{{jaeger_collector_otlp_http_port}}' # default opentelemetry collector port
+      httpEndpoint: '192.168.72.84:4318' # default opentelemetry collector port
       insecure: true
   - name: logging
   - name: transcoder
@@ -28,8 +28,9 @@ endpoints:
     # 请求域名
     # host: localhost   
     backends:
-      # - target: '{{bff_host}}:{{bff_port}}'
       - target: 'discovery:///bff.http'
+        weight: 100
+      # - target: '192.168.72.84:8200'
     # 各个endpoint的中间件
     middlewares:
       - name: circuitbreaker

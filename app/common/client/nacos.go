@@ -17,10 +17,11 @@ import (
 )
 
 var cc = constant.ClientConfig{
-	TimeoutMs:           5000,
-	NotLoadCacheAtStart: true,
-	LogDir:              "/tmp/nacos/log",
-	CacheDir:            "/tmp/nacos/cache",
+	TimeoutMs:            5000,
+	NotLoadCacheAtStart:  false,
+	UpdateCacheWhenEmpty: true,
+	LogDir:               "/tmp/nacos/log",
+	CacheDir:             "/tmp/nacos/cache",
 	LogRollingConfig: &lumberjack.Logger{
 		MaxAge: 7,
 	},

@@ -46,6 +46,7 @@
       src: ../tmpl/{{ item }}
       dest: ../../standalone/config/{{ item }}
       force: true
+      mode: 0777
     loop:
       - "public.yaml"
       - "bff.yaml"

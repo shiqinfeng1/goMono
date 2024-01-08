@@ -2,7 +2,6 @@ package log
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/pkg/errors"
 
@@ -10,6 +9,7 @@ import (
 	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/rs/zerolog"
 	cconf "github.com/shiqinfeng1/goMono/app/common/conf"
+	"github.com/shiqinfeng1/goMono/app/common/container"
 	"github.com/shiqinfeng1/goMono/app/common/types"
 )
 
@@ -32,8 +32,9 @@ var (
 )
 
 // 全局初始化一次
-func New(svcInfo *types.SrvInfo, log *cconf.Log) klog.Logger {
-	lvl, err := zerolog.ParseLevel(log.Level)
+func New(svcInfo *types.SrvInfo, logCfg *cconf.Log) klog.Logger {
+	var fileName string
+	lvl, err := zerolog.ParseLevel(logCfg.Level)
 	if err != nil {
 		lvl = zerolog.DebugLevel
 	}
@@ -41,11 +42,17 @@ func New(svcInfo *types.SrvInfo, log *cconf.Log) klog.Logger {
 	klogger = &KloggerWrap{
 		svcInfo: svcInfo,
 		oldLvl:  lvl,
-		f:       log.File,
-		m:       log.Monitor,
+		f:       logCfg.File,
+		m:       logCfg.Monitor,
 	}
-	fileName := time.Now().Format(fmt.Sprintf("./log/%v-%v-20060102.log", svcInfo.Name, svcInfo.ID))
-	klogger.zlogger = newZeroLogger(fileName, log.File, log.Monitor)
+	name, err := container.GetNameLite()
+	if err != nil {
+		klog.Errorf("get myself container name: %v", err)
+		fileName = fmt.Sprintf("./log/%v-%v.log", svcInfo.Name, svcInfo.ID)
+	} else {
+		fileName = fmt.Sprintf("./log/%v.log", name)
+	}
+	klogger.zlogger = newZeroLogger(fileName, logCfg.File, logCfg.Monitor)
 	klogger.klogger = klog.With(zlog.NewLogger(klogger.zlogger),
 		"svc.id/name/ver", fmt.Sprintf("%v/%v/%v", svcInfo.ID, svcInfo.Name, svcInfo.Version),
 	)

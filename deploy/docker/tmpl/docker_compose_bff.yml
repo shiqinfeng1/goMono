@@ -1,7 +1,6 @@
 version: "3.8"
 services:
   bff:
-    hostname: bff
     image: "{{registry_addr}}/{{bff_image}}"
     ports:
       - "{{bff_port}}:8200"
@@ -10,6 +9,7 @@ services:
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - "/etc/timezone:/etc/timezone:ro"
+      - "/run/docker.sock:/run/docker.sock:ro"
       - "{{bff_config_dir}}:/bin/config"
       - "{{bff_log_dir}}:/bin/log"
     extra_hosts:

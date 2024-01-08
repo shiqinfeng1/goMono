@@ -36,6 +36,7 @@ func newFileWriter(logPath string, fcfg *conf.File) io.Writer {
 		MaxBackups: int(fcfg.GetMaxBackups()), // file numbers
 		MaxAge:     int(fcfg.GetMaxAge()),     // days
 		Compress:   fcfg.GetCompress(),        // disabled by default
+		LocalTime:  fcfg.GetLocalTime(),
 	}
 }
 

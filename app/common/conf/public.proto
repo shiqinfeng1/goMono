@@ -26,6 +26,7 @@ message File {
   int32 max_backups = 2;
   int32 max_age = 3;
   bool compress = 4;
+  bool local_time = 5;
 }
 message Trace {
     string endpoint = 1;

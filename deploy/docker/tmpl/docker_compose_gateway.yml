@@ -1,7 +1,6 @@
 version: "3.8"
 services:
   gateway:
-    hostname: gateway
     image: "{{registry_addr}}/{{gateway_image}}"
     ports:
       - "{{proxy_port1}}:{{proxy_port1}}"
@@ -13,6 +12,7 @@ services:
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - "/etc/timezone:/etc/timezone:ro"
+      - "/run/docker.sock:/run/docker.sock:ro"
       - "{{gateway_config_dir}}:/bin/config"
       - "{{gateway_log_dir}}:/bin/log"
     extra_hosts:

@@ -13,10 +13,11 @@ public:
     monitor:
       endpoint: tcp://127.0.0.1:23224
     file:
-      max_size:    100  # megabytes
+      max_size:    50  # megabytes
       max_backups: 7    # file numbers
       max_age:     28   # days
       compress:    true
+      local_time:  true
 
   registry: 
     addrs:

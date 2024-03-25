@@ -310,7 +310,7 @@ func (c *BFFHTTPClientImpl) ApproveRescheduleTraining(ctx context.Context, in *v
 	if err != nil {
 		return nil, err
 	}
-	return &out, err
+	return &out, nil
 }
 
 func (c *BFFHTTPClientImpl) CancelTraining(ctx context.Context, in *v1.CancelTrainingRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
@@ -323,7 +323,7 @@ func (c *BFFHTTPClientImpl) CancelTraining(ctx context.Context, in *v1.CancelTra
 	if err != nil {
 		return nil, err
 	}
-	return &out, err
+	return &out, nil
 }
 
 func (c *BFFHTTPClientImpl) CreateTraining(ctx context.Context, in *v1.CreateTrainingRequest, opts ...http.CallOption) (*v1.CreateTrainingResponse, error) {
@@ -336,7 +336,7 @@ func (c *BFFHTTPClientImpl) CreateTraining(ctx context.Context, in *v1.CreateTra
 	if err != nil {
 		return nil, err
 	}
-	return &out, err
+	return &out, nil
 }
 
 func (c *BFFHTTPClientImpl) GetTrainerAvailableHours(ctx context.Context, in *GetTrainerAvailableHoursRequest, opts ...http.CallOption) (*GetTrainerAvailableHoursRespone, error) {
@@ -349,7 +349,7 @@ func (c *BFFHTTPClientImpl) GetTrainerAvailableHours(ctx context.Context, in *Ge
 	if err != nil {
 		return nil, err
 	}
-	return &out, err
+	return &out, nil
 }
 
 func (c *BFFHTTPClientImpl) GetTraining(ctx context.Context, in *emptypb.Empty, opts ...http.CallOption) (*v1.GetTrainingResponse, error) {
@@ -362,7 +362,7 @@ func (c *BFFHTTPClientImpl) GetTraining(ctx context.Context, in *emptypb.Empty, 
 	if err != nil {
 		return nil, err
 	}
-	return &out, err
+	return &out, nil
 }
 
 func (c *BFFHTTPClientImpl) MakeHourAvailable(ctx context.Context, in *MakeHourAvailableRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
@@ -375,7 +375,7 @@ func (c *BFFHTTPClientImpl) MakeHourAvailable(ctx context.Context, in *MakeHourA
 	if err != nil {
 		return nil, err
 	}
-	return &out, err
+	return &out, nil
 }
 
 func (c *BFFHTTPClientImpl) MakeHourUnavailable(ctx context.Context, in *MakeHourUnavailableRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
@@ -388,7 +388,7 @@ func (c *BFFHTTPClientImpl) MakeHourUnavailable(ctx context.Context, in *MakeHou
 	if err != nil {
 		return nil, err
 	}
-	return &out, err
+	return &out, nil
 }
 
 func (c *BFFHTTPClientImpl) RejectRescheduleTraining(ctx context.Context, in *v1.RejectRescheduleTrainingRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
@@ -401,7 +401,7 @@ func (c *BFFHTTPClientImpl) RejectRescheduleTraining(ctx context.Context, in *v1
 	if err != nil {
 		return nil, err
 	}
-	return &out, err
+	return &out, nil
 }
 
 func (c *BFFHTTPClientImpl) RequestRescheduleTraining(ctx context.Context, in *v1.RequestRescheduleTrainingRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
@@ -414,7 +414,7 @@ func (c *BFFHTTPClientImpl) RequestRescheduleTraining(ctx context.Context, in *v
 	if err != nil {
 		return nil, err
 	}
-	return &out, err
+	return &out, nil
 }
 
 func (c *BFFHTTPClientImpl) RescheduleTraining(ctx context.Context, in *v1.RescheduleTrainingRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
@@ -427,5 +427,5 @@ func (c *BFFHTTPClientImpl) RescheduleTraining(ctx context.Context, in *v1.Resch
 	if err != nil {
 		return nil, err
 	}
-	return &out, err
+	return &out, nil
 }

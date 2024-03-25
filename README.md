@@ -1,27 +1,21 @@
 # 基于Kratos的微服务最佳实践框架
 
-本框架基于kratos的大仓模式，结合了Kratos-layout和ThreeDotLabs的最佳实践，目录有所调整，支持DDD、CQRS，能够有效应对复杂的业务逻辑
+本框架基于kratos的大仓模式，结合了Kratos-layout和ThreeDotLabs的最佳实践，目录有所调整，技术架构和目录支持DDD、CQRS，解耦业务逻辑和技术框架，能够有效应对复杂的业务逻辑的开发。
 
-还在开发中，可能存在错误
 
-# 部署运行本演示项目
+## 1 编译和部署
 
-## 基于本模板创建自己的项目仓库
+### 1.1 环境准备
 
-## 单机部署
+找1台或多台服务器，将其中1台（master节点）作为ansible管理节点，其他作为运行节点。如果只有一台， 那么管理节点和运行节点是同一台
 
-## 集群部署
-
-### 准备工作
-
-- 找1台或多台服务器，将其中1台作为ansible管理节点，其他作为运行节点。如果只有一台， 那么管理节点和运行节点是同一台
-    在master节点上，生成公钥
+- 在master节点上，生成公钥
 
     ```bash
     ssh-keygen -C master@192.168.1.110 # 本地生成秘钥， 如果已有则跳过
     ```
 
-- 允许使用非root账号sudo免密操作
+- 在每台服务器上配置允许非root账号进行sudo免密操作
   测试环境可以直接使用root账号， 如果为了安全性则使用非root账号， 但需要确保具有sudo权限。
   
   新建非root账号
@@ -39,7 +33,7 @@
   sudo chmod u-w -v /etc/sudoers
   ```
 
-### 在管理节点上安装ansible
+### 1.2 在管理节点（master）上安装ansible
 
 centos7
 
@@ -65,105 +59,140 @@ ls /etc/ansible/
 ansible.cfg  hosts  roles
 ```
 
-### 运行节点主机列表配置
+### 1.3  在管理节点（master）上配置节点主机列表及ansible
 
-默认的配置在 `/etc/ansible/hosts` 中，追加自己的配置，和项目匹配到配置如下：
+默认的配置在 `/etc/ansible/hosts` 中，追加自己的配置,配置文件demo在 `./hosts.ansible`.
+
+配置字段说明：
+- 方括号[]中是组名，用于对业务/功能系统进行分类，便于对不同系统进行个别的管理。下面为主机名称
+- ansible_user 指定登录该服务器的用户名，如果和当前系统已登录的用户名一样，则不需要指定。
+- 注意：如果修改组名，需同步更新playbook中的hosts字段
 
 ```ini
 [all]
 master hostname=master ansible_python_interpreter=/usr/bin/python3 ansible_host=192.168.72.36 ansible_port=22 ansible_user=sqf # ansible_pass='Tsss'
 node1 hostname=node1 ansible_python_interpreter=/usr/bin/python3 ansible_host=192.168.72.84 ansible_port=22 ansible_user=user # ansible_pass='Tsss'
 
-[registry]
+[images]
 master
 
-[nacos]
+[registry]
 master
 
 [prometheus]
 master
 
-[mysql]
+[jaeger]
 master
 
+[nacos]
+node1
+
+[mysql]
+node1
+
+[mysql_slave]
+node1
+
 [redis]
-master
+node1
+
+[gateway]
+node1
+
+[bff]
+node1
 
 [backend]
 node1
 ```
 
-- 方括号[]中是组名，用于对系统进行分类，便于对不同系统进行个别的管理。
-- ansible_user 指定登录该服务器的用户名，如果和当前系统已登录的用户名一样，则不需要指定。
-- 如果修改组名，需同步更新playbook中的hosts字段
+配置修改好之后，可以通过如下命令查看主机清单：
 
-查看主机清单
+  ```bash
+  ansible all --list-hosts  # all 为组名
+  ansible webservers --list-hosts # webservers 为组名
+  ansible dbservers --list-hosts  # dbservers 为组名
+  ... 
+  ```
 
-```bash
-ansible all --list-hosts
-ansible webservers --list-hosts
-ansible dbservers --list-hosts 
-```
+检查主机的连通性
 
-### 检查主机的连通性
+  ```bash
+  ansible node1 -m ping 
+  ```
 
-```bash
-ansible node1 -m ping 
-```
+允许使用sudo执行命令
 
-### 允许使用sudo执行命令
+  修改 `/etc/ansible/ansible.cfg` 中的privilege_escalation配置为：
 
-修改 `/etc/ansible/ansible.cfg` 中的privilege_escalation配置为：
+  ```ini
+  [privilege_escalation]
+  become=True
+  become_method=sudo
+  ```
+### 1.4 设置所有工作节点免密登录
 
-```ini
-[privilege_escalation]
-become=True
-become_method=sudo
-```
+原理：将master节点的的公钥复制到节点上
 
-### 设置节点免密登录
-
+登录master管理节点，执行：
 ```bash
 ansible-playbook ./deploy/docker/ansible_playbook/ssh_login_no_password.yml
 ```
 
 如果安装失败，需要手动复制key：`ssh-copy-id user@192.168.72.84`
-### 批量设置hostname
+
+### 1.5 批量设置hostname
 
 ```bash
 ansible-playbook ./deploy/docker/ansible_playbook/modify_hostname.yml
 ```
 
+
+
+
+
 ### 部署基础设施
 
-1. 安装docker
+1. 安装docker和docker-compose
 
     ```bash
-    ansible-playbook ./deploy/docker/ansible-playbook/install_docker_online.yml
+    cd goMono
+    ansible-playbook ./deploy/docker/ansible_playbook/install_docker_online.yml
     ```
+    > 注意：如果执行palybook时报错：
+    `fatal: [node1]: FAILED! => {"changed": false, "msg": "The Python 2 bindings for rpm are needed for this module. If you require Python 3 support use the `dnf` Ansible module instead.. The Python 2 yum module is needed for this module. If you require Python 3 support use the dnf Ansible module instead."}`, 需要将`/etc/ansible/hosts`中的`ansible_python_interpreter=/usr/bin/python3` 改为 `ansible_python_interpreter=/usr/bin/python2`， 或者，在ansible-playbook命令后面添加参数：`-e ansible_python_interpreter=/usr/bin/python2`
+
 
 2. 部署镜像私有仓库
+    
     项目源码来自[这里](https://github.com/Joxit/docker-registry-ui), 部署操作：
 
     ```bash
+    cd goMono
     ansible-playbook ./deploy/docker/ansible_playbook/install_docker_registry.yml
     ```
+
+    部署完成后，私有仓库在 `http://<域名/IP>:8080/` 上提供服务。（使用域名时，可能需要配置本地DNS）
 
 3. 拉取和打包镜像
 
    ```bash
+   cd goMono
    ansible-playbook ./deploy/docker/prepare-infra-images.yml
    ```
 
 4. 部署nacos
 
    ```bash
+   cd goMono
    ansible-playbook ./deploy/docker/install_nacos.yml
    ```
 
 5. 部署prometheus和grafana
 
    ```bash
+   cd goMono
    ansible-playbook ./deploy/docker/install_prometheus_grafana.yml
    ```
 

@@ -74,5 +74,5 @@ func (c *UserServiceHTTPClientImpl) GetTrainingBalance(ctx context.Context, in *
 	if err != nil {
 		return nil, err
 	}
-	return &out, err
+	return &out, nil
 }

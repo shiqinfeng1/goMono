@@ -1,16 +1,16 @@
 
 public:
   adapter:
-    database:
+    database:  # 数据库服务地址
       driver: mysql
-      source: "root:root@tcp({{mysql_host}}:23306)/test"
-    redis:
-      addr: 127.0.0.1:26379
+      source: "root:root@tcp({{mysql_host}}:23306)/test" # todo: 数据库名需要更新
+    redis: # redis的服务地址
+      addr: "{{redis_host}}:{{redis_srv_port}}"
       read_timeout: 0.2s
       write_timeout: 0.2s
   log:
     level: debug
-    monitor:
+    monitor:  # 日志服务地址
       endpoint: tcp://127.0.0.1:23224
     file:
       max_size:    50  # megabytes
@@ -19,18 +19,18 @@ public:
       compress:    true
       local_time:  true
 
-  registry: 
+  registry:  # 注册中心的服务地址
     addrs:
       - "{{nacos_host}}:{{nacos1_srv_port}}"
       - "{{nacos_host}}:{{nacos2_srv_port}}"
       - "{{nacos_host}}:{{nacos3_srv_port}}"
-  trace:
+  trace:  # 链路跟踪服务地址
     endpoint: "{{jaeger_host}}:{{jaeger_collector_otlp_http_port}}"
 
-  discovery:
+  discovery:  # 服务发现的服务地址
     endpoints:
       - "{{nacos_host}}:{{nacos1_srv_port}}"
 
-  gateway_register:
+  gateway_register: # 网关服务地址
     endpoints:
       - "{{proxy_host}}:{{proxy_port1}}"

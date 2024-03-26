@@ -149,10 +149,7 @@ ansible-playbook ./deploy/docker/ansible_playbook/modify_hostname.yml
 ```
 
 
-
-
-
-### 部署基础设施
+## 2部署基础设施
 
 1. 安装docker和docker-compose
 
@@ -179,14 +176,14 @@ ansible-playbook ./deploy/docker/ansible_playbook/modify_hostname.yml
 
    ```bash
    cd goMono
-   ansible-playbook ./deploy/docker/prepare-infra-images.yml
+   ansible-playbook ./deploy/docker/ansible_playbook/prepare-infra-images.yml
    ```
 
 4. 部署nacos
 
    ```bash
    cd goMono
-   ansible-playbook ./deploy/docker/install_nacos.yml
+   ansible-playbook ./deploy/docker/ansible_playbook/install_nacos.yml
    ```
 
 5. 部署prometheus和grafana

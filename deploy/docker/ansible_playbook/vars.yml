@@ -8,31 +8,32 @@ registry_srv_port: 8080  # docker私有仓库的服务端口
 #########################################################################
 # 业务和docker相关的配置
 #########################################################################
-biz_stack: bizstack
+biz_stack: bizstack # docker stack的名称前缀
 
 #########################################################################
 # 业务网关gateway相关配置
 #########################################################################
-mode: develop  # develop test product
-debug: true
-proxy_host: 192.168.72.84
-proxy_port1: 8180
-proxy_port2: 8181
+mode: develop  # 运行模式 develop test product  bff也使用该字段
+debug: true  # 是否开启调试模式
+proxy_host: 192.168.72.84   # 网关服务地址
+proxy_port1: 8180 # 网关服务端口
+proxy_port2: 8181 # 网关服务端口
 proxy_addrs: :{{proxy_port1}},:{{proxy_port2}}  # 网关服务地址，可以由多个，逗号隔开
-gateway_data_dir: /data/gateway
-gateway_config_dir: "{{gateway_data_dir}}/config"
-gateway_log_dir: "{{gateway_data_dir}}/log"
-gateway_compose_file: docker_compose_gateway.yml
-
+gateway_data_dir: /data/gateway # 网关数据的目录
+gateway_config_dir: "{{gateway_data_dir}}/config"  # 网关配置目录
+gateway_log_dir: "{{gateway_data_dir}}/log" # 网关日志目录
+gateway_compose_file: docker_compose_gateway.yml # 网关服务的docker-compose文件
+ 
 #########################################################################
 # bff相关配置
 #########################################################################
-bff_host: 192.168.72.84
-bff_port: 8200
-bff_data_dir: /data/bff
-bff_config_dir: "{{bff_data_dir}}/config"
-bff_log_dir: "{{bff_data_dir}}/log"
-bff_compose_file: docker_compose_bff.yml
+bff_host: 192.168.72.84 # bff服务的地址
+bff_port: 8200   # bff服务端口号
+bff_data_dir: /data/bff # bff数据的目录
+bff_config_dir: "{{bff_data_dir}}/config" # bff配置目录
+bff_log_dir: "{{bff_data_dir}}/log"  # bff日志目录
+bff_compose_file: docker_compose_bff.yml # bff服务的docker-compose文件
+
 #########################################################################
 # 业务应用镜像相关配置
 #########################################################################
@@ -47,9 +48,6 @@ biz_images_list:
  - "{{bff_image}}"
  - "{{biz_training_image}}"
  - "{{biz_trainer_image}}"
-#########################################################################
-# 业务应用镜像相关配置
-#########################################################################
 biz_trainer_host: 192.168.72.84
 biz_trainer_port: 8300
 biz_training_host: 192.168.72.84
@@ -59,14 +57,13 @@ biz_training_port: 8400
 # 基础设施镜像相关配置
 #########################################################################
 prometheus_image: prom/prometheus:latest
-jaeger_image: dockerproxy.com/jaegertracing/all-in-one:1.52
+jaeger_image: jaegertracing/all-in-one:1.52 # dockerproxy.com/jaegertracing/all-in-one:1.52
 grafana_image: grafana/grafana:latest
 nacos_image: nacos/nacos-server:latest
 nacos_mysql_image: nacos/mysql:8.0.31
 redis_image: redis:7.0-alpine
 mysql_image: dockerproxy.com/bitnami/mysql:8.0.30
 mysql_backup_image: registry.cn-shanghai.aliyuncs.com/shiqinfeng/mysql-cron-backup:latest
-
 infra_images_list:   # 在线下载的基础设施的镜像列表
   - "{{prometheus_image}}"
   - "{{jaeger_image}}"
@@ -87,15 +84,13 @@ delete_download_images: true  # 是否删除本地已上传到私有仓库的基
 # nacos相关配置
 #########################################################################
 nacos_compose_file: docker_compose_nacos.yml  # nacos1的compose文件
-
 config_nacos_mysql: config_nacos_mysql.env # nacos使用的数据库的配置
-config_nacos: config_nacos.env # nacos的配置
-
+config_nacos: config_nacos.env # nacos的配置文件， 【注意】： 其中的服务地址配置如果配置为域名不通的话， 可配置为ip直接访问
 nacos_mysql_port: 13306 # nacos使用的mysql的服务端口
 # 如果配置主机名不通， 需检查宿主机的/etc/resolv.conf的配置,确保nslookup能查到解析
 nacos_mysql_host: 192.168.72.84 # 部分情况如果配置为mysql服务主机名，docker内置dns服务会解析失败，此时可以配置为ip地址； nacos使用的mysql的服务地址，该主机的dns需要配置在部署nacos的机子上, 并在ansible主机清单维护
 
-# 如果nacos运行在统一节点，务必保证个nacos的端口号不重复
+# 如果nacos运行在同一节点，务必保证个nacos的端口号不重复
 nacos_host: 192.168.72.84 # nacos1的服务地址，该主机的dns需要配置在部署nacos/prometheus的机子上, 并在ansible主机清单维护
 nacos1_conn_port1: 7848
 nacos1_conn_port2: 9848

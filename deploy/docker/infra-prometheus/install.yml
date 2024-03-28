@@ -1,0 +1,15 @@
+---
+- name: Install Nacos
+  hosts: nacos
+  vars_files:
+    - ../infra-docker-registry/vars.yml
+    - vars.yml
+  vars:
+   - registry_addr: "{{hostvars[groups['registry'][0]].hostname}}:{{registry_srv_port}}" 
+  become: true
+  tasks:
+  - include: ../images/prepare_infra_images.yml
+    when: force_update_images == True
+
+- import_playbook: install_jaeger.yml
+- import_playbook: install_prometheus_grafana.yml

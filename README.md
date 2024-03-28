@@ -137,7 +137,7 @@ node1
 
 登录master管理节点，执行：
 ```bash
-ansible-playbook ./deploy/docker/ansible_playbook/ssh_login_no_password.yml
+ansible-playbook ./deploy/docker/cluster-init/ssh_login_no_password.yml
 ```
 
 如果安装失败，需要手动复制key：`ssh-copy-id user@192.168.72.84`
@@ -145,9 +145,14 @@ ansible-playbook ./deploy/docker/ansible_playbook/ssh_login_no_password.yml
 ### 1.5 批量设置hostname
 
 ```bash
-ansible-playbook ./deploy/docker/ansible_playbook/modify_hostname.yml
+ansible-playbook ./deploy/docker/cluster-init/modify_hostname.yml
 ```
 
+### 1.5 批量设置dns
+
+```bash
+ansible-playbook ./deploy/docker/cluster-init/config_dns.yml
+```
 
 ## 2部署基础设施
 
@@ -155,7 +160,7 @@ ansible-playbook ./deploy/docker/ansible_playbook/modify_hostname.yml
 
     ```bash
     cd goMono
-    ansible-playbook ./deploy/docker/ansible_playbook/install_docker_online.yml
+    ansible-playbook ./deploy/docker/infra-docker/install_docker_online.yml
     ```
     > 注意：如果执行palybook时报错：
     `fatal: [node1]: FAILED! => {"changed": false, "msg": "The Python 2 bindings for rpm are needed for this module. If you require Python 3 support use the `dnf` Ansible module instead.. The Python 2 yum module is needed for this module. If you require Python 3 support use the dnf Ansible module instead."}`, 需要将`/etc/ansible/hosts`中的`ansible_python_interpreter=/usr/bin/python3` 改为 `ansible_python_interpreter=/usr/bin/python2`， 或者，在ansible-playbook命令后面添加参数：`-e ansible_python_interpreter=/usr/bin/python2`
@@ -167,7 +172,7 @@ ansible-playbook ./deploy/docker/ansible_playbook/modify_hostname.yml
 
     ```bash
     cd goMono
-    ansible-playbook ./deploy/docker/ansible_playbook/install_docker_registry.yml
+    ansible-playbook ./deploy/docker/infra-docker/install_docker_registry.yml
     ```
 
     部署完成后，私有仓库在 `http://<域名/IP>:8080/` 上提供服务。（使用域名时，可能需要配置本地DNS）
@@ -195,8 +200,8 @@ ansible-playbook ./deploy/docker/ansible_playbook/modify_hostname.yml
 
   注意：
   
-  - 默认只设置了nacos的数据源，如果需要增加其他数据源，修改 `./deploy/docker/config_prometheus.env` 配置
-  - nacos的dashboard配置是： `deploy/docker/config_nacos_grafana_dashboard.json`
+  - 默认只设置了nacos的数据源，如果需要增加其他数据源，修改 `./deploy/docker/infra-prometheus/config_prometheus.env` 配置
+  - nacos的dashboard配置是： `deploy/docker/infra-prometheus/config_nacos_grafana_dashboard.json`
 
 # 开发微服务
 

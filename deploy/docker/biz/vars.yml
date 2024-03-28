@@ -1,0 +1,25 @@
+
+#########################################################################
+# 业务和docker相关的配置
+#########################################################################
+biz_stack: bizstack # docker stack的名称前缀
+
+#########################################################################
+# 业务应用镜像相关配置
+#########################################################################
+task_migration_image: app/task-migration:latest
+biz_training_image: app/biz-training:latest
+biz_trainer_image: app/biz-trainer:latest
+biz_images_list: 
+ - "{{task_migration_image}}"
+ - "{{gateway_image}}"
+ - "{{bff_image}}"
+ - "{{biz_training_image}}"
+ - "{{biz_trainer_image}}"
+biz_trainer_host: 192.168.72.84
+biz_trainer_port: 8300
+biz_training_host: 192.168.72.84
+biz_training_port: 8400
+
+
+

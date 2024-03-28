@@ -1,0 +1,24 @@
+---
+- name: Stop Mysql
+  hosts: mysql
+  vars_files:
+    - ../infra-docker-registry/vars.yml
+    - vars.yml
+  vars:
+   - registry_addr: "{{hostvars[groups['registry'][0]].hostname}}:{{registry_srv_port}}" 
+  become: true
+  tasks:
+  - name: Copy Mysql Docker-Compose Files
+    template: 
+      src: ./{{ item }}
+      dest: /tmp/{{ item }}
+      force: true
+    loop:
+      - "{{mysql_compose_file}}"
+      - "{{mysql_slave_compose_file}}"
+  - name: Stop Mysql
+    shell:
+      cmd: "docker-compose -p gomono-infra-mysql -f /tmp/{{mysql_compose_file}} down"
+  - name: Stop Mysql Slave
+    shell:
+      cmd: "docker-compose -p gomono-infra-mysql-slave -f /tmp/{{mysql_slave_compose_file}} down"

@@ -1,0 +1,82 @@
+---
+- name: Install Gateway
+  hosts: gateway
+  vars_files:
+    - ../infra-docker-registry/vars.yml
+    - ../infra-nacos/vars.yml
+    - ../infra-prometheus/vars.yml
+    - ../infra-mysql/vars.yml
+    - ../infra-redis/vars.yml
+    - vars.yml
+  vars:
+   - registry_addr: "{{hostvars[groups['registry'][0]].hostname}}:{{registry_srv_port}}" 
+  become: true
+  tasks:
+  - include: ../images/push_biz_images.yml
+    when: force_update_images == True
+
+  - name: Ensure docker is running
+    become: yes
+    service:
+      name: docker
+      state: started
+  - name: Creates Gateway Data Directory
+    file:
+      path: "{{item}}"
+      state: directory
+      owner: "{{ansible_user}}"
+      group: "{{ansible_user}}"
+      mode: 0777
+    loop:
+      - "{{gateway_data_dir}}"
+      - "{{gateway_config_dir}}"
+      - "{{gateway_log_dir}}"
+
+  - name: Copy Gateway Docker-Compose Files
+    template: 
+      src: ./{{ item }}
+      dest: "{{gateway_data_dir}}/{{ item }}"
+      force: true
+    loop:
+      - "{{gateway_compose_file}}"
+
+  - name: Copy Gateway config Files
+    template: 
+      src: ./{{ item }}
+      dest: "{{gateway_config_dir}}/{{ item }}"
+      force: true
+    loop:
+      - "gateway.yaml"
+      - "public.yaml"
+
+  - name: Backup Gateway config Files
+    delegate_to: localhost
+    template: 
+      src: ./{{ item }}
+      dest: ../../standalone/config/{{ item }}
+      force: true
+      mode: 0777
+    loop:
+      - "gateway.yaml"
+      - "public.yaml"
+
+  - name: Start Gateway
+    shell:
+      cmd: "docker stack deploy --compose-file  {{gateway_data_dir}}/{{gateway_compose_file}}  {{biz_stack}}"
+
+  - name: Check Gateway Status
+    docker_swarm_service_info:
+      name: "{{item}}"
+    register: result
+    until: (result.exists == true) and (result.failed == false)
+    retries: 10
+    delay: 5
+    loop:
+      - "{{biz_stack}}_gateway"
+
+  # - name: Delete docker-compose.yml
+  #   file: 
+  #     dest: /tmp/{{ item }}
+  #     state: absent
+  #   loop:
+  #     - "{{prometheus_compose_file}}"

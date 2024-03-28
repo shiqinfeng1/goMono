@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  jaeger:
+    container_name: gomono-jaeger
+    hostname: jaeger
+    image: "{{registry_addr}}/{{jaeger_image}}"
+    environment:
+      - "COLLECTOR_ZIPKIN_HOST_PORT={{jaeger_collector_zipkin_port}}"
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+    ports:
+      - "{{jaeger_thrift_compact_port}}:6831/udp"
+      - "{{jaeger_thrift_binary_port}}:6832/udp"
+      - "{{jaeger_agent_zipkin_port}}:5775"
+      - "{{jaeger_agent_configs_port}}:5778"	 
+      - "{{jaeger_query_port}}:16686"	 
+      - "{{jaeger_collector_otlp_grpc_port}}:4317"	
+      - "{{jaeger_collector_otlp_http_port}}:4318"
+      - "{{jaeger_collector_direct_port}}:14268"	 
+      - "{{jaeger_collector_model_port}}:14250"	 
+      - "{{jaeger_collector_zipkin_port}}:9411"	
+    restart: always
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'

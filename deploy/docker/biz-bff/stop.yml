@@ -1,0 +1,21 @@
+---  
+- name: Stop Bff
+  hosts: bff
+  vars_files:
+    - ../infra-docker-registry/vars.yml
+    - vars.yml
+  vars:
+   - registry_addr: "{{hostvars[groups['registry'][0]].hostname}}:{{registry_srv_port}}" 
+  become: true
+  tasks:
+  - name: Copy Bff Docker-Compose Files
+    template: 
+      src: ./{{ item }}
+      dest: /tmp/{{ item }}
+      force: true
+    loop:
+      - "{{bff_compose_file}}"
+  - name: Stop Bff
+    shell:
+      cmd: "docker service rm {{biz_stack}}_bff"
+    ignore_errors: yes

@@ -71,6 +71,12 @@ api:
 #    		--openapiv2_out=./api 
 #     		--openapiv2_opt logtostderr=true 
 
+# generate image names，like：
+# app/biz-trainer
+# app/biz-training
+# app/gateway-gomono
+# app/task-migration
+# app/bff-gomono
 names=$(shell find app -name main.go|xargs -I X dirname X)
 
 # build execute 
@@ -89,7 +95,7 @@ wire:
 	find app  -mindepth 2 -maxdepth 2 | grep cmd | $(wireCmd)
 
 export DOCKER_BUILDKIT := 1
-# (optional)Image registry address
+# (optional)Image registry address 
 CONTAINER_REGISTRY=
 
 # build docker images
@@ -144,7 +150,7 @@ build-docker-debug-dlv:
 
 .PHONY: all
 # make all
-all: init config api wire build build-docker-debug
+all: init config api wire build build-docker-debug 
 
 # show help
 help:

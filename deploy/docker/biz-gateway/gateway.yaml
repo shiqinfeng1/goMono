@@ -6,7 +6,7 @@ middlewares:
   - name: tracing
     options:
       '@type': type.googleapis.com/gateway.middleware.tracing.v1.Tracing
-      httpEndpoint: '192.168.72.84:4318' # default opentelemetry collector port
+      httpEndpoint: '{{jaeger_host}}:{{jaeger_collector_otlp_http_port}}' # default opentelemetry collector port
       insecure: true
   - name: logging
   - name: transcoder

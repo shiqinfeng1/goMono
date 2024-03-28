@@ -3,7 +3,8 @@
 
 ####################################
 ## (1) Setup the build environment
-FROM dockerproxy.com/library/golang:1.21-bullseye AS build-env
+FROM dockerproxy.com/library/golang:1.22-bullseye AS build-env
+# FROM golang:1.22-bullseye AS build-env
 
 # Build the app binary in /app
 RUN mkdir /app
@@ -70,7 +71,8 @@ RUN --mount=type=ssh \
 RUN chmod a+x /app/bin/app
 
 ## (4) Add the statically linked debug binary to a distroless image configured for debugging
-FROM dockerproxy.com/library/golang:1.21-bullseye as debug-dlv
+FROM dockerproxy.com/library/golang:1.22-bullseye as debug-dlv
+# FROM golang:1.22-bullseye as debug-dlv
 RUN go env -w GOPROXY=https://goproxy.cn,direct
 RUN go install github.com/go-delve/delve/cmd/dlv@latest
 

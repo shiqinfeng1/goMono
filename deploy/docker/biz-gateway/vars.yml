@@ -1,0 +1,27 @@
+
+#########################################################################
+# 业务和docker相关的配置
+#########################################################################
+biz_stack: bizstack # docker stack的名称前缀
+gateway_image: app/gateway-gomono:latest
+gateway_compose_file: docker_compose_gateway.yml # 网关服务的docker-compose文件
+biz_images_list: 
+ - "{{gateway_image}}"
+
+force_update_images: true  # 是否下载或更新基础设施镜像
+
+#########################################################################
+# 业务网关gateway相关配置
+#########################################################################
+mode: develop  # 运行模式 develop test product  bff也使用该字段
+debug: true  # 是否开启调试模式
+proxy_host: 192.168.72.84   # 网关服务地址
+proxy_port1: 8180 # 网关服务端口
+proxy_port2: 8181 # 网关服务端口
+proxy_addrs: :{{proxy_port1}},:{{proxy_port2}}  # 网关服务地址，可以由多个，逗号隔开
+gateway_data_dir: /gomono/gateway # 网关数据的目录
+gateway_config_dir: "{{gateway_data_dir}}/config"  # 网关配置目录
+gateway_log_dir: "{{gateway_data_dir}}/log" # 网关日志目录
+ 
+
+

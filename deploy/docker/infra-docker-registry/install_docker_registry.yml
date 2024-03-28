@@ -1,0 +1,55 @@
+---
+- name: Install Docker Image Registry
+  hosts: registry
+  become: true
+  gather_facts: true
+  vars_files:
+    - vars.yml
+  tasks:
+  - name: Ensure docker is running
+    become: yes
+    service:
+      name: docker
+      state: started
+  - name: Ensure /etc/docker/daemon.json file exists
+    copy:
+      content: "{}"
+      dest: /etc/docker/daemon.json
+      force: false
+
+  - name: load /etc/docker/daemon.json
+    slurp:
+      src: /etc/docker/daemon.json
+    register: imported_var
+
+  - name: append insecure-registries to /etc/docker/daemon.json
+    set_fact:
+      imported_var: "{{ imported_var.content|b64decode|from_json | default([]) | combine(item, recursive=True) }}"
+    loop:
+      - { 'insecure-registries': ['{{ansible_hostname}}:{{registry_srv_port}}'] }  
+
+  - name: Save /etc/docker/daemon.json
+    copy: 
+      content: "{{ imported_var | to_nice_json }}" 
+      dest: /etc/docker/daemon.json
+
+  - name: Restart Docker service
+    service:
+      name: docker
+      state: restarted
+
+  - name: Copy Docker Compose files
+    template: 
+      src: ./{{ item }}
+      dest: /tmp/{{ item }}
+      force: true
+    loop:
+      - "docker_compose_docker_registry.yml"
+
+  # - name: Stop Docker Image Registry
+  #   shell:
+  #     cmd: "docker-compose -f /tmp/docker_compose_docker_registry.yml down"
+
+  - name: Start Docker Image Registry
+    shell:
+      cmd: "docker-compose -p infra -f /tmp/docker_compose_docker_registry.yml up -d"

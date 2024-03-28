@@ -1,0 +1,45 @@
+#########################################################################
+# 基础设施镜像相关配置
+#########################################################################
+mysql_image: dockerproxy.com/bitnami/mysql:8.0.30
+mysql_backup_image: registry.cn-shanghai.aliyuncs.com/shiqinfeng/mysql-cron-backup:latest
+infra_images_list:   # 通过在线下载的基础设施的镜像列表
+  - "{{mysql_image}}"
+  - "{{mysql_backup_image}}"
+
+delete_download_images: true  # 是否删除本地已上传到私有仓库的基础设施镜像
+force_update_images: false  # 是否下载或更新基础设施镜像
+
+#########################################################################
+# 数据库相关的环境变量
+#########################################################################
+mysql_compose_file: docker_compose_mysql.yml 
+mysql_host: 192.168.72.84 # 待备份的mysql服务地址 192.168.72.36
+mysql_port: 43306 # 主mysql服务端口
+mysql_data_dir: /gomono/mysql/data  # 主mysql数据目录
+mysql_root_user: root  # 待备份的mysql服务登录用户名
+mysql_root_password: Admin@1234 # 待备份的mysql服务登录密码
+mysql_database: "gomono"
+mysql_user: gomono
+mysql_password: goMono@1234
+mysql_authentication_plugin: mysql_native_password
+mysql_sql_mode: STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+allow_empty_password: yes  # 不允许生产环境配置yes
+
+mysql_slave_compose_file: docker_compose_mysql_slave.yml 
+mysql_slave_host: 192.168.72.84 # 待备份的mysql服务地址 192.168.72.36
+mysql_slave_port: 43316 # 从mysql服务端口
+mysql_slave_data_dir: /gomono/mysql_slave/data # 从mysql数据目录
+mysql_backup_data_dir: /gomono/mysql_backup # 从mysql数据本地备份目录
+
+max_backups: 7  # mysql全量备份保留天数
+init_backup: 1 # 启动时立即进行全量备份
+cron_time: "0 0 2 * * *" # mysql全量备份 每天凌晨2点执行一次
+cron_time_rsync: "0 0 5 * * *" # mysql全量备份远程同步  每天凌晨5点执行一次
+cron_time_binlog_rsync: "32 * * * * *" # mysql增量备份远程同步 每分钟第32秒执行一次
+remote_backup_ssh_ip: 192.168.72.84 # 远端backup服务器ip地址
+remote_backup_ssh_port: 22 # 远端backup服务器端口号
+remote_backup_pass: sqf  # 远端backup服务器用户密码
+remote_backup_user: root  # 远端backup服务器用户
+remote_backup_path: /root/mysql_backup/   # 远端backup全量备份路径，own必须属于REMOTE_BACKUP_USER
+remote_backup_binlog_path: /root/myasql_backup_binlog/   # 远端backup增量备份路径，own必须属于REMOTE_BACKUP_USER

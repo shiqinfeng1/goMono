@@ -60,12 +60,12 @@ config:
 API_PROTO_FILES=$(shell find app -name *.proto | grep api)
 .PHONY: api
 api:
-	protoc --proto_path=./api \
+	protoc --proto_path=./app \
 	       --proto_path=./third_party \
- 	       --go_out=paths=source_relative:./api \
- 	       --go-http_out=paths=source_relative:./api \
- 	       --go-grpc_out=paths=source_relative:./api \
-		   --go-errors_out=paths=source_relative:./api \
+ 	       --go_out=paths=source_relative:./app \
+ 	       --go-http_out=paths=source_relative:./app \
+ 	       --go-grpc_out=paths=source_relative:./app \
+		   --go-errors_out=paths=source_relative:./app \
 	       --openapi_out=fq_schema_naming=true,default_response=false:./api \
 	       $(API_PROTO_FILES)
 #    		--openapiv2_out=./api 

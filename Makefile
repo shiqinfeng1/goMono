@@ -46,7 +46,7 @@ init:
 	go install github.com/google/wire/cmd/wire@latest
 
 # generate config proto to go-files
-INTERNAL_PROTO_FILES=$(shell find app -name *.proto)
+INTERNAL_PROTO_FILES=$(shell find app -name *.proto | grep conf)
 .PHONY: config
 config:
 	for var in $(INTERNAL_PROTO_FILES); do \
@@ -57,7 +57,7 @@ config:
     done
 
 # generate api proto to go-files
-API_PROTO_FILES=$(shell find api -name *.proto)
+API_PROTO_FILES=$(shell find app -name *.proto | grep api)
 .PHONY: api
 api:
 	protoc --proto_path=./api \
@@ -82,7 +82,7 @@ names=$(shell find app -name main.go|xargs -I X dirname X)
 # build execute 
 .PHONY: build
 build:
-# go build -ldflags "app/bff-gomono/cmd/cmd.Version=$(VERSION)" -o ./deploy/standalone/bin/ ./...
+# go build -ldflags "app/gomono-bff/cmd/cmd.Version=$(VERSION)" -o ./deploy/standalone/bin/ ./...
 	for x in $(names); do \
 		echo -e "\nbuild $$x ... $(MODULE)/$$x/cmd.Version=$(VERSION)"; \
 		go build -ldflags "-X $(MODULE)/$$x/cmd.Version=$(VERSION)" -o ./deploy/standalone/bin/ ./$$x; \

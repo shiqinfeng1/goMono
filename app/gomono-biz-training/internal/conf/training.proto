@@ -1,0 +1,19 @@
+syntax = "proto3";
+package kratos.config.training;
+
+option go_package = "github.com/shiqinfeng1/goMono/app/gomono-biz-training/internal/conf;conf";
+import "google/protobuf/duration.proto";
+
+message Server {
+  GRPC grpc = 1;
+  Register register = 2;
+}
+message GRPC {
+  string network = 1;
+  string addr = 2;
+  google.protobuf.Duration timeout = 3;
+}
+
+message Register {
+  repeated  string endpoints = 1;
+}

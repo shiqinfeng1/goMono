@@ -2,8 +2,107 @@
 
 本框架基于kratos的大仓模式，结合了Kratos-layout和ThreeDotLabs的最佳实践，目录有所调整，技术架构和目录支持DDD、CQRS，解耦业务逻辑和技术框架，能够有效应对复杂的业务逻辑的开发。
 
+## 目录说明
 
-## 1 编译和部署
+```bash
+
+├── api
+│   └── user
+│       └── v1
+├── app
+│   ├── gomono-admin
+│   ├── gomono-bff
+│   │   ├── api
+│   │   │   └── v1
+│   │   ├── cmd
+│   │   └── internal
+│   │       ├── adapters
+│   │       ├── application
+│   │       ├── conf
+│   │       ├── ports
+│   │       └── service
+│   ├── gomono-biz-trainer
+│   │   ├── api
+│   │   │   └── v1
+│   │   ├── cmd
+│   │   └── internal
+│   │       ├── adapters
+│   │       ├── application
+│   │       │   ├── command
+│   │       │   └── query
+│   │       ├── conf
+│   │       ├── domain
+│   │       │   └── hour
+│   │       ├── ports
+│   │       └── service
+│   ├── gomono-biz-training
+│   │   ├── api
+│   │   │   └── v1
+│   │   ├── cmd
+│   │   └── internal
+│   │       ├── adapters
+│   │       ├── application
+│   │       │   ├── command
+│   │       │   └── query
+│   │       ├── conf
+│   │       ├── domain
+│   │       │   └── training
+│   │       ├── ports
+│   │       └── service
+│   ├── gomono-gateway
+│   └── gomono-task-migration
+├── deploy
+│   ├── docker
+│   │   ├── biz
+│   │   ├── biz-bff
+│   │   ├── biz-gateway
+│   │   ├── cluster-init
+│   │   ├── images
+│   │   ├── infra-docker-registry
+│   │   ├── infra-mysql
+│   │   ├── infra-nacos
+│   │   ├── infra-prometheus
+│   │   └── infra-redis
+│   ├── k8s
+│   └── standalone
+│       ├── bin
+│       └── config
+├── third_party
+│   ├── errors
+│   ├── google
+│   │   ├── api
+│   │   └── protobuf
+│   │       └── compiler
+│   ├── openapi
+│   │   └── v3
+│   └── validate
+└── utils
+    ├── auth
+    ├── client
+    ├── conf
+    ├── container
+    ├── decorator
+    ├── discovery
+    ├── log
+    ├── registrar
+    ├── trace
+    └── types
+```
+
+- api 接口定义输出文档
+- app 业务程序，一个应用对应一个目录，每个目录内部对应一个标准的golang工程，典型的文件夹包括：
+  - `api` 接口定义
+  - `cmd` 主命令/子命令入口定义
+  - `internal` 应用的内部模块，不可以被外部应用引用
+  - `main.go` 主程序入口
+- deploy 程序部署相关的自动化部署脚本，典型的部署脚本包括：
+  - docker集群
+  - k8s
+  - shandalone裸机部署
+- third_party 第三方依赖，典型的有googl的基础功能的pb文件
+- utils 包含所有应用都会用到的基础工具包，如果该工具包在所有项目中都通用，可以独立出来变成公司级别的kit基础包
+
+## 1 docker集群的环境准备和快速部署
 
 ### 1.1 环境准备
 
@@ -64,6 +163,7 @@ ansible.cfg  hosts  roles
 默认的配置在 `/etc/ansible/hosts` 中，追加自己的配置,配置文件demo在 `./hosts.ansible`.
 
 配置字段说明：
+
 - 方括号[]中是组名，用于对业务/功能系统进行分类，便于对不同系统进行个别的管理。下面为主机名称
 - ansible_user 指定登录该服务器的用户名，如果和当前系统已登录的用户名一样，则不需要指定。
 - 注意：如果修改组名，需同步更新playbook中的hosts字段
@@ -131,11 +231,13 @@ node1
   become=True
   become_method=sudo
   ```
+
 ### 1.4 设置所有工作节点免密登录
 
 原理：将master节点的的公钥复制到节点上
 
 登录master管理节点，执行：
+
 ```bash
 ansible-playbook ./deploy/docker/cluster-init/ssh_login_no_password.yml
 ```
@@ -148,66 +250,106 @@ ansible-playbook ./deploy/docker/cluster-init/ssh_login_no_password.yml
 ansible-playbook ./deploy/docker/cluster-init/modify_hostname.yml
 ```
 
-### 1.5 批量设置dns
+### 1.6 批量设置dns
 
 ```bash
 ansible-playbook ./deploy/docker/cluster-init/config_dns.yml
 ```
 
-## 2部署基础设施
+## 2 部署基础设施
+
+复制deploy文件夹到管理节点，并在管理节点上执行下述操作。
 
 1. 安装docker和docker-compose
 
     ```bash
     cd goMono
-    ansible-playbook ./deploy/docker/infra-docker/install_docker_online.yml
+    ansible-playbook ./deploy/docker/infra-docker-registry/install_docker_online.yml
     ```
-    > 注意：如果执行palybook时报错：
-    `fatal: [node1]: FAILED! => {"changed": false, "msg": "The Python 2 bindings for rpm are needed for this module. If you require Python 3 support use the `dnf` Ansible module instead.. The Python 2 yum module is needed for this module. If you require Python 3 support use the dnf Ansible module instead."}`, 需要将`/etc/ansible/hosts`中的`ansible_python_interpreter=/usr/bin/python3` 改为 `ansible_python_interpreter=/usr/bin/python2`， 或者，在ansible-playbook命令后面添加参数：`-e ansible_python_interpreter=/usr/bin/python2`
 
+    > 注意：如果执行palybook时报错：
+    ` fatal: [node1]: FAILED! => {"changed": false, "msg": "The Python 2 bindings for rpm are needed for this module. If you require Python 3 support use the `dnf`Ansible module instead.. The Python 2 yum module is needed for this module. If you require Python 3 support use the dnf Ansible module instead."}`, 需要将`/etc/ansible/hosts`中的`ansible_python_interpreter=/usr/bin/python3` 改为 `ansible_python_interpreter=/usr/bin/python2`， 或者，在ansible-playbook命令后面添加参数：`-e ansible_python_interpreter=/usr/bin/python2`
 
 2. 部署镜像私有仓库
-    
-    项目源码来自[这里](https://github.com/Joxit/docker-registry-ui), 部署操作：
+  
+    私有仓库的项目源码来自[这里](https://github.com/Joxit/docker-registry-ui), 部署操作：
 
     ```bash
-    cd goMono
-    ansible-playbook ./deploy/docker/infra-docker/install_docker_registry.yml
+    ansible-playbook ./deploy/docker/infra-docker-registry/install_docker_registry.yml
     ```
 
     部署完成后，私有仓库在 `http://<域名/IP>:8080/` 上提供服务。（使用域名时，可能需要配置本地DNS）
 
-3. 拉取和打包镜像
+3. 拉取和打包基础设施的镜像
 
    ```bash
-   cd goMono
-   ansible-playbook ./deploy/docker/ansible_playbook/prepare-infra-images.yml
+   ansible-playbook ./deploy/docker/images/prepare-infra-images.yml
    ```
 
 4. 部署nacos
 
-   ```bash
-   cd goMono
-   ansible-playbook ./deploy/docker/ansible_playbook/install_nacos.yml
-   ```
+  部署
+
+  ```bash
+  ansible-playbook ./deploy/docker/infra-nacos/install.yml
+  ```
+
+  停用
+
+  ```bash
+  ansible-playbook ./deploy/docker/infra-nacos/stop.yml
+  ```
 
 5. 部署prometheus和grafana
 
-   ```bash
-   cd goMono
-   ansible-playbook ./deploy/docker/install_prometheus_grafana.yml
-   ```
+  部署
+  
+  ```bash
+  ansible-playbook ./deploy/docker/infra-prometheus/install.yml
+  ```
+
+  停用
+
+  ```bash
+  ansible-playbook ./deploy/docker/infra-prometheus/stop.yml
+  ```
 
   注意：
   
   - 默认只设置了nacos的数据源，如果需要增加其他数据源，修改 `./deploy/docker/infra-prometheus/config_prometheus.env` 配置
   - nacos的dashboard配置是： `deploy/docker/infra-prometheus/config_nacos_grafana_dashboard.json`
 
+6. 部署mysql
+
+  部署
+  
+  ```bash
+  ansible-playbook ./deploy/docker/infra-mysql/install.yml
+  ```
+
+  停用
+
+  ```bash
+  ansible-playbook ./deploy/docker/infra-mysql/stop.yml
+  ```
+
+7. 部署redis
+
+  部署
+  
+  ```bash
+  ansible-playbook ./deploy/docker/infra-redis/install.yml
+  ```
+
+  停用
+
+  ```bash
+  ansible-playbook ./deploy/docker/infra-redis/stop.yml
+  ```
+
 # 开发微服务
 
 ## 添加自己的服务
-
-
 
 ## 初始化和编译
 
@@ -240,7 +382,6 @@ docker run --rm -p 8000:8000 -p 9000:9000 -v </path/to/your/configs>:/data/conf 
 ```
 
 ## 框架和功能详解
-
 
 #### 领域层
 

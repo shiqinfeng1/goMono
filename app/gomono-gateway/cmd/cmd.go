@@ -53,7 +53,7 @@ var Main = gcmd.Command{
 	Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
 		// 获取环境变量配置
 		withDebug, _ := strconv.ParseBool(os.Getenv("DEBUG"))
-		proxyAddrs := strings.Split(os.Getenv("PROXYADDRS"), ",")
+		proxyAddrs := strings.Split(os.Getenv("PROXYADDRS"), ",") // 代理地址
 		// 日志接口
 		logger := log.New(&types.SrvInfo{
 			ID:      ID,

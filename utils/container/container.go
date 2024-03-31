@@ -15,6 +15,7 @@ var (
 	ErrContainerNameInvalid = func(name string) error { return fmt.Errorf("container name invalid:%v", name) }
 )
 
+// 容器客户端
 func getDockerClient() (*client.Client, error) {
 	cli, err := client.NewClientWithOpts(
 		client.FromEnv,
@@ -27,11 +28,13 @@ func getDockerClient() (*client.Client, error) {
 	return cli, nil
 }
 
+// 获取容器名称
 func GetName() (string, error) {
 	cli, err := getDockerClient()
 	if err != nil {
 		return "", err
 	}
+	// HOSTNAME 就是docker yaml中的hostname值
 	container, err := cli.ContainerInspect(context.Background(), os.Getenv("HOSTNAME"))
 	if err != nil {
 		return "", ErrContainerInspectFail(err)
@@ -40,6 +43,7 @@ func GetName() (string, error) {
 	return name, nil
 }
 
+// 获取容器名称的前面部分，去除容器名称中系统追加的后缀
 func GetNameLite() (string, error) {
 	name, err := GetName()
 	if err != nil {

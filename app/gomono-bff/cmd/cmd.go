@@ -6,15 +6,12 @@ import (
 	"os"
 
 	"github.com/go-kratos/kratos/v2"
-	kcfg "github.com/go-kratos/kratos/v2/config"
 	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/gogf/gf/v2/os/gcmd"
 	"github.com/shiqinfeng1/goMono/app/gomono-bff/internal/conf"
-	cconf "github.com/shiqinfeng1/goMono/utils/conf"
-	"github.com/shiqinfeng1/goMono/utils/log"
 	"github.com/shiqinfeng1/goMono/utils/types"
 )
 
@@ -28,33 +25,10 @@ var (
 		Name:    Name,
 		Version: Version,
 	}
-	bffCfg conf.Server // 应用配置参数
-	pubCfg cconf.Public
 )
 
 func init() {
-	// 动态更新配置
-	onChanges := cconf.CfgOnChanges{
-		"public.log.level": func(key string, value kcfg.Value) {
-			_ = key
-			lvl, _ := value.String()
-			log.SetLevel(lvl) // 动态更新level等级
-		},
-		// todo： 这里添加需要监听的字段，及处理函数
-	}
-	scan := []cconf.ScanTarget{
-		{
-			File:   "public.yaml",
-			Field:  "public",
-			Target: &pubCfg,
-		},
-		{
-			File:   "bff.yaml",
-			Field:  "server",
-			Target: &bffCfg,
-		},
-	}
-	cconf.Bootstrap(scan, onChanges)
+	Bootstrap()
 }
 
 func newApp(register *conf.Register, logger klog.Logger, regstr registry.Registrar, hs *http.Server) *kratos.App {
@@ -89,7 +63,6 @@ var Main = gcmd.Command{
 			svcInfo,
 			pubCfg.Discovery,
 			pubCfg.Log,
-			pubCfg.Adapter,
 			pubCfg.Trace,
 			bffCfg.Http,
 			bffCfg.Auth,

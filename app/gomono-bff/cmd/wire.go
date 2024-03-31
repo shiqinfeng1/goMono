@@ -27,7 +27,6 @@ func wireApp(
 	*types.SrvInfo,
 	*cconf.Discovery,
 	*cconf.Log,
-	*cconf.Adapter,
 	*cconf.Trace,
 	*conf.HTTP,
 	*conf.Auth,

@@ -8,6 +8,7 @@ import (
 
 func main() {
 	ctx := gctx.GetInitCtx()
+	// 如果有子命令，在下面的AddCommand中注册
 	err := cmd.Main.AddCommand()
 	if err != nil {
 		panic(err)

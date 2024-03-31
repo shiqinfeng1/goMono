@@ -232,7 +232,7 @@ node1
   become_method=sudo
   ```
 
-### 1.4 设置所有工作节点免密登录
+### 设置所有工作节点免密登录
 
 原理：将master节点的的公钥复制到节点上
 
@@ -244,19 +244,19 @@ ansible-playbook ./deploy/docker/cluster-init/ssh_login_no_password.yml
 
 如果安装失败，需要手动复制key：`ssh-copy-id user@192.168.72.84`
 
-### 1.5 批量设置hostname
+### 批量设置hostname
 
 ```bash
 ansible-playbook ./deploy/docker/cluster-init/modify_hostname.yml
 ```
 
-### 1.6 批量设置dns
+### 批量设置dns
 
 ```bash
 ansible-playbook ./deploy/docker/cluster-init/config_dns.yml
 ```
 
-## 2 部署基础设施
+## 部署基础设施
 
 复制deploy文件夹到管理节点，并在管理节点上执行下述操作。
 
@@ -302,7 +302,7 @@ ansible-playbook ./deploy/docker/cluster-init/config_dns.yml
 5. 部署prometheus和grafana
 
     部署
-    
+
     ```bash
     ansible-playbook ./deploy/docker/infra-prometheus/install.yml
     ```
@@ -314,14 +314,14 @@ ansible-playbook ./deploy/docker/cluster-init/config_dns.yml
     ```
 
     注意：
-    
+
     - 默认只设置了nacos的数据源，如果需要增加其他数据源，修改 `./deploy/docker/infra-prometheus/config_prometheus.env` 配置
     - nacos的dashboard配置是： `deploy/docker/infra-prometheus/config_nacos_grafana_dashboard.json`
 
 6. 部署mysql
 
     部署
-    
+
     ```bash
     ansible-playbook ./deploy/docker/infra-mysql/install.yml
     ```
@@ -335,7 +335,7 @@ ansible-playbook ./deploy/docker/cluster-init/config_dns.yml
 7. 部署redis
 
     部署
-    
+
     ```bash
     ansible-playbook ./deploy/docker/infra-redis/install.yml
     ```
@@ -346,34 +346,37 @@ ansible-playbook ./deploy/docker/cluster-init/config_dns.yml
     ansible-playbook ./deploy/docker/infra-redis/stop.yml
     ```
 
-# 开发微服务
+## 开发微服务
 
-## 添加自己的服务
+1. 添加自己的服务
+  参考 `app/gomono-biz-xxx` 下的文件夹复制或者新建一份，注意：`main.go` 必须放在`app/gomono-biz-xxx`目录下
+2. 添加一个proto文件,根据业务编写proto接口
+3. 生成protobuffer的客户单代码和服务端代码
 
-参考 `app/gomono-biz-xxx` 下的文件夹复制或者新建一份
+    ```bash
+    make api
+    ```
 
-## 编译应用镜像
+4. 编译应用镜像
 
-如果没有私有仓库，按照上面的步骤部署一个私有仓库。
-修改Makefile文件中的`CONTAINER_REGISTRY`为镜像仓库的地址， 例如：`node1:8080`
-编译所有镜像：
+  如果没有私有仓库，按照上面的步骤部署一个私有仓库。
+  修改Makefile文件中的`CONTAINER_REGISTRY`为镜像仓库的地址， 例如：`node1:8080`
+  编译所有镜像,并推送镜像到私有仓库：
+
+  ```bash
+  make all
+  ```
+
+## Docker集群部署
+
+根据实际项目需求部署具体哪些应用
 
 ```bash
-make all
-```
+# 对应的停止命令是： ansible-playbook ./deploy/docker/biz-gateway/stop.yml
+ansible-playbook ./deploy/docker/biz-gateway/install.yml
 
-## 上传应用镜像到私有仓库
-
-```bash
-make push-all
-```
-
-## 添加一个proto文件,根据业务编写proto接口
-
-## 生成protobuffer的客户单代码和服务端代码
-
-```bash
-make api
+# 对应的停止命令是： ansible-playbook ./deploy/docker/biz-bff/stop.yml
+ansible-playbook ./deploy/docker/biz-bff/install.yml
 ```
 
 ## 本地运行
@@ -382,17 +385,22 @@ make api
 ./bin/training -conf ./application/training/configs
 ```
 
-## Docker运行
-
-```bash
-# build
-docker build -t <your-docker-image-name> .
-
-# run
-docker run --rm -p 8000:8000 -p 9000:9000 -v </path/to/your/configs>:/data/conf <your-docker-image-name>
-```
-
 ## 框架和功能详解
+
+### 运行环境/模式
+
+有3种运行环境
+
+- product 生产环境
+- test 测试环境
+- debug 调试环境
+
+有如下的区别
+
+- 配置文件的源
+  生产环境环境下只能从配置中心获取配置，如果没读到，那么将无法运行
+  测试环境key从配置中心，也可以从本地读取配置，如果都没读到，那么将无法运行
+  调试环境值只从本地读取配置，如果没读到，那么将无法运行
 
 #### 领域层
 
@@ -402,4 +410,3 @@ docker run --rm -p 8000:8000 -p 9000:9000 -v </path/to/your/configs>:/data/conf 
 2. 定义`Repository`存储库接口，满足依赖倒置原则。repo在adpters中实现，在app层的useCase中使用，而不绑定到领域实体，便于测试以及实现CQRS，因为CQRS的查询是不需要经过领域实体的，可以直接使用repo
 3. 实现领域实体的行为。如果行为较多，可以拆分为多个文件。注意！！！这是围绕「行为」定义和实现实体的对外接口函数，而不是围绕字段进行set和get实现的类似贫血模型接口
 4. 领域层的所有错误都必须定义名称，不能直接返回`errors.New(...)` 或者`fmt.Errorf(...)`，而是应该先全局定义再返回 `var ErrXxxx = errors.New("xxx") ... return ErrXxxx`
-5. 

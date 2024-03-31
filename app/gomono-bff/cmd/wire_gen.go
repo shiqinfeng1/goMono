@@ -23,7 +23,7 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(contextContext context.Context, srvInfo *types.SrvInfo, discovery *conf.Discovery, confLog *conf.Log, adapter *conf.Adapter, trace *conf.Trace, http *conf2.HTTP, auth *conf2.Auth, register *conf2.Register) (*kratos.App, func(), error) {
+func wireApp(contextContext context.Context, srvInfo *types.SrvInfo, discovery *conf.Discovery, confLog *conf.Log, trace *conf.Trace, http *conf2.HTTP, auth *conf2.Auth, register *conf2.Register) (*kratos.App, func(), error) {
 	logger := log.New(srvInfo, confLog)
 	registryRegistrar := registrar.MustNacosRegistrar(discovery)
 	trainerGrpc := adapters.NewTrainerGrpc(discovery, logger)

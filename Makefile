@@ -209,5 +209,10 @@ help:
 		} \
 	} \
 	{ lastLine = $$0 }' $(MAKEFILE_LIST)
+	@echo ''
+	@echo 'App Targets:'
+	@for x in $(names); do \
+		printf "\033[36m%-28s\033[0m\n" $${x:4};\
+	done ;\
 
 .DEFAULT_GOAL := help

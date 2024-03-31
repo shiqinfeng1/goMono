@@ -72,11 +72,11 @@ api:
 #     		--openapiv2_opt logtostderr=true 
 
 # generate image names，like：
-# app/biz-trainer
-# app/biz-training
-# app/gateway-gomono
-# app/task-migration
-# app/bff-gomono
+# app/gomono-bff
+# app/gomono-task-migration
+# app/gomono-biz-trainer
+# app/gomono-biz-training
+# app/gomono-gateway
 names=$(shell find app -name main.go|xargs -I X dirname X)
 
 # build execute 
@@ -96,7 +96,8 @@ wire:
 
 export DOCKER_BUILDKIT := 1
 # (optional)Image registry address 
-CONTAINER_REGISTRY=
+CONTAINER_REGISTRY=node1:8080/
+
 
 # build docker images
 .PHONY: build-docker-production
@@ -136,17 +137,57 @@ build-docker-debug:
 build-docker-debug-dlv:
 	for x in $(names); do \
 		docker build -f Dockerfile  \
-			--build-arg TARGET=./app/$$x \
+			--build-arg TARGET=./$$x \
 			--build-arg COMMIT=$(COMMIT)  \
-			--build-arg VERSION=$(IMAGE_TAG) \
+			--build-arg VERSION=$(MODULE)/$$x/cmd.Version=$(VERSION) \
 			--build-arg GOARCH=$(GOARCH) \
 			--target debug-dlv \
 			--secret id=git_creds,env=GITHUB_CREDS --build-arg GOPRIVATE=$(GOPRIVATE) \
 			--label "git_commit=$(COMMIT)" --label "git_tag=${IMAGE_TAG}" \
-			-t "$(CONTAINER_REGISTRY)$$x-debug:latest" . ; \
+			-t "$(CONTAINER_REGISTRY)$$x:latest" . ; \
 	done
 
 # -t "$(CONTAINER_REGISTRY)$$x-debug:$(IMAGE_TAG)" . ;
+
+.PHONY: app-list
+app-list:
+	@echo ''
+	@for x in $(names); do \
+		echo "$$x"; \
+	done
+
+.PHONY: %
+%:
+# 查询文件夹是否存在
+	@if [ ! -d app/$@ ]; then \
+		echo "指定应用($@)对应的目录 'app/$@' 不存在, 请在下述应用中选择:"; \
+		echo '*********************'; \
+		for x in $(names); do \
+			echo "$${x:4}"; \
+		done ;\
+		echo '*********************'; \
+	else \
+		docker build -f Dockerfile  \
+			--build-arg TARGET=./app/$@ \
+			--build-arg COMMIT=$(COMMIT)  \
+			--build-arg VERSION=$(MODULE)/$@/cmd.Version=$(VERSION) \
+			--build-arg GOARCH=$(GOARCH) \
+			--target debug \
+			--secret id=git_creds,env=GITHUB_CREDS --build-arg GOPRIVATE=$(GOPRIVATE) \
+			--label "git_commit=$(COMMIT)" --label "git_tag=${IMAGE_TAG}" \
+			-t "$(CONTAINER_REGISTRY)app/$@:latest" . ; \
+		if [[ "$(CONTAINER_REGISTRY)" != "" ]]; then \
+			docker push "$(CONTAINER_REGISTRY)app/$@:latest"; \
+		fi \
+	fi
+
+
+.PHONY: push-all
+# make all
+push-all: 
+	for x in $(names); do \
+		docker push "$(CONTAINER_REGISTRY)$$x:latest" \
+	done
 
 .PHONY: all
 # make all

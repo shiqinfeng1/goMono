@@ -12,8 +12,6 @@ biz_training_image: app/biz-training:latest
 biz_trainer_image: app/biz-trainer:latest
 biz_images_list: 
  - "{{task_migration_image}}"
- - "{{gateway_image}}"
- - "{{bff_image}}"
  - "{{biz_training_image}}"
  - "{{biz_trainer_image}}"
 biz_trainer_host: 192.168.72.84

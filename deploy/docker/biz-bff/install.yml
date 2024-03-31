@@ -13,9 +13,6 @@
    - registry_addr: "{{hostvars[groups['registry'][0]].hostname}}:{{registry_srv_port}}" 
   become: true
   tasks:
-  - include: ../images/push_biz_images.yml
-    when: force_update_images == True
-
   - name: Ensure docker is running
     become: yes
     service:

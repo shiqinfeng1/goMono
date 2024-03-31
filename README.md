@@ -98,13 +98,13 @@
 - deploy 程序部署相关的自动化部署脚本，典型的部署脚本包括：
   - docker集群
   - k8s
-  - shandalone裸机部署
+  - standalone裸机部署
 - third_party 第三方依赖，典型的有googl的基础功能的pb文件
 - utils 包含所有应用都会用到的基础工具包，如果该工具包在所有项目中都通用，可以独立出来变成公司级别的kit基础包
 
-## 1 docker集群的环境准备和快速部署
+## docker集群的环境准备和快速部署
 
-### 1.1 环境准备
+### 环境准备
 
 找1台或多台服务器，将其中1台（master节点）作为ansible管理节点，其他作为运行节点。如果只有一台， 那么管理节点和运行节点是同一台
 
@@ -132,7 +132,7 @@
   sudo chmod u-w -v /etc/sudoers
   ```
 
-### 1.2 在管理节点（master）上安装ansible
+### 在管理节点（master）上安装ansible
 
 centos7
 
@@ -158,7 +158,7 @@ ls /etc/ansible/
 ansible.cfg  hosts  roles
 ```
 
-### 1.3  在管理节点（master）上配置节点主机列表及ansible
+### 在管理节点（master）上配置节点主机列表及ansible
 
 默认的配置在 `/etc/ansible/hosts` 中，追加自己的配置,配置文件demo在 `./hosts.ansible`.
 
@@ -263,7 +263,6 @@ ansible-playbook ./deploy/docker/cluster-init/config_dns.yml
 1. 安装docker和docker-compose
 
     ```bash
-    cd goMono
     ansible-playbook ./deploy/docker/infra-docker-registry/install_docker_online.yml
     ```
 
@@ -288,73 +287,85 @@ ansible-playbook ./deploy/docker/cluster-init/config_dns.yml
 
 4. 部署nacos
 
-  部署
+    部署
 
-  ```bash
-  ansible-playbook ./deploy/docker/infra-nacos/install.yml
-  ```
+    ```bash
+    ansible-playbook ./deploy/docker/infra-nacos/install.yml
+    ```
 
-  停用
+    停用
 
-  ```bash
-  ansible-playbook ./deploy/docker/infra-nacos/stop.yml
-  ```
+    ```bash
+    ansible-playbook ./deploy/docker/infra-nacos/stop.yml
+    ```
 
 5. 部署prometheus和grafana
 
-  部署
-  
-  ```bash
-  ansible-playbook ./deploy/docker/infra-prometheus/install.yml
-  ```
+    部署
+    
+    ```bash
+    ansible-playbook ./deploy/docker/infra-prometheus/install.yml
+    ```
 
-  停用
+    停用
 
-  ```bash
-  ansible-playbook ./deploy/docker/infra-prometheus/stop.yml
-  ```
+    ```bash
+    ansible-playbook ./deploy/docker/infra-prometheus/stop.yml
+    ```
 
-  注意：
-  
-  - 默认只设置了nacos的数据源，如果需要增加其他数据源，修改 `./deploy/docker/infra-prometheus/config_prometheus.env` 配置
-  - nacos的dashboard配置是： `deploy/docker/infra-prometheus/config_nacos_grafana_dashboard.json`
+    注意：
+    
+    - 默认只设置了nacos的数据源，如果需要增加其他数据源，修改 `./deploy/docker/infra-prometheus/config_prometheus.env` 配置
+    - nacos的dashboard配置是： `deploy/docker/infra-prometheus/config_nacos_grafana_dashboard.json`
 
 6. 部署mysql
 
-  部署
-  
-  ```bash
-  ansible-playbook ./deploy/docker/infra-mysql/install.yml
-  ```
+    部署
+    
+    ```bash
+    ansible-playbook ./deploy/docker/infra-mysql/install.yml
+    ```
 
-  停用
+    停用
 
-  ```bash
-  ansible-playbook ./deploy/docker/infra-mysql/stop.yml
-  ```
+    ```bash
+    ansible-playbook ./deploy/docker/infra-mysql/stop.yml
+    ```
 
 7. 部署redis
 
-  部署
-  
-  ```bash
-  ansible-playbook ./deploy/docker/infra-redis/install.yml
-  ```
+    部署
+    
+    ```bash
+    ansible-playbook ./deploy/docker/infra-redis/install.yml
+    ```
 
-  停用
+    停用
 
-  ```bash
-  ansible-playbook ./deploy/docker/infra-redis/stop.yml
-  ```
+    ```bash
+    ansible-playbook ./deploy/docker/infra-redis/stop.yml
+    ```
 
 # 开发微服务
 
 ## 添加自己的服务
 
-## 初始化和编译
+参考 `app/gomono-biz-xxx` 下的文件夹复制或者新建一份
+
+## 编译应用镜像
+
+如果没有私有仓库，按照上面的步骤部署一个私有仓库。
+修改Makefile文件中的`CONTAINER_REGISTRY`为镜像仓库的地址， 例如：`node1:8080`
+编译所有镜像：
 
 ```bash
 make all
+```
+
+## 上传应用镜像到私有仓库
+
+```bash
+make push-all
 ```
 
 ## 添加一个proto文件,根据业务编写proto接口

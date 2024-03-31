@@ -1,35 +1,36 @@
 
 public:
   adapter:
-    database:
+    database:  # 数据库服务地址
       driver: mysql
-      source: "root:root@tcp(192.168.72.84:23306)/test"
-    redis:
-      addr: 127.0.0.1:26379
+      source: "root:root@tcp(192.168.72.84:43306)/test" # todo: 数据库名需要更新
+    redis: # redis的服务地址
+      addr: "192.168.72.84:46379"
       read_timeout: 0.2s
       write_timeout: 0.2s
   log:
     level: debug
-    monitor:
+    monitor:  # 日志服务地址
       endpoint: tcp://127.0.0.1:23224
     file:
-      max_size:    100  # megabytes
+      max_size:    50  # megabytes
       max_backups: 7    # file numbers
       max_age:     28   # days
       compress:    true
+      local_time:  true
 
-  registry: 
+  registry:  # 注册中心的服务地址
     addrs:
       - "192.168.72.84:8848"
       - "192.168.72.84:8858"
       - "192.168.72.84:8868"
-  trace:
+  trace:  # 链路跟踪服务地址
     endpoint: "192.168.72.84:4318"
 
-  discovery:
+  discovery:  # 服务发现的服务地址
     endpoints:
       - "192.168.72.84:8848"
 
-  gateway_register:
+  gateway_register: # 网关服务地址
     endpoints:
       - "192.168.72.84:8180"

@@ -1,0 +1,56 @@
+syntax = "proto3";
+package kratos.config.public;
+
+option go_package = "github.com/shiqinfeng1/goMono/utils/conf;conf";
+
+import "google/protobuf/duration.proto";
+
+message Public{
+  Log log = 1;
+  Trace trace = 2;
+  Registry registry = 3;
+  Discovery discovery = 4;
+  Adapter adapter = 5;
+  GatewayRegister gateway_register = 6;
+}
+message Log {
+  string level = 1;
+  Monitor monitor = 2;
+  File file = 3;
+}
+message Monitor {
+  string endpoint = 1;
+}
+message File {
+  int32 max_size = 1;
+  int32 max_backups = 2;
+  int32 max_age = 3;
+  bool compress = 4;
+  bool local_time = 5;
+}
+message Trace {
+    string endpoint = 1;
+}
+message Registry {
+    repeated string addrs = 1;
+}
+message Discovery {
+    repeated string endpoints = 1;
+}
+message Adapter {
+  message Database {
+    string driver = 1;
+    string source = 2;
+  }
+  message Redis {
+    string addr = 1;
+    google.protobuf.Duration read_timeout = 2;
+    google.protobuf.Duration write_timeout = 3;
+  }
+  Database database = 1;
+  Redis redis = 2;
+}
+
+message GatewayRegister {
+  repeated string endpoints = 1;
+}

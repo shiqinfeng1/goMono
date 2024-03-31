@@ -1,0 +1,52 @@
+---
+- name: Install Prometheus & Grafana
+  hosts: prometheus
+  vars_files:
+    - ../infra-docker-registry/vars.yml
+    - ../infra-nacos/vars.yml
+    - ../biz/vars.yml
+    - ../biz-bff/vars.yml
+    - vars.yml
+  vars:
+   - registry_addr: "{{hostvars[groups['registry'][0]].hostname}}:{{registry_srv_port}}" 
+  become: true
+  tasks:
+  - name: Ensure docker is running
+    become: yes
+    service:
+      name: docker
+      state: started
+  - name: Copy Prometheus&Grafana Docker-Compose Files
+    template: 
+      src: ./{{ item }}
+      dest: /tmp/{{ item }}
+      force: true
+    loop:
+      - "{{prometheus_compose_file}}"
+      - "{{config_prometheus}}"
+  
+  - name: Stop Prometheus & Grafana
+    shell:
+      cmd: "docker-compose -p gomono-infra-pg -f /tmp/{{prometheus_compose_file}} down"
+
+  - name: Start Prometheus & Grafana
+    shell:
+      cmd: "docker-compose -p gomono-infra-pg -f /tmp/{{prometheus_compose_file}} up -d"
+
+  - name: Check Prometheus & Grafana Running Status
+    docker_container_info:
+      name: "{{item}}"
+    register: result
+    until: result.container['State']['Status'] == "running"
+    retries: 10
+    delay: 5
+    loop:
+      - "gomono-prometheus"
+      - "gomono-grafana"
+
+  # - name: Delete docker-compose.yml
+  #   file: 
+  #     dest: /tmp/{{ item }}
+  #     state: absent
+  #   loop:
+  #     - "{{prometheus_compose_file}}"

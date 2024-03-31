@@ -3,7 +3,7 @@
 
 openapi: 3.0.3
 info:
-    title: ""
+    title: BFF API
     version: 0.0.1
 paths:
     /demo/v1/trainer/getTrainerAvailableHours:
@@ -163,24 +163,6 @@ paths:
                 "200":
                     description: OK
                     content: {}
-    /user/v1/getTrainingBalance:
-        post:
-            tags:
-                - UserService
-            operationId: UserService_GetTrainingBalance
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/user.GetTrainingBalanceRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/user.GetTrainingBalanceResponse'
 components:
     schemas:
         bff.GetTrainerAvailableHoursRequest:
@@ -315,16 +297,5 @@ components:
                 time:
                     type: string
                     format: date-time
-        user.GetTrainingBalanceRequest:
-            type: object
-            properties:
-                userId:
-                    type: string
-        user.GetTrainingBalanceResponse:
-            type: object
-            properties:
-                amount:
-                    type: string
 tags:
     - name: BFF
-    - name: UserService

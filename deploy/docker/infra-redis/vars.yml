@@ -1,0 +1,20 @@
+#########################################################################
+# 基础设施镜像相关配置
+#########################################################################
+redis_image: redis:7.0-alpine
+infra_images_list:   # 通过在线下载的基础设施的镜像列表
+  - "{{redis_image}}"
+
+delete_download_images: true  # 是否删除本地已上传到私有仓库的基础设施镜像
+force_update_images: false  # 是否下载或更新基础设施镜像
+
+#########################################################################
+# redis相关配置
+#########################################################################
+redis_compose_file: docker_compose_redis.yml 
+redis_host: 192.168.72.84
+redis_srv_port: 46379
+redis_slave_srv_port: 46378
+redis_password: 123456
+redis_data_dir: /gomono/redis
+redis_slave_data_dir: /gomono/redis-slave

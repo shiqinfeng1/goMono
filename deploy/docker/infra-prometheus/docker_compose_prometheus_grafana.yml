@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  prometheus:
+    container_name: gomono-prometheus
+    hostname: prometheus
+    image: "{{registry_addr}}/{{prometheus_image}}"
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - /tmp/{{config_prometheus}}:/etc/prometheus/prometheus.yml
+    ports:
+      - "{{prometheus_srv_port}}:9090"
+    restart: always
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+
+  grafana:
+    container_name: gomono-grafana
+    hostname: grafana
+    image: "{{registry_addr}}/{{grafana_image}}"
+    ports:
+      - "{{grafana_srv_port}}:3000"
+    restart: always
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'

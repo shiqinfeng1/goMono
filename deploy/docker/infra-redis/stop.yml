@@ -1,0 +1,25 @@
+---
+- name: Stop Nacos Containers
+  hosts: redis
+  vars_files:
+    - ../infra-docker-registry/vars.yml
+    - vars.yml
+  vars:
+   - registry_addr: "{{hostvars[groups['registry'][0]].hostname}}:{{registry_srv_port}}" 
+  become: true
+  tasks:
+  - name: Copy Redis Docker-Compose Files
+    template: 
+      src: ./{{ item }}
+      dest: /tmp/{{ item }}
+      force: true
+    loop:
+      - "{{redis_compose_file}}"
+
+  - name: Stop Redis
+    shell:
+      cmd: "docker-compose -p gomono-infra-nacos -f /tmp/{{item.1}} down"
+    when: (item.0 == ansible_hostname) or (item.0 == ansible_host)
+    with_together: 
+      - "{{[redis_host]}}"
+      - "{{[redis_compose_file]}}"

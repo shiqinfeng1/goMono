@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  bff:
+    image: "{{registry_addr}}/{{bff_image}}"
+    ports:
+      - "{{bff_port}}:8200"
+    environment:
+      - "MODE={{mode}}"
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/run/docker.sock:/run/docker.sock:ro"
+      - "{{bff_config_dir}}:/bin/config"
+      - "{{bff_log_dir}}/app:/bin/log"
+      - "{{bff_log_dir}}/nacos:/tmp/nacos"
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    deploy:
+      mode: replicated
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s

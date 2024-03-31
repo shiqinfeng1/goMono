@@ -30,7 +30,6 @@ endpoints:
     backends:
       - target: 'discovery:///bff.http'
         weight: 100
-      # - target: '192.168.72.84:8200'
     # 各个endpoint的中间件
     middlewares:
       - name: circuitbreaker

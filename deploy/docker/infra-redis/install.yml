@@ -1,0 +1,57 @@
+---
+- name: Install Redis
+  hosts: redis
+  vars_files:
+    - ../infra-docker-registry/vars.yml
+    - vars.yml
+  vars:
+   - registry_addr: "{{hostvars[groups['registry'][0]].hostname}}:{{registry_srv_port}}" 
+  become: true
+  tasks:
+  - include: ../images/prepare_infra_images.yml
+    when: force_update_images == True
+  - name: Ensure docker is running
+    become: yes
+    service:
+      name: docker
+      state: started
+  - name: Creates Redis Data Directory
+    file:
+      path: "{{item}}"
+      state: directory
+      owner: "{{ansible_user}}"
+      group: "{{ansible_user}}"
+      mode: 0777
+    loop:
+      - "{{redis_data_dir}}"
+      - "{{redis_slave_data_dir}}"
+
+  - name: Copy Redis Docker-Compose Files
+    template: 
+      src: ./{{ item }}
+      dest: /tmp/{{ item }}
+      force: true
+    loop:
+      - "{{redis_compose_file}}"
+  
+  - name: Start Redis
+    shell:
+      cmd: "docker-compose -p gomono-infra-redis -f /tmp/{{redis_compose_file}} up -d"
+
+  - name: Check Redis Status
+    docker_container_info:
+      name: "{{item}}"
+    register: result
+    until: result.container['State']['Status'] == "running"
+    retries: 10
+    delay: 5
+    loop:
+      - "gomono-redis"
+      - "gomono-redis-slave"
+
+  # - name: Delete docker-compose.yml
+  #   file: 
+  #     dest: /tmp/{{ item }}
+  #     state: absent
+  #   loop:
+  #     - "{{redis_compose_file}}"

@@ -1,0 +1,55 @@
+---
+- name: Ensure docker is running
+  become: yes
+  service:
+    name: docker
+    state: started
+
+- name: Pull Images From Web
+  command: "docker pull {{item}}"
+  loop: 
+    "{{infra_images_list}}"
+
+- name: Tag Images
+  command: "docker tag {{item}} {{registry_addr}}/{{item}}"
+  loop: 
+    "{{infra_images_list}}"
+
+- name: Copy Dockerfiles
+  copy: 
+    src: "./{{ item }}" 
+    dest: "/tmp/{{ item }}"
+    mode: 777
+  loop:
+    "{{local_infra_images_dockerfile_list}}"
+- name: Make Local Images
+  command: "docker build -f /tmp/{{item.0}} -t {{registry_addr}}/{{item.1}} {{ lookup('env', 'PWD') }}"
+  with_together: 
+    - "{{local_infra_images_dockerfile_list}}"
+    - "{{local_infra_images_list}}"
+  # docker_image:
+  #   name: "{{registry_addr}}/{{item.1}}"
+  #   build:
+  #     path: /tmp
+  #     dockerfile: "{{item.0}}"
+  #   source: build
+  #   state: present
+
+- name: Push Images
+  command: "docker push {{registry_addr}}/{{item}}"
+  loop: 
+    "{{infra_images_list + local_infra_images_list}}"
+
+- name: Remove Downloaded Images
+  command: "docker rmi {{registry_addr}}/{{item}} {{item}}"
+  loop: 
+    "{{infra_images_list}}"
+  when: delete_download_images == True
+  ignore_errors: yes
+- name: Remove Local Images
+  command: "docker rmi {{registry_addr}}/{{item}}"
+  loop: 
+    "{{local_infra_images_list}}"
+  when: delete_download_images == True
+  ignore_errors: yes
+  

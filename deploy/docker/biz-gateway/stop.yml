@@ -1,0 +1,21 @@
+---
+- name: Stop Gateway
+  hosts: gateway
+  vars_files:
+    - ../infra-docker-registry/vars.yml
+    - vars.yml
+  vars:
+   - registry_addr: "{{hostvars[groups['registry'][0]].hostname}}:{{registry_srv_port}}" 
+  become: true
+  tasks:
+  - name: Copy Gateway Docker-Compose Files
+    template: 
+      src: ./{{ item }}
+      dest: /tmp/{{ item }}
+      force: true
+    loop:
+      - "{{gateway_compose_file}}"
+  - name: Stop Gateway
+    shell:
+      cmd: "docker service rm {{biz_stack}}_gateway"
+    ignore_errors: yes

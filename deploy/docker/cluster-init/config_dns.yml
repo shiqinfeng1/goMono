@@ -1,0 +1,45 @@
+---
+- name: Install Docker & Docker-Compose
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Creates hostctl directory  # 创建dns工具目录
+      file:
+        path: /tmp/hostctl
+        state: directory
+        owner: "{{ansible_user}}"
+        group: "{{ansible_user}}"
+        mode: 0777
+    - name: download hostctl_1.1.4_linux_64-bit.tar.gz  # 下载dns配置工具
+      command: 
+        cmd: wget https://github.com/guumaster/hostctl/releases/download/v1.1.4/hostctl_1.1.4_linux_64-bit.tar.gz 
+        chdir: /tmp/hostctl
+
+    - name: Unarchive hostctl_1.1.4_linux_64-bit.tar.gz # 解压dns工具
+      unarchive: 
+        src: /tmp/hostctl/hostctl_1.1.4_linux_64-bit.tar.gz
+        dest: /tmp/hostctl
+        copy: no
+
+    - name: Ansible copy files remote to remote  # 远端复制工具到/usr/bin
+      copy:
+        src: /tmp/hostctl/hostctl
+        dest: /usr/bin
+        remote_src: yes
+        mode: u+x,g+x,o+x
+
+    - name: Clean files  # 删除临时文件
+      file:
+        path: /tmp/hostctl
+        state: absent
+
+    - name: Set DNS  # 配置dns， 允许节点主机之间通过域名相互访问
+      command: hostctl add domains ansible {{ hostvars[item].hostname }} --ip {{ hostvars[item].ansible_host }}
+      with_items: "{{groups['all']}}"
+
+    - name: After Set DNS # 查看配置结果
+      command: hostctl list
+      register: hosts
+    - debug:
+        var: hosts.stdout_lines

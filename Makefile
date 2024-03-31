@@ -1,3 +1,4 @@
+# Get OS name: linux or windows or darwin
 GOHOSTOS:=$(shell go env GOHOSTOS)
 # The short Git commit hash
 SHORT_COMMIT := $(shell git rev-parse --short HEAD)
@@ -10,11 +11,10 @@ VERSION := $(shell git describe --tags --abbrev=2 --match "v*" 2>/dev/null)
 ifeq (${IMAGE_TAG},)
 IMAGE_TAG := ${VERSION}
 endif
-
 ifeq (${IMAGE_TAG},)
 IMAGE_TAG := ${SHORT_COMMIT}
 endif
-CONTAINER_REGISTRY=
+
 # Name of the cover profile
 COVER_PROFILE := coverage.txt
 # Disable go sum database lookup for private repos
@@ -25,19 +25,17 @@ UNAME := $(shell uname)
 # Used when building within docker
 GOARCH := $(shell go env GOARCH)
 
-API_PROTO_FILES=$(shell find api -name *.proto)
-INTERNAL_PROTO_FILES=$(shell find app -name *.proto)
+MODULE=github.com/shiqinfeng1/goMono
+
+# generate wire_gen.go
 ifeq ($(GOHOSTOS), darwin)
 	wireCmd=xargs -I F sh -c 'cd F && echo && wire'
 else
 	wireCmd=xargs -i sh -c 'cd {} && echo && wire'
 endif
 
-MODULE=github.com/shiqinfeng1/goMono
-
-
 .PHONY: init
-# init env
+# init env: install third-party-tool
 init:
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
@@ -47,8 +45,9 @@ init:
 	go install github.com/google/gnostic/cmd/protoc-gen-openapi@latest
 	go install github.com/google/wire/cmd/wire@latest
 
+# generate config proto to go-files
+INTERNAL_PROTO_FILES=$(shell find app -name *.proto | grep conf)
 .PHONY: config
-# generate app proto
 config:
 	for var in $(INTERNAL_PROTO_FILES); do \
         protoc --proto_path=./app \
@@ -57,40 +56,50 @@ config:
 	       $$var; \
     done
 
+# generate api proto to go-files
+API_PROTO_FILES=$(shell find app -name *.proto | grep api)
 .PHONY: api
-# generate api proto
 api:
-	protoc --proto_path=./api \
+	protoc --proto_path=./app \
 	       --proto_path=./third_party \
- 	       --go_out=paths=source_relative:./api \
- 	       --go-http_out=paths=source_relative:./api \
- 	       --go-grpc_out=paths=source_relative:./api \
-		   --go-errors_out=paths=source_relative:./api \
+ 	       --go_out=paths=source_relative:./app \
+ 	       --go-http_out=paths=source_relative:./app \
+ 	       --go-grpc_out=paths=source_relative:./app \
+		   --go-errors_out=paths=source_relative:./app \
 	       --openapi_out=fq_schema_naming=true,default_response=false:./api \
 	       $(API_PROTO_FILES)
 #    		--openapiv2_out=./api 
 #     		--openapiv2_opt logtostderr=true 
 
-.PHONY: build
+# generate image names，like：
+# app/biz-trainer
+# app/biz-training
+# app/gateway-gomono
+# app/task-migration
+# app/bff-gomono
+names=$(shell find app -name main.go|xargs -I X dirname X)
+
 # build execute 
+.PHONY: build
 build:
-# go build -ldflags "app/bff-gomono/cmd/cmd.Version=$(VERSION)" -o ./deploy/standalone/bin/ ./...
+# go build -ldflags "app/gomono-bff/cmd/cmd.Version=$(VERSION)" -o ./deploy/standalone/bin/ ./...
 	for x in $(names); do \
 		echo -e "\nbuild $$x ... $(MODULE)/$$x/cmd.Version=$(VERSION)"; \
 		go build -ldflags "-X $(MODULE)/$$x/cmd.Version=$(VERSION)" -o ./deploy/standalone/bin/ ./$$x; \
 		echo  "ok"; \
 	done
 
+
 .PHONY: wire
-# generate wire_gen.go
 wire:
 	find app  -mindepth 2 -maxdepth 2 | grep cmd | $(wireCmd)
 
 export DOCKER_BUILDKIT := 1
+# (optional)Image registry address 
+CONTAINER_REGISTRY=
 
-names=$(shell find app -name main.go|xargs -I X dirname X)
-.PHONY: build-docker-production
 # build docker images
+.PHONY: build-docker-production
 build-docker-production:
 	for x in $(names); do \
 		echo -e "\n\nmake docker $$x ..."; \
@@ -105,8 +114,8 @@ build-docker-production:
 			-t "$(CONTAINER_REGISTRY)$$x:latest" . ; \
 	done
 
-.PHONY: build-docker-debug
 # build docker images
+.PHONY: build-docker-debug
 build-docker-debug:
 	for x in $(names); do \
 		echo -e "\n\nmake docker $$x ..."; \
@@ -122,8 +131,8 @@ build-docker-debug:
 	done
 # -t "$(CONTAINER_REGISTRY)$$x:$(IMAGE_TAG)" . ;
 
-.PHONY: build-docker-debug-dlv
 # build docker images with debug
+.PHONY: build-docker-debug-dlv
 build-docker-debug-dlv:
 	for x in $(names); do \
 		docker build -f Dockerfile  \
@@ -141,7 +150,7 @@ build-docker-debug-dlv:
 
 .PHONY: all
 # make all
-all: init config api wire build build-docker-debug
+all: init config api wire build build-docker-debug 
 
 # show help
 help:

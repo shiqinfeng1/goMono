@@ -1,0 +1,24 @@
+---
+- name: Stop Prometheus&Grafana Containers
+  hosts: prometheus
+  vars_files:
+    - ../infra-docker-registry/vars.yml
+    - vars.yml
+  vars:
+   - registry_addr: "{{hostvars[groups['registry'][0]].hostname}}:{{registry_srv_port}}" 
+  become: true
+  tasks:
+  - name: Copy Prometheus&Grafana Docker-Compose Files
+    template: 
+      src: ./{{ item }}
+      dest: /tmp/{{ item }}
+      force: true
+    loop:
+      - "{{prometheus_compose_file}}"
+  - name: Stop Prometheus & Grafana
+    shell:
+      cmd: "docker-compose -p gomono-infra-pg -f /tmp/{{prometheus_compose_file}} down"
+  - name: Stop Jaeger
+    shell:
+      cmd: "docker-compose -p gomono-infra-jaeger -f /tmp/{{jaeger_compose_file}} down"
+      

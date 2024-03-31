@@ -1,5 +1,5 @@
 # Get OS name: linux or windows or darwin
-GOHOSTOS:=$(shell go env GOHOSTOS)
+GOHOSTOS := $(shell go env GOHOSTOS)
 # The short Git commit hash
 SHORT_COMMIT := $(shell git rev-parse --short HEAD)
 BRANCH_NAME := $(shell git rev-parse --abbrev-ref HEAD | tr '/' '-')
@@ -45,9 +45,10 @@ init:
 	go install github.com/google/gnostic/cmd/protoc-gen-openapi@latest
 	go install github.com/google/wire/cmd/wire@latest
 
-# generate config proto to go-files
+
 INTERNAL_PROTO_FILES=$(shell find app -name *.proto | grep conf)
 .PHONY: config
+# generate config proto to go-files
 config:
 	for var in $(INTERNAL_PROTO_FILES); do \
         protoc --proto_path=./app \
@@ -56,9 +57,9 @@ config:
 	       $$var; \
     done
 
-# generate api proto to go-files
 API_PROTO_FILES=$(shell find app -name *.proto | grep api)
 .PHONY: api
+# generate api proto to go-files
 api:
 	protoc --proto_path=./app \
 	       --proto_path=./third_party \
@@ -79,8 +80,8 @@ api:
 # app/gomono-gateway
 names=$(shell find app -name main.go|xargs -I X dirname X)
 
-# build execute 
 .PHONY: build
+# build all app execute binaray
 build:
 # go build -ldflags "app/gomono-bff/cmd/cmd.Version=$(VERSION)" -o ./deploy/standalone/bin/ ./...
 	for x in $(names); do \
@@ -91,6 +92,7 @@ build:
 
 
 .PHONY: wire
+# generate wire codes
 wire:
 	find app  -mindepth 2 -maxdepth 2 | grep cmd | $(wireCmd)
 
@@ -98,9 +100,8 @@ export DOCKER_BUILDKIT := 1
 # (optional)Image registry address 
 CONTAINER_REGISTRY=node1:8080/
 
-
-# build docker images
 .PHONY: build-docker-production
+# build all app docker image for production
 build-docker-production:
 	for x in $(names); do \
 		echo -e "\n\nmake docker $$x ..."; \
@@ -113,10 +114,13 @@ build-docker-production:
 			--secret id=git_creds,env=GITHUB_CREDS --build-arg GOPRIVATE=$(GOPRIVATE) \
 			--label "git_commit=$(COMMIT)" --label "git_tag=${IMAGE_TAG}" \
 			-t "$(CONTAINER_REGISTRY)$$x:latest" . ; \
+		if [[ "$(CONTAINER_REGISTRY)" != "" ]]; then \
+			docker push "$(CONTAINER_REGISTRY)$$x:latest"; \
+		fi \
 	done
 
-# build docker images
 .PHONY: build-docker-debug
+# build all app docker image with debug 
 build-docker-debug:
 	for x in $(names); do \
 		echo -e "\n\nmake docker $$x ..."; \
@@ -129,11 +133,14 @@ build-docker-debug:
 			--secret id=git_creds,env=GITHUB_CREDS --build-arg GOPRIVATE=$(GOPRIVATE) \
 			--label "git_commit=$(COMMIT)" --label "git_tag=${IMAGE_TAG}" \
 			-t "$(CONTAINER_REGISTRY)$$x:latest" . ; \
+		if [[ "$(CONTAINER_REGISTRY)" != "" ]]; then \
+			docker push "$(CONTAINER_REGISTRY)$$x:latest"; \
+		fi \
 	done
 # -t "$(CONTAINER_REGISTRY)$$x:$(IMAGE_TAG)" . ;
 
-# build docker images with debug
 .PHONY: build-docker-debug-dlv
+# build all app docker image with debug & dlv
 build-docker-debug-dlv:
 	for x in $(names); do \
 		docker build -f Dockerfile  \
@@ -145,18 +152,27 @@ build-docker-debug-dlv:
 			--secret id=git_creds,env=GITHUB_CREDS --build-arg GOPRIVATE=$(GOPRIVATE) \
 			--label "git_commit=$(COMMIT)" --label "git_tag=${IMAGE_TAG}" \
 			-t "$(CONTAINER_REGISTRY)$$x:latest" . ; \
+		if [[ "$(CONTAINER_REGISTRY)" != "" ]]; then \
+			docker push "$(CONTAINER_REGISTRY)$$x:latest"; \
+		fi \
 	done
 
 # -t "$(CONTAINER_REGISTRY)$$x-debug:$(IMAGE_TAG)" . ;
 
+
 .PHONY: app-list
+# show all app images names
 app-list:
 	@echo ''
 	@for x in $(names); do \
 		echo "$$x"; \
 	done
 
-.PHONY: %
+.PHONY: all
+# make all
+all: init config api wire build build-docker-debug 
+
+# make App Targets 
 %:
 # 查询文件夹是否存在
 	@if [ ! -d app/$@ ]; then \
@@ -181,17 +197,6 @@ app-list:
 		fi \
 	fi
 
-
-.PHONY: push-all
-# make all
-push-all: 
-	for x in $(names); do \
-		docker push "$(CONTAINER_REGISTRY)$$x:latest" \
-	done
-
-.PHONY: all
-# make all
-all: init config api wire build build-docker-debug 
 
 # show help
 help:

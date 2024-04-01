@@ -1,5 +1,5 @@
 # This is a gateway config.
-name: gateway-gomono
+name: gomono-gateway
 version: v1.0.0
 # 全局中间件
 middlewares:

@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/gogf/gf/v2/os/gctx"
-	"github.com/shiqinfeng1/goMono/app/gomono-bff/cmd"
+	"github.com/shiqinfeng1/goMono/app/gomono-gateway/cmd"
 	_ "go.uber.org/automaxprocs"
 )
 

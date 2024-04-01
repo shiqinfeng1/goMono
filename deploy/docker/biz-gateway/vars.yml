@@ -3,7 +3,7 @@
 # 业务和docker相关的配置
 #########################################################################
 biz_stack: bizstack # docker stack的名称前缀
-gateway_image: app/gateway-gomono:latest
+gateway_image: app/gomono-gateway:latest
 gateway_compose_file: docker_compose_gateway.yml # 网关服务的docker-compose文件
 biz_images_list: 
  - "{{gateway_image}}"

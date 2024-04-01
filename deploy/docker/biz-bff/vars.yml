@@ -3,7 +3,7 @@
 # 业务和docker相关的配置
 #########################################################################
 biz_stack: bizstack # docker stack的名称前缀
-bff_image: app/bff-gomono:latest
+bff_image: app/gomono-bff:latest
 bff_compose_file: docker_compose_bff.yml # bff服务的docker-compose文件
 biz_images_list: 
  - "{{bff_image}}"
@@ -19,7 +19,3 @@ bff_port: 8200   # bff服务端口号
 bff_data_dir: /gomono/bff # bff数据的目录
 bff_config_dir: "{{bff_data_dir}}/config" # bff配置目录
 bff_log_dir: "{{bff_data_dir}}/log"  # bff日志目录
-
-
-
-

@@ -44,7 +44,6 @@
       dest: "{{bff_config_dir}}/{{ item }}"
       force: true
     loop:
-      - "public.yaml"
       - "bff.yaml"
 
   - name: Backup BFF config Files
@@ -55,7 +54,6 @@
       force: true
       mode: 0777
     loop:
-      - "public.yaml"
       - "bff.yaml"
 
   - name: Start BFF

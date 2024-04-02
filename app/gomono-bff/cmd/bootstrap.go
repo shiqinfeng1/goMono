@@ -24,7 +24,7 @@ func Bootstrap() {
 	}
 	scan := []cconf.ScanTarget{
 		{
-			File:   "public.yaml",
+			File:   "bff.yaml",
 			Field:  "public",
 			Target: &pubCfg,
 		},

@@ -47,7 +47,7 @@ func Bootstrap() {
 			Target: &gatewayCfg,
 		},
 		{
-			File:   "public.yaml",
+			File:   "gateway.yaml",
 			Field:  "public",
 			Target: &pubCfg,
 		},

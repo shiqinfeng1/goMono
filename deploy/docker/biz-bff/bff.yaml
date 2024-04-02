@@ -6,3 +6,20 @@ server:
   register:
     endpoints:
       - "{{bff_host}}:{{bff_port}}"
+
+public:
+  log:
+    level: debug
+    monitor:  # 日志服务地址
+      endpoint: tcp://127.0.0.1:23224
+    file:
+      max_size:    50  # megabytes
+      max_backups: 7    # file numbers
+      max_age:     28   # days
+      compress:    true
+      local_time:  true
+  trace:  # 链路跟踪服务地址
+    endpoint: "{{jaeger_host}}:{{jaeger_collector_otlp_http_port}}"
+  discovery:  # 服务发现的服务地址
+    endpoints:
+      - "{{nacos_host}}:{{nacos1_srv_port}}"

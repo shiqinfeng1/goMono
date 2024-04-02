@@ -44,7 +44,6 @@
       force: true
     loop:
       - "gateway.yaml"
-      - "public.yaml"
 
   - name: Backup Gateway config Files
     delegate_to: localhost
@@ -55,7 +54,6 @@
       mode: 0777
     loop:
       - "gateway.yaml"
-      - "public.yaml"
 
   - name: Start Gateway
     shell:
